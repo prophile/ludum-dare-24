@@ -8,9 +8,14 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Inappropriate Horse Racing Tactics";
 		cfg.useGL20 = true;
-		cfg.width = 480;
-		cfg.height = 320;
+		configureWindowDimensions(cfg);
 		
 		new LwjglApplication(new GameWrapper(), cfg);
+	}
+
+	private static void configureWindowDimensions(
+			LwjglApplicationConfiguration cfg) {
+		cfg.width = 480;
+		cfg.height = 320;
 	}
 }
