@@ -26,11 +26,7 @@ public class BackgroundManager {
        if (mBackgroundSprite1.getX()+800-cameraPosition < -400) {
            mBackgroundSprite1.setPosition(mBackgroundSprite1.getX()+800*2, 0);
        }
-       System.out.println("---");
-       System.out.println(cameraPosition);
-       System.out.println(mBackgroundSprite2.getX());
-       System.out.println(mBackgroundSprite2.getX()+800-cameraPosition);
-       System.out.println("---");
+       
        if (mBackgroundSprite2.getX()+800-cameraPosition < -400) {
            mBackgroundSprite2.setPosition(mBackgroundSprite2.getX()+800*2, 0);
        }

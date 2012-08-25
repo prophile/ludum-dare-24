@@ -1,7 +1,9 @@
 package me.teaisaweso.games.ld24;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -17,8 +19,9 @@ public class Player extends Entity {
     private final Sprite mSprite;
 
     public Player(Sprite sprite, World world) {
-        mEa.mMaxSpeed = 30;
-        mEa.mAccel = 300;
+        mStatusModifiers.add(new SlowDownModifier());
+        mEa.mMaxSpeed = 30000;
+        mEa.mAccel = 30;
         mSprite = sprite;
         mWidth = 200;
         mHeight = 200;
@@ -26,7 +29,7 @@ public class Player extends Entity {
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(mWidth/(2*GameWrapper.PHYSICS_RATIO), mHeight/(2*GameWrapper.PHYSICS_RATIO));
-        fd.density = 100;
+        fd.density = 1; 
         fd.shape = ps;
         bd.fixedRotation = true;
         bd.type = BodyType.DynamicBody;
@@ -58,7 +61,7 @@ public class Player extends Entity {
         for (StatusModifier modifier : mStatusModifiers) {
             currentAccel = modifier.adjustAccel(currentAccel);
         }
-        
+        System.out.println(currentAccel);
         return currentAccel;
     }
     
@@ -74,14 +77,25 @@ public class Player extends Entity {
 
     @Override
     public void update() {
-        for (StatusModifier modifier : mStatusModifiers) {
-            modifier.update();
-        }
+        updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(this.getEffectiveAccel(), 0), mBody.getPosition());
         if (mBody.getLinearVelocity().x > this.getEffectiveMaxSpeed())
         {
             mBody.setLinearVelocity(this.getEffectiveMaxSpeed(), mBody.getLinearVelocity().y);
         }
+    }
+
+    private void updateAndRemoveModifiers() {
+        Set<StatusModifier> endedModifiers = new HashSet<StatusModifier>();
+        for (StatusModifier modifier : mStatusModifiers) {
+            modifier.update();
+            if (modifier.hasEnded()) {
+                endedModifiers.add(modifier);
+                System.out.println("removing");
+            }
+        }
+        
+        mStatusModifiers.removeAll(endedModifiers);
     }
 
 }

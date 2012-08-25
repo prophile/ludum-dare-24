@@ -82,7 +82,7 @@ public class GameWrapper implements ApplicationListener {
 	    
 	    mWorld.step((float) (1.0/60.0), 3, 3);
 	    
-	    System.out.println(mWorld.getBodyCount());
+	    
 	    mPlayer.update();
 	    mEnemy.update();
 	    mBackgroundManager.update(mCameraOrigin.x);

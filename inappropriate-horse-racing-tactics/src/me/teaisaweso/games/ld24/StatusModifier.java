@@ -26,4 +26,8 @@ public abstract class StatusModifier {
     public float adjustAccel(float currentAccel) {
         return currentAccel;
     }
+    
+    public boolean hasEnded() {
+        return true;
+    }
 }
