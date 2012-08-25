@@ -19,4 +19,8 @@ public abstract class RegionObstacle extends Obstacle {
         mBody = world.createBody(bd);
         mBody.createFixture(fd);
     }
+
+    public abstract void enterRegion(Entity e);
+
+    public abstract void leaveRegion(Entity e);
 }
