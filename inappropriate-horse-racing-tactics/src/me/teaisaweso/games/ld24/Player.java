@@ -98,4 +98,8 @@ public class Player extends Entity {
         mStatusModifiers.removeAll(endedModifiers);
     }
 
+    public void jump() {
+        mBody.applyLinearImpulse(0, 100, mBody.getPosition().x, mBody.getPosition().y);
+    }
+
 }
