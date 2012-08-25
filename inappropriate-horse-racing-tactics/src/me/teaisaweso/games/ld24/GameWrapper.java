@@ -30,6 +30,7 @@ public class GameWrapper implements ApplicationListener {
     private SpriteBatch mBatch;
     private SpriteBatch mGameOverBatch;
     private Texture mTexture;
+    private Sprite mCrosshair;
     private Player mPlayer;
     private World mWorld;
     private Box2DDebugRenderer mDebugger;
@@ -94,8 +95,13 @@ public class GameWrapper implements ApplicationListener {
 
         mBatch = new SpriteBatch();
 
-        mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
+        mTexture = new Texture(Gdx.files
+                .internal("assets/AssetMonkeyDraft.png"));
+
+        Texture crosshair = new Texture(Gdx.files
+                .internal("assets/crosshair.png"));
+        mCrosshair = new Sprite(crosshair, 10, 10);
+
         mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Sprite s = new Sprite(mTexture, 200, 200);
         mPlayer = new Player(s, mWorld);
@@ -129,6 +135,7 @@ public class GameWrapper implements ApplicationListener {
             mBackgroundManager.draw(mBatch);
             mPlayer.draw(mBatch);
             mEnemy.draw(mBatch);
+            drawCrosshair(mBatch);
             mBatch.end();
             Matrix4 m = new Matrix4(mCamera.combined);
             m.translate(-mCameraOrigin.x, -mCameraOrigin.y, 0);
@@ -148,6 +155,7 @@ public class GameWrapper implements ApplicationListener {
             }
         }
 
+        
     }
 
     private void handleCollision(Fixture a, Fixture b) {
@@ -187,6 +195,32 @@ public class GameWrapper implements ApplicationListener {
             mPlayer.jump();
         }
 
+    }
+
+    public void drawCrosshair(SpriteBatch sb) {
+        // Fetch mouse location
+        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+
+        // Work out center of where the player is on the display,
+        Sprite s = mPlayer.getCurrentSprite();
+        float px = s.getX() + (s.getWidth() / 2);
+        float py = s.getY() + (s.getHeight() / 2);
+        Vector2 pos = new Vector2(px, py);
+
+        // Work around mouse x/y being from top left
+        mouse.y = 600 - mouse.y;
+        mouse.y -= 300;
+        mouse.x -= 400;
+
+        // Work out where the put the crosshair,
+        pos.sub(mCameraOrigin);
+        pos.sub(mouse);
+        pos.mul(0.7f);
+        pos.add(mouse);
+        pos.add(mCameraOrigin);
+
+        mCrosshair.setPosition(pos.x - 5, pos.y - 5);
+        mCrosshair.draw(sb);
     }
 
     @Override
