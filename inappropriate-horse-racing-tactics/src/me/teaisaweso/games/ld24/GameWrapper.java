@@ -10,6 +10,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWrapper implements ApplicationListener {
@@ -22,12 +28,28 @@ public class GameWrapper implements ApplicationListener {
 	private Texture mTexture;
 	private Player mPlayer;
 	private World mWorld;
+	private Box2DDebugRenderer mDebugger;
+	
+	
+	public void addFloor() {
+	    BodyDef bd = new BodyDef();
+	    bd.type = BodyType.StaticBody;
+	    FixtureDef fd = new FixtureDef();
+	    PolygonShape ps = new PolygonShape();
+	    ps.setAsBox(3000f, 0.5f);
+	    fd.shape = ps;
+	    bd.fixedRotation = true;
+	    bd.position.set(0,0);
+	    Body body = mWorld.createBody(bd);
+	    body.createFixture(fd);
+	    
+	}
 	
 	@Override
 	public void create() {		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		mWorld = new World(new Vector2(0,0), true);
+		mWorld = new World(new Vector2(0,-3), true);
 		
 		mCamera = new OrthographicCamera(w, h);
 	
@@ -35,9 +57,14 @@ public class GameWrapper implements ApplicationListener {
 		
 		mTexture = new Texture(Gdx.files.internal("assets/libgdx.png"));
 		mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		this.addFloor();
+		
 		Sprite s =	new Sprite(mTexture, 153, 37);
 		s.setPosition(0, 0);
 		mPlayer = new Player(s, mWorld);
+	    mDebugger = new Box2DDebugRenderer( true, true, true, true );
+
 	}
 
 	@Override
@@ -47,10 +74,17 @@ public class GameWrapper implements ApplicationListener {
 	}
 
 	@Override
-	public void render() {		
+	public void render() {
+	    
+	    mWorld.step((float) (1.0/60.0), 3, 3);
+	    
+	    System.out.println(mWorld.getBodyCount());
+	    mPlayer.update();
+	    
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
+		mDebugger.render(mWorld, mCamera.combined.scale(16, 16, 1));
+        mCamera.combined.scale(1.0f/16,1.0f/16,1);
 		mBatch.setProjectionMatrix(mCamera.combined);
 		float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -58,6 +92,7 @@ public class GameWrapper implements ApplicationListener {
 		mBatch.begin();
 		mPlayer.draw(mBatch);
 		mBatch.end();
+		
 	}
 
 	@Override
