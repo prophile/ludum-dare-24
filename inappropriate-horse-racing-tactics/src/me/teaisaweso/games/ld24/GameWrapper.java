@@ -30,8 +30,9 @@ public class GameWrapper implements ApplicationListener {
 	private Sprite mBackgroundSprite;
 	private Box2DDebugRenderer mDebugger;
 	private Enemy mEnemy;
+	private BackgroundManager mBackgroundManager;
 	
-	public static Vector2 cameraOrigin = new Vector2(0, 0);
+	public static Vector2 mCameraOrigin = new Vector2(0, 0);
 	
 	public void addFloor() {
 	    BodyDef bd = new BodyDef();
@@ -51,6 +52,7 @@ public class GameWrapper implements ApplicationListener {
 	public void create() {		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
+		mBackgroundManager = new BackgroundManager();
 		mWorld = new World(new Vector2(0,-3), true);
 		
 		mCamera = new OrthographicCamera(w, h);
@@ -62,12 +64,8 @@ public class GameWrapper implements ApplicationListener {
 		Sprite s =    new Sprite(mTexture, 32, 32);
 		mPlayer = new Player(s, mWorld);
 		
-		Texture t =  new Texture(Gdx.files.internal("assets/background.png"));
-		t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		mBackgroundSprite = new Sprite(t, 120, 80);
-		
 		this.addFloor();
-		
+		Texture t;
 		t = new Texture(Gdx.files.internal("assets/libgdx.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         s =    new Sprite(t, 32, 32);
@@ -88,18 +86,19 @@ public class GameWrapper implements ApplicationListener {
 	    System.out.println(mWorld.getBodyCount());
 	    mPlayer.update();
 	    mEnemy.update();
+	    mBackgroundManager.update(mCameraOrigin.x);
 	    
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		Matrix4 m = new Matrix4(mCamera.combined);
-		m.translate(-cameraOrigin.x, -cameraOrigin.y, 0);
+		m.translate(-mCameraOrigin.x, -mCameraOrigin.y, 0);
 		m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
 		mDebugger.render(mWorld, m);
         mBatch.setProjectionMatrix(mCamera.combined);
-        mBatch.setTransformMatrix(new Matrix4().translate(-cameraOrigin.x,-cameraOrigin.y, 0));
+        mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,-mCameraOrigin.y, 0));
         
         mBatch.begin();
-        mBackgroundSprite.draw(mBatch);
+        mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
         mBatch.end();
