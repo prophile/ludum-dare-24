@@ -18,14 +18,14 @@ public class Player extends Entity {
 
     public Player(Sprite sprite, World world) {
         mEa.mMaxSpeed = 30;
-        mEa.mAccel = 30;
+        mEa.mAccel = 300;
         mSprite = sprite;
-        mWidth = 32;
-        mHeight = 32;
+        mWidth = 200;
+        mHeight = 200;
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(1, 1);
+        ps.setAsBox(mWidth/(2*GameWrapper.PHYSICS_RATIO), mHeight/(2*GameWrapper.PHYSICS_RATIO));
         fd.density = 100;
         fd.shape = ps;
         bd.fixedRotation = true;

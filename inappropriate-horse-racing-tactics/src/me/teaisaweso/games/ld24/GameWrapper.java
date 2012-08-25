@@ -58,9 +58,9 @@ public class GameWrapper implements ApplicationListener {
 	
 		mBatch = new SpriteBatch();
 		
-		mTexture = new Texture(Gdx.files.internal("assets/libgdx.png"));
+		mTexture = new Texture(Gdx.files.internal("assets/AssetMonkeyDraft.png"));
 		mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		Sprite s =    new Sprite(mTexture, 32, 32);
+		Sprite s =    new Sprite(mTexture, 200, 200);
 		mPlayer = new Player(s, mWorld);
 		
 		this.addFloor();
