@@ -11,8 +11,6 @@ public class SlowDownModifier extends StatusModifier {
         return 1f;
     }
     
-    
-
     @Override
     public float adjustAccel(float currentAccel) {
         return 300;
