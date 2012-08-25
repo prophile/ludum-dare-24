@@ -19,8 +19,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWrapper implements ApplicationListener {
-    
-    
+
     public static final float PHYSICS_RATIO = 16;
     
 	private OrthographicCamera mCamera;
@@ -29,6 +28,8 @@ public class GameWrapper implements ApplicationListener {
 	private Player mPlayer;
 	private World mWorld;
 	private Box2DDebugRenderer mDebugger;
+	
+	public static Vector2 cameraOrigin = new Vector2(0, 0);
 	
 	
 	public void addFloor() {
@@ -64,13 +65,7 @@ public class GameWrapper implements ApplicationListener {
 		s.setPosition(0, 0);
 		mPlayer = new Player(s, mWorld);
 	    mDebugger = new Box2DDebugRenderer( true, true, true, true );
-
-	}
-
-	@Override
-	public void dispose() {
-		mBatch.dispose();
-		mTexture.dispose();
+	    mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));;
 	}
 
 	@Override
@@ -85,25 +80,28 @@ public class GameWrapper implements ApplicationListener {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		mDebugger.render(mWorld, mCamera.combined.scale(16, 16, 1));
         mCamera.combined.scale(1.0f/16,1.0f/16,1);
-		mBatch.setProjectionMatrix(mCamera.combined);
-		float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-		mBatch.setTransformMatrix(new Matrix4().translate(-w/2, -h/2, 0));
-		mBatch.begin();
-		mPlayer.draw(mBatch);
-		mBatch.end();
+        mBatch.setProjectionMatrix(mCamera.combined);
+        mBatch.setTransformMatrix(new Matrix4().translate(-cameraOrigin.x,-cameraOrigin.y, 0));
+        mBatch.begin();
+        mPlayer.draw(mBatch);
+        mBatch.end();
 		
 	}
 
-	@Override
-	public void resize(int width, int height) {
-	}
+    @Override
+    public void resize(int width, int height) {
+    }
 
-	@Override
-	public void pause() {
-	}
+    @Override
+    public void pause() {
+    }
 
-	@Override
-	public void resume() {
-	}
+    @Override
+    public void resume() {
+    }
+    
+    @Override
+    public void dispose() {
+        mBatch.dispose();
+    }
 }

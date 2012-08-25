@@ -14,8 +14,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Player extends Entity {
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
-    private Sprite mSprite;
-    
+    private final Sprite mSprite;
+
     public Player(Sprite sprite, World world) {
         mSprite = sprite;
         BodyDef bd = new BodyDef();
@@ -32,16 +32,19 @@ public class Player extends Entity {
         b.createFixture(fd);
         mBody = b;
     }
-    
-    
+
+    public void addStatusModifier(StatusModifier modifier) {
+        mStatusModifiers.add(modifier);
+    }
+
     @Override
     public Sprite getCurrentSprite() {
         Sprite currentSprite = mSprite;
-        
+
         for (StatusModifier modifier : mStatusModifiers) {
             currentSprite = modifier.getCurrentSprite(currentSprite);
         }
-        
+
         return currentSprite;
     }
 
@@ -49,6 +52,9 @@ public class Player extends Entity {
     public void update() {
         mBody.applyLinearImpulse(new Vector2(30,0), mBody.getPosition());
         super.update();
+        for (StatusModifier modifier : mStatusModifiers) {
+            modifier.update();
+        }
     }
 
 }

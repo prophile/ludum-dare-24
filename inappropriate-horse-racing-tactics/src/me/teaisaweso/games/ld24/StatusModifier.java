@@ -6,16 +6,20 @@ public abstract class StatusModifier {
     public double adjustSpeed(double speed) {
         return speed;
     }
-    
+
     public double adjustCurrentSpeed(double currentSpeed) {
-        return this.adjustSpeed(currentSpeed);
+        return adjustSpeed(currentSpeed);
     }
-    
+
     public double adjustMaxSpeed(double maxSpeed) {
-        return this.adjustSpeed(maxSpeed);
+        return adjustSpeed(maxSpeed);
     }
-    
+
     public Sprite getCurrentSprite(Sprite sprite) {
         return sprite;
+    }
+
+    public void update() {
+        // do nothing
     }
 }
