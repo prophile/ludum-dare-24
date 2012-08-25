@@ -64,17 +64,57 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void create() {
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+        loadGameOverAssets();
+        createCamera();
         mBackgroundManager = new BackgroundManager();
         mWorld = new World(new Vector2(0, -30), true);
-        mSlowDown = new SlowDownRegion(mWorld, 3000, 0, 100, 20000);
-        Texture t;
-        t = new Texture(Gdx.files.internal("assets/gameoverscreen.png"));
-        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        mGameOverSprite = new Sprite(t, 800, 600);
-        mGameOverBatch = new SpriteBatch();
 
+        mBatch = new SpriteBatch();
+
+        createCrosshair();
+
+        createPlayer();
+        createDarwin();
+
+        addFloor();
+        createObstacles();
+
+        mDebugger = new Box2DDebugRenderer(true, true, true, true);
+    }
+
+    private void createCrosshair() {
+        Texture crosshair = new Texture(
+                Gdx.files.internal("assets/crosshair.png"));
+        mCrosshair = new Sprite(crosshair, 10, 10);
+    }
+
+    private void createCamera() {
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+        mCamera = new OrthographicCamera(w, h);
+    }
+
+    private void createDarwin() {
+        Texture t;
+        Sprite s;
+        t = new Texture(Gdx.files.internal("assets/DarwinDraft.png"));
+        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        s = new Sprite(t, 200, 400);
+
+        mEnemy = new Enemy(s, mWorld);
+    }
+
+    private void createPlayer() {
+        mTexture = new Texture(
+                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
+        mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        Sprite s = new Sprite(mTexture, 200, 200);
+        mPlayer = new Player(s, mWorld);
+        mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
+    }
+
+    private void createObstacles() {
+        mSlowDown = new SlowDownRegion(mWorld, 3000, 0, 100, 20000);
         BodyDef bd = new BodyDef();
         bd.position.set(1000 / 16, 400 / 16);
         bd.type = BodyType.KinematicBody;
@@ -87,71 +127,59 @@ public class GameWrapper implements ApplicationListener {
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
         mSdO = new SlowDownObstacle(b);
+    }
 
-        mCamera = new OrthographicCamera(w, h);
-
-        mBatch = new SpriteBatch();
-
-        mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
-
-        Texture crosshair = new Texture(
-                Gdx.files.internal("assets/crosshair.png"));
-        mCrosshair = new Sprite(crosshair, 10, 10);
-
-        mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Sprite s = new Sprite(mTexture, 200, 200);
-        mPlayer = new Player(s, mWorld);
-
-        addFloor();
-
-        t = new Texture(Gdx.files.internal("assets/DarwinDraft.png"));
+    private void loadGameOverAssets() {
+        Texture t;
+        t = new Texture(Gdx.files.internal("assets/gameoverscreen.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        s = new Sprite(t, 200, 400);
-
-        mEnemy = new Enemy(s, mWorld);
-
-        mDebugger = new Box2DDebugRenderer(true, true, true, true);
-        mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
-
+        mGameOverSprite = new Sprite(t, 800, 600);
+        mGameOverBatch = new SpriteBatch();
     }
 
     @Override
     public void render() {
         if (!sGameOver) {
-            update();
-
-            Gdx.gl.glClearColor(1, 1, 1, 1);
-            Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-            mBatch.setProjectionMatrix(mCamera.combined);
-            mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,
-                    -mCameraOrigin.y, 0));
-
-            mBackgroundManager.drawSky();
-            mBatch.begin();
-            mBackgroundManager.draw(mBatch);
-            mPlayer.draw(mBatch);
-            mEnemy.draw(mBatch);
-            drawCrosshair(mBatch);
-            mBatch.end();
-            Matrix4 m = new Matrix4(mCamera.combined);
-            m.translate(-mCameraOrigin.x, -mCameraOrigin.y, 0);
-            m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
-            mDebugger.render(mWorld, m);
-
+            renderGameWorld();
         } else {
-            mGameOverBatch.begin();
-            mGameOverSprite.draw(mGameOverBatch);
-            mGameOverBatch.end();
-            if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
-                sGameOver = false;
-                create();
-            } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                System.exit(0);
-            }
+            renderGameOverScreen();
         }
 
+    }
+
+    private void renderGameOverScreen() {
+        mGameOverBatch.begin();
+        mGameOverSprite.draw(mGameOverBatch);
+        mGameOverBatch.end();
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+            sGameOver = false;
+            create();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            System.exit(0);
+        }
+    }
+
+    private void renderGameWorld() {
+        update();
+
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        mBatch.setProjectionMatrix(mCamera.combined);
+        mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,
+                -mCameraOrigin.y, 0));
+
+        mBackgroundManager.drawSky();
+        mBatch.begin();
+        mBackgroundManager.draw(mBatch);
+        mPlayer.draw(mBatch);
+        mEnemy.draw(mBatch);
+        drawCrosshair(mBatch);
+        mBatch.end();
+        Matrix4 m = new Matrix4(mCamera.combined);
+        m.translate(-mCameraOrigin.x, -mCameraOrigin.y, 0);
+        m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
+        mDebugger.render(mWorld, m);
     }
 
     private void handleCollision(Fixture a, Fixture b) {
