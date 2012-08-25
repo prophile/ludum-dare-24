@@ -6,5 +6,6 @@ public abstract class Obstacle extends Entity {
     }
 
     public abstract void hit();
+
     public abstract StatusModifier freshStatusModifier();
 }

@@ -7,8 +7,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class SlowDownRegion extends RegionObstacle {
 
-    private Set<Entity> mEntities = new HashSet<Entity>();
-    
+    private final Set<Entity> mEntities = new HashSet<Entity>();
+
     public SlowDownRegion(World world, float x, float y, float width,
             float height) {
         super(world, x, y, width, height);
@@ -16,19 +16,19 @@ public class SlowDownRegion extends RegionObstacle {
 
     @Override
     public void enterRegion(Entity e) {
-        
+
         if (e instanceof Player && !mEntities.contains(e)) {
-            Player p = (Player)e;
-            p.addStatusModifier(this.freshStatusModifier());
+            Player p = (Player) e;
+            p.addStatusModifier(freshStatusModifier());
             System.out.println("enter region");
         }
         mEntities.add(e);
-            
+
     }
 
     @Override
     public void leaveRegion(Entity e) {
-        
+
     }
 
     @Override

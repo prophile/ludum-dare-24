@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class RegionObstacle extends Obstacle {
-    
+
     public RegionObstacle(World world, float x, float y, float width,
             float height) {
         BodyDef bd = new BodyDef();

@@ -21,13 +21,14 @@ public class Entity {
     }
 
     public void update() {
-        
+
     }
 
     public void draw(SpriteBatch sb) {
-        Sprite image = this.getCurrentSprite();
-        image.setPosition(this.getPosition().x-mWidth/2, this.getPosition().y-mHeight/2);
-        
+        Sprite image = getCurrentSprite();
+        image.setPosition(getPosition().x - mWidth / 2, getPosition().y
+                - mHeight / 2);
+
         image.draw(sb);
     }
 }

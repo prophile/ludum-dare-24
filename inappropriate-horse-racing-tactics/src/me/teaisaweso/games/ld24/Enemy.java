@@ -16,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Enemy extends Entity {
 
-    private Sprite mSprite;
+    private final Sprite mSprite;
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
 
     public Enemy(Sprite sprite, World world) {
@@ -28,7 +28,8 @@ public class Enemy extends Entity {
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(mWidth/(2*GameWrapper.PHYSICS_RATIO), mHeight/(2*GameWrapper.PHYSICS_RATIO));
+        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO), mHeight
+                / (2 * GameWrapper.PHYSICS_RATIO));
         fd.density = 1;
         fd.shape = ps;
         bd.fixedRotation = true;
@@ -51,38 +52,38 @@ public class Enemy extends Entity {
         return currentSprite;
 
     }
-    
+
     public float getEffectiveAccel() {
         float currentAccel = mEa.mAccel;
         for (StatusModifier modifier : mStatusModifiers) {
             currentAccel = modifier.adjustAccel(currentAccel);
         }
-        
+
         return currentAccel;
     }
-    
-    
+
     public void catchPlayer() {
         GameWrapper.sGameOver = true;
     }
-    
+
     public float getEffectiveMaxSpeed() {
         float currentSpeed = mEa.mMaxSpeed;
-        
+
         for (StatusModifier modifier : mStatusModifiers) {
             currentSpeed = modifier.adjustMaxSpeed(currentSpeed);
         }
-        
+
         return currentSpeed;
     }
 
     @Override
     public void update() {
         updateAndRemoveModifiers();
-        mBody.applyLinearImpulse(new Vector2(this.getEffectiveAccel(), 0), mBody.getPosition());
-        if (mBody.getLinearVelocity().x > this.getEffectiveMaxSpeed())
-        {
-            mBody.setLinearVelocity(this.getEffectiveMaxSpeed(), mBody.getLinearVelocity().y);
+        mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
+                mBody.getPosition());
+        if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
+            mBody.setLinearVelocity(getEffectiveMaxSpeed(),
+                    mBody.getLinearVelocity().y);
         }
     }
 
@@ -95,7 +96,7 @@ public class Enemy extends Entity {
                 System.out.println("removing");
             }
         }
-        
+
         mStatusModifiers.removeAll(endedModifiers);
     }
 

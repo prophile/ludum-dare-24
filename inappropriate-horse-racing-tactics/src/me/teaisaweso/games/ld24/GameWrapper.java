@@ -74,9 +74,9 @@ public class GameWrapper implements ApplicationListener {
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mGameOverSprite = new Sprite(t, 800, 600);
         mGameOverBatch = new SpriteBatch();
-        
+
         BodyDef bd = new BodyDef();
-        bd.position.set(1000/16, 200/16);
+        bd.position.set(1000 / 16, 400 / 16);
         bd.type = BodyType.KinematicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
@@ -87,27 +87,24 @@ public class GameWrapper implements ApplicationListener {
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
         mSdO = new SlowDownObstacle(b);
-        
-        
-        
-        
+
         mCamera = new OrthographicCamera(w, h);
 
         mBatch = new SpriteBatch();
 
-        mTexture = new Texture(Gdx.files
-                .internal("assets/AssetMonkeyDraft.png"));
+        mTexture = new Texture(
+                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
 
-        Texture crosshair = new Texture(Gdx.files
-                .internal("assets/crosshair.png"));
+        Texture crosshair = new Texture(
+                Gdx.files.internal("assets/crosshair.png"));
         mCrosshair = new Sprite(crosshair, 10, 10);
 
         mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Sprite s = new Sprite(mTexture, 200, 200);
         mPlayer = new Player(s, mWorld);
 
-        this.addFloor();
-        
+        addFloor();
+
         t = new Texture(Gdx.files.internal("assets/DarwinDraft.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         s = new Sprite(t, 200, 400);
@@ -126,7 +123,7 @@ public class GameWrapper implements ApplicationListener {
 
             Gdx.gl.glClearColor(1, 1, 1, 1);
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-            
+
             mBatch.setProjectionMatrix(mCamera.combined);
             mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,
                     -mCameraOrigin.y, 0));
@@ -146,16 +143,14 @@ public class GameWrapper implements ApplicationListener {
             mGameOverBatch.begin();
             mGameOverSprite.draw(mGameOverBatch);
             mGameOverBatch.end();
-            if (Gdx.input.isKeyPressed(Input.Keys.ENTER))
-            {
+            if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
                 sGameOver = false;
-                this.create();
+                create();
             } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
                 System.exit(0);
             }
         }
 
-        
     }
 
     private void handleCollision(Fixture a, Fixture b) {
@@ -171,7 +166,7 @@ public class GameWrapper implements ApplicationListener {
             if (b.getBody() == mEnemy.mBody) {
                 mEnemy.catchPlayer();
             }
-            
+
             if (b.getBody() == mSdO.mBody) {
                 mSdO.collide(mPlayer);
             }
@@ -186,8 +181,8 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.update(mCameraOrigin.x);
 
         for (Contact c : mWorld.getContactList()) {
-            this.handleCollision(c.getFixtureA(), c.getFixtureB());
-            this.handleCollision(c.getFixtureB(), c.getFixtureA());
+            handleCollision(c.getFixtureA(), c.getFixtureB());
+            handleCollision(c.getFixtureB(), c.getFixtureA());
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && mIsOnFloor) {
@@ -203,8 +198,8 @@ public class GameWrapper implements ApplicationListener {
 
         // Work out center of where the player is on the display,
         Sprite s = mPlayer.getCurrentSprite();
-        float px = s.getX() + (s.getWidth() / 2);
-        float py = s.getY() + (s.getHeight() / 2);
+        float px = s.getX() + s.getWidth() / 2;
+        float py = s.getY() + s.getHeight() / 2;
         Vector2 pos = new Vector2(px, py);
 
         // Work around mouse x/y being from top left

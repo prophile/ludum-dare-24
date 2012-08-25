@@ -19,7 +19,7 @@ public class Player extends Entity {
     private final Sprite mSprite;
 
     public Player(Sprite sprite, World world) {
-        
+
         mEa.mMaxSpeed = 30000;
         mEa.mAccel = 30;
         mSprite = sprite;
@@ -28,13 +28,14 @@ public class Player extends Entity {
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(mWidth/(2*GameWrapper.PHYSICS_RATIO), mHeight/(2*GameWrapper.PHYSICS_RATIO));
-        fd.density = 1; 
+        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO), mHeight
+                / (2 * GameWrapper.PHYSICS_RATIO));
+        fd.density = 1;
         fd.shape = ps;
         bd.fixedRotation = true;
         bd.type = BodyType.DynamicBody;
         bd.fixedRotation = true;
-        bd.position.set(0,3);
+        bd.position.set(0, 3);
         Body b = world.createBody(bd);
         b.createFixture(fd);
         mBody = b;
@@ -43,7 +44,7 @@ public class Player extends Entity {
     public void addStatusModifier(StatusModifier modifier) {
         mStatusModifiers.add(modifier);
     }
-    
+
     @Override
     public Sprite getCurrentSprite() {
         Sprite currentSprite = mSprite;
@@ -61,27 +62,28 @@ public class Player extends Entity {
         for (StatusModifier modifier : mStatusModifiers) {
             currentAccel = modifier.adjustAccel(currentAccel);
         }
-        
+
         return currentAccel;
     }
-    
+
     public float getEffectiveMaxSpeed() {
         float currentSpeed = mEa.mMaxSpeed;
-        
+
         for (StatusModifier modifier : mStatusModifiers) {
             currentSpeed = modifier.adjustMaxSpeed(currentSpeed);
         }
-        
+
         return currentSpeed;
     }
 
     @Override
     public void update() {
         updateAndRemoveModifiers();
-        mBody.applyLinearImpulse(new Vector2(this.getEffectiveAccel(), 0), mBody.getPosition());
-        if (mBody.getLinearVelocity().x > this.getEffectiveMaxSpeed())
-        {
-            mBody.setLinearVelocity(this.getEffectiveMaxSpeed(), mBody.getLinearVelocity().y);
+        mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
+                mBody.getPosition());
+        if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
+            mBody.setLinearVelocity(getEffectiveMaxSpeed(),
+                    mBody.getLinearVelocity().y);
         }
     }
 
@@ -94,12 +96,13 @@ public class Player extends Entity {
                 System.out.println("removing");
             }
         }
-        
+
         mStatusModifiers.removeAll(endedModifiers);
     }
 
     public void jump() {
-        mBody.applyLinearImpulse(0, 500, mBody.getPosition().x, mBody.getPosition().y);
+        mBody.applyLinearImpulse(0, 500, mBody.getPosition().x,
+                mBody.getPosition().y);
     }
 
 }
