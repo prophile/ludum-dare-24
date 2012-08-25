@@ -19,20 +19,19 @@ public class Player extends Entity {
         bd.fixedRotation = true;
         bd.type = BodyType.StaticBody;
         bd.fixedRotation = true;
-        bd.position.set(0,0);
+        bd.position.set(0, 0);
         Body b = world.createBody(bd);
         mBody = b;
     }
-    
-    
+
     @Override
     public Sprite getCurrentSprite() {
         Sprite currentSprite = mSprite;
-        
+
         for (StatusModifier modifier : mStatusModifiers) {
             currentSprite = modifier.getCurrentSprite(currentSprite);
         }
-        
+
         return currentSprite;
     }
 
