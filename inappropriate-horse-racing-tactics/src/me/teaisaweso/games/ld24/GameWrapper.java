@@ -230,7 +230,7 @@ public class GameWrapper implements ApplicationListener {
             mWorld.destroyBody(mSdO.mBody);
             mSdO = null;
         }
-        if (mBulletTicks > 1000 && mBullet != null) {
+        if (mBulletTicks > 100 && mBullet != null) {
             mRemoveBodies.add(mBullet);
             mBullet = null;
         }
