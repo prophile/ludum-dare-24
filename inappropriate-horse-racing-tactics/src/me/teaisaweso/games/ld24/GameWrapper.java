@@ -27,7 +27,6 @@ public class GameWrapper implements ApplicationListener {
 	private Texture mTexture;
 	private Player mPlayer;
 	private World mWorld;
-	private Sprite mBackgroundSprite;
 	private Box2DDebugRenderer mDebugger;
 	private Enemy mEnemy;
 	private BackgroundManager mBackgroundManager;
