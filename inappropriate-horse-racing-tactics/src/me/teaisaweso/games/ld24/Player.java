@@ -24,6 +24,10 @@ public class Player extends Entity {
         mBody = b;
     }
 
+    public void addStatusModifier(StatusModifier modifier) {
+        mStatusModifiers.add(modifier);
+    }
+
     @Override
     public Sprite getCurrentSprite() {
         Sprite currentSprite = mSprite;
@@ -38,6 +42,9 @@ public class Player extends Entity {
     @Override
     public void update() {
         super.update();
+        for (StatusModifier modifier : mStatusModifiers) {
+            modifier.update();
+        }
     }
 
 }
