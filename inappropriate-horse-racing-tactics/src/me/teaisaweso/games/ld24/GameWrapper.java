@@ -144,17 +144,20 @@ public class GameWrapper implements ApplicationListener {
 
         // Work out center of where the player is on the display,
         Sprite s = mPlayer.getCurrentSprite();
-        float px = s.getX() + (s.getWidth()/2);
-        float py = s.getY() + (s.getHeight()/2);
+        float px = s.getX() + (s.getWidth() / 2);
+        float py = s.getY() + (s.getHeight() / 2);
         Vector2 pos = new Vector2(px, py);
 
-        // Adjust by the viewing transform.
-        pos.sub(mCameraOrigin);
+        // Work around mouse x/y being from top left
+        mouse.y = 600 - mouse.y;
+        mouse.y -= 300;
+        mouse.x -= 400;
 
         // Work out where the put the crosshair,
+        pos.sub(mCameraOrigin);
         pos.sub(mouse);
-        pos.mul(0.1f);
-        pos.x = -pos.x;
+        pos.mul(0.7f);
+        pos.add(mouse);
         pos.add(mCameraOrigin);
 
         mCrosshair.setPosition(pos.x - 5, pos.y - 5);
