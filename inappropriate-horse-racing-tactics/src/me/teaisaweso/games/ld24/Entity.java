@@ -8,10 +8,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
 public class Entity {
-
-    private Random mRng = new Random();
     
     protected Body mBody;
+    protected float mWidth = 0, mHeight = 0;
 
     public Sprite getCurrentSprite() {
         return null;
@@ -29,7 +28,7 @@ public class Entity {
 
     public void draw(SpriteBatch sb) {
         Sprite image = this.getCurrentSprite();
-        image.setPosition(this.getPosition().x, this.getPosition().y);
+        image.setPosition(this.getPosition().x-mWidth/2, this.getPosition().y-mHeight/2);
         
         image.draw(sb);
     }

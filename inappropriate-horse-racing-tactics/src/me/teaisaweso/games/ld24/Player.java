@@ -18,6 +18,8 @@ public class Player extends Entity {
 
     public Player(Sprite sprite, World world) {
         mSprite = sprite;
+        mWidth = 32;
+        mHeight = 32;
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
