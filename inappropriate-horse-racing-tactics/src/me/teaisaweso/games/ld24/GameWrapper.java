@@ -27,6 +27,7 @@ public class GameWrapper implements ApplicationListener {
     private OrthographicCamera mCamera;
     private SpriteBatch mBatch;
     private Texture mTexture;
+    private Sprite mCrosshair;
     private Player mPlayer;
     private World mWorld;
     private Box2DDebugRenderer mDebugger;
@@ -61,8 +62,13 @@ public class GameWrapper implements ApplicationListener {
 
         mBatch = new SpriteBatch();
 
-        mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
+        mTexture = new Texture(Gdx.files
+                .internal("assets/AssetMonkeyDraft.png"));
+
+        Texture crosshair = new Texture(Gdx.files
+                .internal("assets/crosshair.png"));
+        mCrosshair = new Sprite(crosshair, 10, 10);
+
         mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Sprite s = new Sprite(mTexture, 200, 200);
         mPlayer = new Player(s, mWorld);
@@ -98,8 +104,10 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
-        mBatch.end();
 
+        drawCrosshair(mBatch);
+
+        mBatch.end();
     }
 
     private void update() {
@@ -107,27 +115,49 @@ public class GameWrapper implements ApplicationListener {
         mPlayer.update();
         mEnemy.update();
         mBackgroundManager.update(mCameraOrigin.x);
-        
+
         boolean isOnFloor = false;
-        
+
         for (Contact c : mWorld.getContactList()) {
-            if (c.getFixtureA().getBody() == mPlayer.mBody &&
-                c.getFixtureB().getBody() == mFloor) {
+            if (c.getFixtureA().getBody() == mPlayer.mBody
+                    && c.getFixtureB().getBody() == mFloor) {
                 isOnFloor = true;
             }
-            
-            if (c.getFixtureB().getBody() == mPlayer.mBody &&
-                c.getFixtureA().getBody() == mFloor) {
+
+            if (c.getFixtureB().getBody() == mPlayer.mBody
+                    && c.getFixtureA().getBody() == mFloor) {
                 isOnFloor = true;
             }
 
         }
-        
+
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && isOnFloor) {
             System.out.println("jumping");
             mPlayer.jump();
         }
-        
+
+    }
+
+    public void drawCrosshair(SpriteBatch sb) {
+        // Fetch mouse location
+        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+
+        // Work out where the player is on the display,
+        Sprite s = mPlayer.getCurrentSprite();
+        float px = s.getX();
+        float py = s.getY();
+        Vector2 pos = new Vector2(px, py);
+
+        // Adjust by the viewing transform.
+        pos.sub(mCameraOrigin);
+
+        // Work out where the put the crosshair,
+        pos.sub(mouse);
+        pos.mul(0.1f);
+        pos.add(mCameraOrigin);
+
+        mCrosshair.setPosition(pos.x - 5, pos.y - 5);
+        mCrosshair.draw(sb);
     }
 
     @Override
