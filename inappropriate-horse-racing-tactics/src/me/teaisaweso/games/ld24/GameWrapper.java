@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWrapper implements ApplicationListener {
     
@@ -18,12 +20,14 @@ public class GameWrapper implements ApplicationListener {
 	private OrthographicCamera mCamera;
 	private SpriteBatch mBatch;
 	private Texture mTexture;
-	private Sprite mSprite;
+	private Player mPlayer;
+	private World mWorld;
 	
 	@Override
 	public void create() {		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
+		mWorld = new World(new Vector2(0,0), true);
 		
 		mCamera = new OrthographicCamera(w, h);
 	
@@ -31,9 +35,9 @@ public class GameWrapper implements ApplicationListener {
 		
 		mTexture = new Texture(Gdx.files.internal("assets/libgdx.png"));
 		mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		mSprite = new Sprite(mTexture, 153, 37);
-		mSprite.setPosition(0, 0);
+		Sprite s =	new Sprite(mTexture, 153, 37);
+		s.setPosition(0, 0);
+		mPlayer = new Player(s, mWorld);
 	}
 
 	@Override
@@ -52,7 +56,7 @@ public class GameWrapper implements ApplicationListener {
         float h = Gdx.graphics.getHeight();
 		mBatch.setTransformMatrix(new Matrix4().translate(-w/2, -h/2, 0));
 		mBatch.begin();
-		mSprite.draw(mBatch);
+		mPlayer.draw(mBatch);
 		mBatch.end();
 	}
 
