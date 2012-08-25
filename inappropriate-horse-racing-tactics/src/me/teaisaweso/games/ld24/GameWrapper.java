@@ -154,6 +154,7 @@ public class GameWrapper implements ApplicationListener {
         // Work out where the put the crosshair,
         pos.sub(mouse);
         pos.mul(0.1f);
+        pos.x = -pos.x;
         pos.add(mCameraOrigin);
 
         mCrosshair.setPosition(pos.x - 5, pos.y - 5);
