@@ -1,8 +1,11 @@
 package me.teaisaweso.games.ld24;
 
+import java.util.HashSet;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -45,6 +48,12 @@ public class GameWrapper implements ApplicationListener {
 
     private SlowDownObstacle mSdO;
 
+    private Body mBullet = null;
+
+    private HashSet<Body> mRemoveBodies = new HashSet<Body>();
+
+    private int mBulletTicks;
+
     public static Vector2 mCameraOrigin = new Vector2(0, 0);
 
     public static boolean sGameOver;
@@ -66,6 +75,7 @@ public class GameWrapper implements ApplicationListener {
     public void create() {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
+        mBullet = null;
         mBackgroundManager = new BackgroundManager();
         mWorld = new World(new Vector2(0, -30), true);
         mSlowDown = new SlowDownRegion(mWorld, 3000, 0, 100, 20000);
@@ -74,32 +84,29 @@ public class GameWrapper implements ApplicationListener {
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mGameOverSprite = new Sprite(t, 800, 600);
         mGameOverBatch = new SpriteBatch();
-        
+
         BodyDef bd = new BodyDef();
-        bd.position.set(1000/16, 200/16);
-        bd.type = BodyType.KinematicBody;
+        bd.position.set(1000 / 16, 200 / 16);
+        bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
         cs.setRadius(1);
         fd.shape = cs;
-        fd.isSensor = true;
+        fd.isSensor = false;
         fd.density = 1;
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
         mSdO = new SlowDownObstacle(b);
-        
-        
-        
-        
+
         mCamera = new OrthographicCamera(w, h);
 
         mBatch = new SpriteBatch();
 
-        mTexture = new Texture(Gdx.files
-                .internal("assets/AssetMonkeyDraft.png"));
+        mTexture = new Texture(
+                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
 
-        Texture crosshair = new Texture(Gdx.files
-                .internal("assets/crosshair.png"));
+        Texture crosshair = new Texture(
+                Gdx.files.internal("assets/crosshair.png"));
         mCrosshair = new Sprite(crosshair, 10, 10);
 
         mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -107,7 +114,7 @@ public class GameWrapper implements ApplicationListener {
         mPlayer = new Player(s, mWorld);
 
         this.addFloor();
-        
+
         t = new Texture(Gdx.files.internal("assets/DarwinDraft.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         s = new Sprite(t, 200, 400);
@@ -126,7 +133,7 @@ public class GameWrapper implements ApplicationListener {
 
             Gdx.gl.glClearColor(1, 1, 1, 1);
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-            
+
             mBatch.setProjectionMatrix(mCamera.combined);
             mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,
                     -mCameraOrigin.y, 0));
@@ -146,8 +153,7 @@ public class GameWrapper implements ApplicationListener {
             mGameOverBatch.begin();
             mGameOverSprite.draw(mGameOverBatch);
             mGameOverBatch.end();
-            if (Gdx.input.isKeyPressed(Input.Keys.ENTER))
-            {
+            if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
                 sGameOver = false;
                 this.create();
             } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -155,10 +161,18 @@ public class GameWrapper implements ApplicationListener {
             }
         }
 
-        
     }
 
     private void handleCollision(Fixture a, Fixture b) {
+        if (a.getBody() == mBullet && b.getBody() != mPlayer.mBody) {
+            mRemoveBodies.add(mBullet);
+            if (b.getBody() == mSdO.mBody) {
+                mSdO.hit();
+            }
+
+            mBullet = null;
+        }
+
         if (a.getBody() == mPlayer.mBody) {
             if (b.getBody() == mFloor) {
                 mIsOnFloor = true;
@@ -171,8 +185,8 @@ public class GameWrapper implements ApplicationListener {
             if (b.getBody() == mEnemy.mBody) {
                 mEnemy.catchPlayer();
             }
-            
-            if (b.getBody() == mSdO.mBody) {
+
+            if (mSdO != null && b.getBody() == mSdO.mBody) {
                 mSdO.collide(mPlayer);
             }
         }
@@ -181,6 +195,17 @@ public class GameWrapper implements ApplicationListener {
     private void update() {
         mIsOnFloor = false;
         mWorld.step((float) (1.0 / 60.0), 3, 3);
+        mBulletTicks += 1;
+        if (mSdO != null && mSdO.mEvolved) {
+            mSdO.mBody.setActive(false);
+            mWorld.destroyBody(mSdO.mBody);
+            mSdO = null;
+        }
+        if (mBulletTicks > 1000 && mBullet != null) {
+            mRemoveBodies.add(mBullet);
+            mBullet = null;
+        }
+
         mPlayer.update();
         mEnemy.update();
         mBackgroundManager.update(mCameraOrigin.x);
@@ -220,6 +245,30 @@ public class GameWrapper implements ApplicationListener {
         pos.add(mCameraOrigin);
 
         mCrosshair.setPosition(pos.x - 5, pos.y - 5);
+
+        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
+            System.out.println("touch");
+            mBulletTicks = 0;
+            BodyDef bd = new BodyDef();
+            bd.type = BodyType.KinematicBody;
+            px = s.getX() + (s.getWidth() / 2);
+            py = s.getY() + (s.getHeight() / 2);
+            pos.sub(new Vector2(px, py));
+            pos.nor();
+            pos.mul(PHYSICS_RATIO * 3);
+
+            bd.linearVelocity.set(pos);
+            bd.position.set((s.getX() + s.getWidth() / 2) / PHYSICS_RATIO,
+                    (s.getY() + s.getHeight() / 2) / PHYSICS_RATIO);
+            FixtureDef fd = new FixtureDef();
+            CircleShape cs = new CircleShape();
+            cs.setRadius(2);
+            fd.shape = cs;
+            fd.isSensor = true;
+            mBullet = mWorld.createBody(bd);
+            mBullet.createFixture(fd);
+        }
+
         mCrosshair.draw(sb);
     }
 
