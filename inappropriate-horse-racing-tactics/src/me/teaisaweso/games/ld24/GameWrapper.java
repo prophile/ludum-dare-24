@@ -11,6 +11,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 
 public class GameWrapper implements ApplicationListener {
+    
+    
+    public static final float PHYSICS_RATIO = 16;
+    
 	private OrthographicCamera mCamera;
 	private SpriteBatch mBatch;
 	private Texture mTexture;
@@ -29,8 +33,7 @@ public class GameWrapper implements ApplicationListener {
 		mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		mSprite = new Sprite(mTexture, 153, 37);
-		mSprite.setPosition(w/2, h/2);
-		
+		mSprite.setPosition(0, 0);
 	}
 
 	@Override
