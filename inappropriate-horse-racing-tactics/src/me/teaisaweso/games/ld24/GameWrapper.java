@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -35,7 +36,11 @@ public class GameWrapper implements ApplicationListener {
     private Body mFloor;
     private SlowDownRegion mSlowDown;
 
+    private boolean mIsOnFloor;
+
     public static Vector2 mCameraOrigin = new Vector2(0, 0);
+
+    public static boolean sGameOver;
 
     public void addFloor() {
         BodyDef bd = new BodyDef();
@@ -48,7 +53,6 @@ public class GameWrapper implements ApplicationListener {
         bd.position.set(0, 0);
         mFloor = mWorld.createBody(bd);
         mFloor.createFixture(fd);
-
     }
 
     @Override
@@ -71,9 +75,9 @@ public class GameWrapper implements ApplicationListener {
 
         this.addFloor();
         Texture t;
-        t = new Texture(Gdx.files.internal("assets/libgdx.png"));
+        t = new Texture(Gdx.files.internal("assets/DarwinDraft.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        s = new Sprite(t, 32, 32);
+        s = new Sprite(t, 200, 400);
 
         mEnemy = new Enemy(s, mWorld);
 
@@ -101,43 +105,43 @@ public class GameWrapper implements ApplicationListener {
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
         mBatch.end();
+        
+        if (sGameOver) {
+            System.out.println("lol you died!");
+            System.exit(1);
+        }
 
+    }
+    
+    private void handleCollision(Fixture a, Fixture b) {
+        if (a.getBody() == mPlayer.mBody) {
+            if (b.getBody() == mFloor) {
+                mIsOnFloor = true;
+            }
+            
+            if (b.getBody() == mSlowDown.mBody) {
+                mSlowDown.enterRegion(mPlayer);
+            }
+            
+            if (b.getBody() == mEnemy.mBody) {
+                mEnemy.catchPlayer();
+            }
+        }
     }
 
     private void update() {
+        mIsOnFloor = false;
         mWorld.step((float) (1.0 / 60.0), 3, 3);
         mPlayer.update();
         mEnemy.update();
         mBackgroundManager.update(mCameraOrigin.x);
         
-        boolean isOnFloor = false;
-        
         for (Contact c : mWorld.getContactList()) {
-            if (c.getFixtureA().getBody() == mPlayer.mBody)
-            {
-                if (c.getFixtureB().getBody() == mFloor) {
-                    isOnFloor = true;
-                }
-                
-                if (c.getFixtureB().getBody() == mSlowDown.mBody) {
-                    mSlowDown.enterRegion(mPlayer);
-                }
-            }
-            
-            if (c.getFixtureB().getBody() == mPlayer.mBody) {
-                    if (c.getFixtureA().getBody() == mFloor) {
-                        isOnFloor = true;
-                    }
-                    
-                    if (c.getFixtureA().getBody() == mSlowDown.mBody) {
-                        
-                        mSlowDown.enterRegion(mPlayer);
-                    }
-            }
-
+            this.handleCollision(c.getFixtureA(), c.getFixtureB());
+            this.handleCollision(c.getFixtureB(), c.getFixtureA());
         }
         
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && isOnFloor) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && mIsOnFloor) {
             System.out.println("jumping");
             mPlayer.jump();
         }

@@ -21,15 +21,15 @@ public class Enemy extends Entity {
 
     public Enemy(Sprite sprite, World world) {
         mSprite = sprite;
-        mWidth = 32;
-        mHeight = 32;
-        mEa.mMaxSpeed = 1;
-        mEa.mAccel = 30;
+        mWidth = 200;
+        mHeight = 400;
+        mEa.mMaxSpeed = 300;
+        mEa.mAccel = 3000;
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(1, 1);
-        fd.density = 100;
+        ps.setAsBox(mWidth/(2*GameWrapper.PHYSICS_RATIO), mHeight/(2*GameWrapper.PHYSICS_RATIO));
+        fd.density = 1;
         fd.shape = ps;
         bd.fixedRotation = true;
         bd.type = BodyType.DynamicBody;
@@ -59,6 +59,11 @@ public class Enemy extends Entity {
         }
         
         return currentAccel;
+    }
+    
+    
+    public void catchPlayer() {
+        GameWrapper.sGameOver = true;
     }
     
     public float getEffectiveMaxSpeed() {
