@@ -1,7 +1,9 @@
 package me.teaisaweso.games.ld24;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -71,11 +73,25 @@ public class Enemy extends Entity {
 
     @Override
     public void update() {
+        updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(this.getEffectiveAccel(), 0), mBody.getPosition());
         if (mBody.getLinearVelocity().x > this.getEffectiveMaxSpeed())
         {
             mBody.setLinearVelocity(this.getEffectiveMaxSpeed(), mBody.getLinearVelocity().y);
         }
+    }
+
+    private void updateAndRemoveModifiers() {
+        Set<StatusModifier> endedModifiers = new HashSet<StatusModifier>();
+        for (StatusModifier modifier : mStatusModifiers) {
+            modifier.update();
+            if (modifier.hasEnded()) {
+                endedModifiers.add(modifier);
+                System.out.println("removing");
+            }
+        }
+        
+        mStatusModifiers.removeAll(endedModifiers);
     }
 
 }
