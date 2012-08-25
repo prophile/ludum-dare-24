@@ -99,7 +99,7 @@ public class Player extends Entity {
     }
 
     public void jump() {
-        mBody.applyLinearImpulse(0, 100, mBody.getPosition().x, mBody.getPosition().y);
+        mBody.applyLinearImpulse(0, 500, mBody.getPosition().x, mBody.getPosition().y);
     }
 
 }

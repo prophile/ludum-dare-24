@@ -55,7 +55,7 @@ public class GameWrapper implements ApplicationListener {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         mBackgroundManager = new BackgroundManager();
-        mWorld = new World(new Vector2(0, -3), true);
+        mWorld = new World(new Vector2(0, -30), true);
 
         mCamera = new OrthographicCamera(w, h);
 
