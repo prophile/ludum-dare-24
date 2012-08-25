@@ -3,15 +3,15 @@ package me.teaisaweso.games.ld24;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public abstract class StatusModifier {
-    public double adjustSpeed(double speed) {
+    public float adjustSpeed(float speed) {
         return speed;
     }
 
-    public double adjustCurrentSpeed(double currentSpeed) {
+    public float adjustCurrentSpeed(float currentSpeed) {
         return adjustSpeed(currentSpeed);
     }
 
-    public double adjustMaxSpeed(double maxSpeed) {
+    public float adjustMaxSpeed(float maxSpeed) {
         return adjustSpeed(maxSpeed);
     }
 
@@ -21,5 +21,9 @@ public abstract class StatusModifier {
 
     public void update() {
         // do nothing
+    }
+
+    public float adjustAccel(float currentAccel) {
+        return currentAccel;
     }
 }

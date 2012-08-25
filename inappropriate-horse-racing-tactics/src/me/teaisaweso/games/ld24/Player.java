@@ -17,6 +17,8 @@ public class Player extends Entity {
     private final Sprite mSprite;
 
     public Player(Sprite sprite, World world) {
+        mEa.mMaxSpeed = 30;
+        mEa.mAccel = 30;
         mSprite = sprite;
         mWidth = 32;
         mHeight = 32;
@@ -38,7 +40,7 @@ public class Player extends Entity {
     public void addStatusModifier(StatusModifier modifier) {
         mStatusModifiers.add(modifier);
     }
-
+    
     @Override
     public Sprite getCurrentSprite() {
         Sprite currentSprite = mSprite;
@@ -48,14 +50,37 @@ public class Player extends Entity {
         }
 
         return currentSprite;
+
+    }
+
+    public float getEffectiveAccel() {
+        float currentAccel = mEa.mAccel;
+        for (StatusModifier modifier : mStatusModifiers) {
+            currentAccel = modifier.adjustAccel(currentAccel);
+        }
+        
+        return currentAccel;
+    }
+    
+    public float getEffectiveMaxSpeed() {
+        float currentSpeed = mEa.mMaxSpeed;
+        
+        for (StatusModifier modifier : mStatusModifiers) {
+            currentSpeed = modifier.adjustMaxSpeed(currentSpeed);
+        }
+        
+        return currentSpeed;
     }
 
     @Override
     public void update() {
-        mBody.applyLinearImpulse(new Vector2(30,0), mBody.getPosition());
-        super.update();
         for (StatusModifier modifier : mStatusModifiers) {
             modifier.update();
+        }
+        mBody.applyLinearImpulse(new Vector2(this.getEffectiveAccel(), 0), mBody.getPosition());
+        if (mBody.getLinearVelocity().x > this.getEffectiveMaxSpeed())
+        {
+            mBody.setLinearVelocity(this.getEffectiveMaxSpeed(), mBody.getLinearVelocity().y);
         }
     }
 
