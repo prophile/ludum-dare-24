@@ -23,8 +23,8 @@ public class Enemy extends Entity {
         mSprite = sprite;
         mWidth = 200;
         mHeight = 400;
-        mEa.mMaxSpeed = 300;
-        mEa.mAccel = 3000;
+        mEa.mMaxSpeed = 30000;
+        mEa.mAccel = 57;
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
@@ -34,7 +34,7 @@ public class Enemy extends Entity {
         bd.fixedRotation = true;
         bd.type = BodyType.DynamicBody;
         bd.fixedRotation = true;
-        bd.position.set(-8, 3);
+        bd.position.set(-13, 3);
         Body b = world.createBody(bd);
         b.createFixture(fd);
         mBody = b;

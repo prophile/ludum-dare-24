@@ -19,7 +19,7 @@ public class Player extends Entity {
     private final Sprite mSprite;
 
     public Player(Sprite sprite, World world) {
-        mStatusModifiers.add(new SlowDownModifier());
+        
         mEa.mMaxSpeed = 30000;
         mEa.mAccel = 30;
         mSprite = sprite;

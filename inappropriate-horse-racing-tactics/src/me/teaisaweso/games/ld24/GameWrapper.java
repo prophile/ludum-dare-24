@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -27,6 +28,7 @@ public class GameWrapper implements ApplicationListener {
 
     private OrthographicCamera mCamera;
     private SpriteBatch mBatch;
+    private SpriteBatch mGameOverBatch;
     private Texture mTexture;
     private Player mPlayer;
     private World mWorld;
@@ -37,6 +39,10 @@ public class GameWrapper implements ApplicationListener {
     private SlowDownRegion mSlowDown;
 
     private boolean mIsOnFloor;
+
+    private Sprite mGameOverSprite;
+
+    private SlowDownObstacle mSdO;
 
     public static Vector2 mCameraOrigin = new Vector2(0, 0);
 
@@ -62,7 +68,28 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager = new BackgroundManager();
         mWorld = new World(new Vector2(0, -30), true);
         mSlowDown = new SlowDownRegion(mWorld, 3000, 0, 100, 20000);
-
+        Texture t;
+        t = new Texture(Gdx.files.internal("assets/gameoverscreen.png"));
+        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        mGameOverSprite = new Sprite(t, 800, 600);
+        mGameOverBatch = new SpriteBatch();
+        
+        BodyDef bd = new BodyDef();
+        bd.position.set(1000/16, 200/16);
+        bd.type = BodyType.KinematicBody;
+        FixtureDef fd = new FixtureDef();
+        CircleShape cs = new CircleShape();
+        cs.setRadius(1);
+        fd.shape = cs;
+        fd.isSensor = true;
+        fd.density = 1;
+        Body b = mWorld.createBody(bd);
+        b.createFixture(fd);
+        mSdO = new SlowDownObstacle(b);
+        
+        
+        
+        
         mCamera = new OrthographicCamera(w, h);
 
         mBatch = new SpriteBatch();
@@ -74,7 +101,7 @@ public class GameWrapper implements ApplicationListener {
         mPlayer = new Player(s, mWorld);
 
         this.addFloor();
-        Texture t;
+        
         t = new Texture(Gdx.files.internal("assets/DarwinDraft.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         s = new Sprite(t, 200, 400);
@@ -83,48 +110,62 @@ public class GameWrapper implements ApplicationListener {
 
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
         mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
-        
+
     }
 
     @Override
     public void render() {
-        update();
+        if (!sGameOver) {
+            update();
 
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-        Matrix4 m = new Matrix4(mCamera.combined);
-        m.translate(-mCameraOrigin.x, -mCameraOrigin.y, 0);
-        m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
-        mDebugger.render(mWorld, m);
-        mBatch.setProjectionMatrix(mCamera.combined);
-        mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,
-                -mCameraOrigin.y, 0));
+            Gdx.gl.glClearColor(1, 1, 1, 1);
+            Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+            
+            mBatch.setProjectionMatrix(mCamera.combined);
+            mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,
+                    -mCameraOrigin.y, 0));
 
-        mBatch.begin();
-        mBackgroundManager.draw(mBatch);
-        mPlayer.draw(mBatch);
-        mEnemy.draw(mBatch);
-        mBatch.end();
-        
-        if (sGameOver) {
-            System.out.println("lol you died!");
-            System.exit(1);
+            mBatch.begin();
+            mBackgroundManager.draw(mBatch);
+            mPlayer.draw(mBatch);
+            mEnemy.draw(mBatch);
+            mBatch.end();
+            Matrix4 m = new Matrix4(mCamera.combined);
+            m.translate(-mCameraOrigin.x, -mCameraOrigin.y, 0);
+            m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
+            mDebugger.render(mWorld, m);
+
+        } else {
+            mGameOverBatch.begin();
+            mGameOverSprite.draw(mGameOverBatch);
+            mGameOverBatch.end();
+            if (Gdx.input.isKeyPressed(Input.Keys.ENTER))
+            {
+                sGameOver = false;
+                this.create();
+            } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+                System.exit(0);
+            }
         }
 
     }
-    
+
     private void handleCollision(Fixture a, Fixture b) {
         if (a.getBody() == mPlayer.mBody) {
             if (b.getBody() == mFloor) {
                 mIsOnFloor = true;
             }
-            
+
             if (b.getBody() == mSlowDown.mBody) {
                 mSlowDown.enterRegion(mPlayer);
             }
-            
+
             if (b.getBody() == mEnemy.mBody) {
                 mEnemy.catchPlayer();
+            }
+            
+            if (b.getBody() == mSdO.mBody) {
+                mSdO.collide(mPlayer);
             }
         }
     }
@@ -135,17 +176,17 @@ public class GameWrapper implements ApplicationListener {
         mPlayer.update();
         mEnemy.update();
         mBackgroundManager.update(mCameraOrigin.x);
-        
+
         for (Contact c : mWorld.getContactList()) {
             this.handleCollision(c.getFixtureA(), c.getFixtureB());
             this.handleCollision(c.getFixtureB(), c.getFixtureA());
         }
-        
+
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && mIsOnFloor) {
             System.out.println("jumping");
             mPlayer.jump();
         }
-        
+
     }
 
     @Override
