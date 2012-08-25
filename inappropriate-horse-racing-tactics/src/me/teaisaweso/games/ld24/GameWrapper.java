@@ -142,10 +142,10 @@ public class GameWrapper implements ApplicationListener {
         // Fetch mouse location
         Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
 
-        // Work out where the player is on the display,
+        // Work out center of where the player is on the display,
         Sprite s = mPlayer.getCurrentSprite();
-        float px = s.getX();
-        float py = s.getY();
+        float px = s.getX() + (s.getWidth()/2);
+        float py = s.getY() + (s.getHeight()/2);
         Vector2 pos = new Vector2(px, py);
 
         // Adjust by the viewing transform.
