@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Player extends Entity {
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
-    private Sprite mSprite;
-    
+    private final Sprite mSprite;
+
     public Player(Sprite sprite, World world) {
         mSprite = sprite;
         BodyDef bd = new BodyDef();
