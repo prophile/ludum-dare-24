@@ -33,6 +33,7 @@ public class GameWrapper implements ApplicationListener {
     private Enemy mEnemy;
     private BackgroundManager mBackgroundManager;
     private Body mFloor;
+    private SlowDownRegion mSlowDown;
 
     public static Vector2 mCameraOrigin = new Vector2(0, 0);
 
@@ -56,6 +57,7 @@ public class GameWrapper implements ApplicationListener {
         float h = Gdx.graphics.getHeight();
         mBackgroundManager = new BackgroundManager();
         mWorld = new World(new Vector2(0, -30), true);
+        mSlowDown = new SlowDownRegion(mWorld, 3000, 0, 100, 20000);
 
         mCamera = new OrthographicCamera(w, h);
 
@@ -77,7 +79,7 @@ public class GameWrapper implements ApplicationListener {
 
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
         mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
-        ;
+        
     }
 
     @Override
@@ -111,14 +113,26 @@ public class GameWrapper implements ApplicationListener {
         boolean isOnFloor = false;
         
         for (Contact c : mWorld.getContactList()) {
-            if (c.getFixtureA().getBody() == mPlayer.mBody &&
-                c.getFixtureB().getBody() == mFloor) {
-                isOnFloor = true;
+            if (c.getFixtureA().getBody() == mPlayer.mBody)
+            {
+                if (c.getFixtureB().getBody() == mFloor) {
+                    isOnFloor = true;
+                }
+                
+                if (c.getFixtureB().getBody() == mSlowDown.mBody) {
+                    mSlowDown.enterRegion(mPlayer);
+                }
             }
             
-            if (c.getFixtureB().getBody() == mPlayer.mBody &&
-                c.getFixtureA().getBody() == mFloor) {
-                isOnFloor = true;
+            if (c.getFixtureB().getBody() == mPlayer.mBody) {
+                    if (c.getFixtureA().getBody() == mFloor) {
+                        isOnFloor = true;
+                    }
+                    
+                    if (c.getFixtureA().getBody() == mSlowDown.mBody) {
+                        
+                        mSlowDown.enterRegion(mPlayer);
+                    }
             }
 
         }

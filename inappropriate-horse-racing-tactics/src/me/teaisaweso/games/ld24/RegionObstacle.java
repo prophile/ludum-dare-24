@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class RegionObstacle extends Obstacle {
+    
     public RegionObstacle(World world, float x, float y, float width,
             float height) {
         BodyDef bd = new BodyDef();
@@ -14,6 +15,7 @@ public abstract class RegionObstacle extends Obstacle {
         ps.setAsBox(width / (2 * GameWrapper.PHYSICS_RATIO), height
                 / (2 * GameWrapper.PHYSICS_RATIO));
         fd.isSensor = true;
+        fd.shape = ps;
         bd.position.set(x / GameWrapper.PHYSICS_RATIO, y
                 / GameWrapper.PHYSICS_RATIO);
         mBody = world.createBody(bd);

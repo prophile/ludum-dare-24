@@ -61,7 +61,7 @@ public class Player extends Entity {
         for (StatusModifier modifier : mStatusModifiers) {
             currentAccel = modifier.adjustAccel(currentAccel);
         }
-        System.out.println(currentAccel);
+        
         return currentAccel;
     }
     
