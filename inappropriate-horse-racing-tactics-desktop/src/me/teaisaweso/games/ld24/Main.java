@@ -15,7 +15,7 @@ public class Main {
 
 	private static void configureWindowDimensions(
 			LwjglApplicationConfiguration cfg) {
-		cfg.width = 480;
-		cfg.height = 320;
+		cfg.width = 800;
+		cfg.height = 600;
 	}
 }
