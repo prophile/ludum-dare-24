@@ -62,6 +62,8 @@ public class GameWrapper implements ApplicationListener {
 
     private Box2DDebugRenderer mDebugger;
 
+    private int mLastFireCountdown;
+
     private Enemy mEnemy;
     private Sound mEvolutionShootsound;
     private Body mFloor;
@@ -140,6 +142,8 @@ public class GameWrapper implements ApplicationListener {
         assert instance == null || instance == this;
         instance = this;
         mEntities.clear();
+
+        mLastFireCountdown = 0;
 
         loadGameOverAssets();
 
@@ -252,7 +256,10 @@ public class GameWrapper implements ApplicationListener {
         mCrosshair.setPosition(crosshairPosition.x - 35 / 2,
                 crosshairPosition.y - 35 / 2);
 
-        if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+        if (mLastFireCountdown > 0) {
+            --mLastFireCountdown;
+        }
+        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mLastFireCountdown == 0) {
             System.out.println("touch");
             BodyDef bd = new BodyDef();
             bd.type = BodyType.KinematicBody;
@@ -283,6 +290,7 @@ public class GameWrapper implements ApplicationListener {
             b.mBody.createFixture(fd);
             mEvolutionShootsound.play();
             mGunArm.fire();
+            mLastFireCountdown = Constants.getInt("reloadTime");
         }
 
         mCrosshair.draw(sb);
