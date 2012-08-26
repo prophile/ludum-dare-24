@@ -49,8 +49,6 @@ public class SoupObstacle extends PhysicalObstacle {
         mWidth = 180;
         mHeight = 115;
         mSprite = new Sprite(sSoup1, (int) mWidth, (int) mHeight);
-        mSprite.setOrigin(0.0f, 0.0f);
-        mSprite.setScale(1.0f);
         mEvolutionSound = Gdx.audio.newSound(Gdx.files
                 .internal("assets/Evolve.wav"));
 
