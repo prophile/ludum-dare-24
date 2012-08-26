@@ -77,7 +77,7 @@ public class GameWrapper implements ApplicationListener {
     private TreeStumpObstacle mSingleTreeStumpObstacle;
     private SlowDownRegion mSlowDownRegion;
 
-    private RockObstacle mRo;
+    private RockObstacle mSingleRockObstacle;
 
     private boolean mIsOnFloor;
 
@@ -171,7 +171,7 @@ public class GameWrapper implements ApplicationListener {
         createSlowDownRegion();
         createSlowDownObstacle();
         createTreeStumpObstacle();
-        mRo = new RockObstacle(new Vector2(2000, 50), mWorld);
+        mSingleRockObstacle = new RockObstacle(new Vector2(2000, 50), mWorld);
     }
 
     private void createSlowDownRegion() {
@@ -242,7 +242,7 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
-        mRo.draw(mBatch);
+        mSingleRockObstacle.draw(mBatch);
         mSingleTreeStumpObstacle.draw(mBatch);
         drawCrosshair(mBatch);
         mBatch.end();
@@ -289,8 +289,9 @@ public class GameWrapper implements ApplicationListener {
                 c.setEnabled(false);
             }
 
-            if (mRo != null && b.getBody() == mRo.mBody) {
-                mRo.collide(mPlayer);
+            if (mSingleRockObstacle != null
+                    && b.getBody() == mSingleRockObstacle.mBody) {
+                mSingleRockObstacle.collide(mPlayer);
                 c.setEnabled(false);
             }
 
@@ -308,7 +309,8 @@ public class GameWrapper implements ApplicationListener {
                 c.setEnabled(false);
             }
 
-            if (mRo != null && b.getBody() == mRo.mBody) {
+            if (mSingleRockObstacle != null
+                    && b.getBody() == mSingleRockObstacle.mBody) {
                 c.setEnabled(false);
             }
         }
@@ -358,16 +360,17 @@ public class GameWrapper implements ApplicationListener {
 
     private void updateObstacles() {
         mSingleTreeStumpObstacle.update();
-        mRo.update();
+        mSingleRockObstacle.update();
         if (treeStumpObstacleHasLeftScreen()) {
             respawnTreeStumpObstacle();
         }
 
-        if (mRo.mDead || mRo.getPosition().x - mCameraOrigin.x < -600) {
-            mRo.mBody.setActive(false);
-            mWorld.destroyBody(mRo.mBody);
-            mRo = new RockObstacle(new Vector2(mCameraOrigin.x + 1600, 50),
-                    mWorld);
+        if (mSingleRockObstacle.mDead
+                || mSingleRockObstacle.getPosition().x - mCameraOrigin.x < -600) {
+            mSingleRockObstacle.mBody.setActive(false);
+            mWorld.destroyBody(mSingleRockObstacle.mBody);
+            mSingleRockObstacle = new RockObstacle(new Vector2(
+                    mCameraOrigin.x + 1600, 50), mWorld);
         }
     }
 
