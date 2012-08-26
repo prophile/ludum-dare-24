@@ -84,7 +84,6 @@ public class GameWrapper implements ApplicationListener {
     private TreeStumpObstacle mTreeStumpObstacle2;
     private SoupObstacle mSingleSoupObstacle;
 
-    private int mTicks;
     private World mWorld;
 
     private boolean mSplashScreen = true;
@@ -140,7 +139,6 @@ public class GameWrapper implements ApplicationListener {
     public void create() {
         assert instance == null || instance == this;
         instance = this;
-        mTicks = 0;
         mEntities.clear();
 
         loadGameOverAssets();
@@ -546,7 +544,6 @@ public class GameWrapper implements ApplicationListener {
 
     private void update() {
         mIsOnFloor = false;
-        mTicks++;
         simulatePhysicsStep();
         updateEntities();
         mBackgroundManager.update(getCameraOrigin().x);
