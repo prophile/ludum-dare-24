@@ -1,7 +1,6 @@
 package me.teaisaweso.games.ld24;
 
 import java.io.IOException;
-import java.lang.Integer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -138,7 +137,8 @@ public class GameWrapper implements ApplicationListener {
         Texture t = new Texture(Gdx.files.internal("assets/splash.png"));
         Sprite s = new Sprite(t, 800, 600);
         mSplashScreenSprite = s;
-        mEvolutionShootsound = Gdx.audio.newSound(Gdx.files.internal("assets/EvolutionShoot.wav"));
+        mEvolutionShootsound = Gdx.audio.newSound(Gdx.files
+                .internal("assets/EvolutionShoot.wav"));
         createCamera();
         mBullet = null;
         mBackgroundManager = new BackgroundManager();
@@ -147,8 +147,8 @@ public class GameWrapper implements ApplicationListener {
         mBatch = new SpriteBatch();
 
         mTextFont = new BitmapFont();
-        mTextFont.getRegion().getTexture().setFilter(TextureFilter.Linear,
-                TextureFilter.Linear);
+        mTextFont.getRegion().getTexture()
+                .setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mScore = 0;
 
         createCrosshair();
@@ -198,8 +198,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createPlayer() {
-        mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkey.png"));
+        mTexture = new Texture(Gdx.files.internal("assets/AssetMonkey.png"));
         mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Sprite s = new Sprite(mTexture, 200, 200);
         mPlayer = new Player(s, mWorld);
@@ -288,6 +287,10 @@ public class GameWrapper implements ApplicationListener {
 
     public Enemy getEnemy() {
         return mEnemy;
+    }
+
+    public Player getPlayer() {
+        return mPlayer;
     }
 
     private Vector2 getMouseLocation() {
@@ -420,7 +423,7 @@ public class GameWrapper implements ApplicationListener {
         mBatch.begin();
         mSplashScreenSprite.draw(mBatch);
         mBatch.end();
-        
+
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             mSplashScreen = false;
         }
