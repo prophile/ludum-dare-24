@@ -27,26 +27,34 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWrapper implements ApplicationListener {
+    public static GameWrapper instance = null;
+
     private static Vector2 mCameraOrigin = new Vector2(0, 0);
     public static final float PHYSICS_RATIO = 16;
 
     private static boolean sIsGameOver;
     public static final Random sRng = new Random();
+
     public static void clearGameOver() {
         sIsGameOver = false;
     }
+
     public static Vector2 getCameraOrigin() {
         return mCameraOrigin;
     }
+
     public static boolean isGameOver() {
         return sIsGameOver;
     }
+
     public static void setCameraOrigin(Vector2 mCameraOrigin) {
         GameWrapper.mCameraOrigin = mCameraOrigin;
     }
+
     public static void setGameOver() {
         sIsGameOver = true;
     }
+
     private BackgroundManager mBackgroundManager;
     private SpriteBatch mBatch;
     private Body mBullet = null;
@@ -122,6 +130,8 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void create() {
+        assert instance == null || instance == this;
+        instance = this;
         loadGameOverAssets();
         createCamera();
         mBullet = null;
