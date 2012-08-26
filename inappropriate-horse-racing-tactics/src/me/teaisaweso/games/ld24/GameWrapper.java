@@ -79,7 +79,7 @@ public class GameWrapper implements ApplicationListener {
     public final Random mRng = new Random();
 
     private RockObstacle mSingleRockObstacle;
-    private SlowDownObstacle mSingleSlowDownObstacle;
+    private BananaObstacle mSingleSlowDownObstacle;
     private TreeStumpObstacle mTreeStumpObstacle1;
     private TreeStumpObstacle mTreeStumpObstacle2;
     private SoupObstacle mSingleSoupObstacle;
@@ -215,7 +215,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createSlowDownObstacle() {
-        mSingleSlowDownObstacle = new SlowDownObstacle(mWorld);
+        mSingleSlowDownObstacle = new BananaObstacle(mWorld);
         mEntities.add(mSingleSlowDownObstacle);
     }
 

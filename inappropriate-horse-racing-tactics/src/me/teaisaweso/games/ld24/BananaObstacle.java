@@ -7,13 +7,13 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-public class SlowDownObstacle extends PhysicalObstacle {
+public class BananaObstacle extends PhysicalObstacle {
 
     enum EvolutionStage {
         NORMAL, FLYING, TENTACLES;
@@ -23,10 +23,12 @@ public class SlowDownObstacle extends PhysicalObstacle {
     private final Sound mDarwinHurtSound;
     private final Sound mEvolutionSound;
     private final Sprite mSprite;
-    private static Texture sUnevolvedTexture, sPoofTexture, sFlapTextureHigh,
-            sFlapTextureLow, sTentacleTextureHigh, sTentacleTextureLow;
+    private static Texture sPoofTexture, sFlapTextureHigh, sFlapTextureLow,
+            sTentacleTextureHigh, sTentacleTextureLow;
+    private final static Texture[] sUnevolvedTextures = new Texture[6];
     private static boolean texturesLoaded = false;
     public int mHitTicks = 0;
+    private int mLifeTicks = 0;
     public boolean mDead = false;
 
     private static void loadTexturesOnDemand() {
@@ -42,19 +44,22 @@ public class SlowDownObstacle extends PhysicalObstacle {
     }
 
     private static void loadTextures() {
-        sUnevolvedTexture = new Texture(Gdx.files
-                .internal("assets/Asset_Banana_1.png"));
-        sPoofTexture = new Texture(Gdx.files
-                .internal("assets/Asset_Banana_2.png"));
-        sFlapTextureHigh = new Texture(Gdx.files
-                .internal("assets/Asset_Banana_3.png"));
-        sFlapTextureLow = new Texture(Gdx.files
-                .internal("assets/Asset_Banana_4.png"));
-        sTentacleTextureHigh = new Texture(Gdx.files
-                .internal("assets/Asset_Banana_Tentacle1.png"));
-        sTentacleTextureLow = new Texture(Gdx.files
-                .internal("assets/Asset_Banana_Tentacle2.png"));
-        setupFiltering(sUnevolvedTexture);
+        for (int i = 1; i <= 6; ++i) {
+            sUnevolvedTextures[i - 1] = new Texture(
+                    Gdx.files
+                            .internal("assets/Asset_Banana_Swing" + i + ".png"));
+            setupFiltering(sUnevolvedTextures[i - 1]);
+        }
+        sPoofTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_2.png"));
+        sFlapTextureHigh = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_3.png"));
+        sFlapTextureLow = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_4.png"));
+        sTentacleTextureHigh = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_Tentacle1.png"));
+        sTentacleTextureLow = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_Tentacle2.png"));
         setupFiltering(sPoofTexture);
         setupFiltering(sFlapTextureHigh);
         setupFiltering(sFlapTextureLow);
@@ -62,7 +67,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
         setupFiltering(sTentacleTextureLow);
     }
 
-    public SlowDownObstacle(World world) {
+    public BananaObstacle(World world) {
         loadTexturesOnDemand();
 
         float minSpacing = Constants.getFloat("bananaMinSpacing");
@@ -70,11 +75,9 @@ public class SlowDownObstacle extends PhysicalObstacle {
         float spacingRange = maxSpacing - minSpacing;
         BodyDef bd = new BodyDef();
         bd.position
-                .set(
-                        (GameWrapper.instance.getCameraOrigin().x + minSpacing + GameWrapper.instance.mRng
-                                .nextFloat()
-                                * spacingRange) / 16, Constants
-                                .getFloat("bananaHeight") / 16);
+                .set((GameWrapper.instance.getCameraOrigin().x + minSpacing + GameWrapper.instance.mRng
+                        .nextFloat() * spacingRange) / 16,
+                        Constants.getFloat("bananaHeight") / 16);
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
@@ -89,7 +92,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
 
         mWidth = 150;
         mHeight = 150;
-        mSprite = new Sprite(sUnevolvedTexture, (int) mWidth, (int) mHeight);
+        mSprite = new Sprite(sUnevolvedTextures[0], (int) mWidth, (int) mHeight);
         mSprite.setOrigin(-120.0f, 210.0f);
         mSprite.setScale(1.2f);
         mDarwinHurtSound = Gdx.audio.newSound(Gdx.files
@@ -143,7 +146,12 @@ public class SlowDownObstacle extends PhysicalObstacle {
 
     @Override
     public boolean update() {
-        if (mStage != EvolutionStage.NORMAL) {
+        if (mStage == EvolutionStage.NORMAL) {
+            ++mLifeTicks;
+            int rotateSpeed = Constants.getInt("bananaSwingTime");
+            mSprite.setTexture(sUnevolvedTextures[mLifeTicks % rotateSpeed * 6
+                    / rotateSpeed]);
+        } else {
             ++mHitTicks;
             if (mHitTicks > Constants.getInt("bananaFlyingHoldTime")
                     && mStage == EvolutionStage.FLYING) {

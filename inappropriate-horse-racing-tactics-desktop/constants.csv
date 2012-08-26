@@ -26,6 +26,7 @@ bananaFlyingHoldTime,60
 bananaFlyingHomingForce,1.2
 bananaTentaclesGravity,-500
 bananaPoofTime,12
+bananaSwingTime,28
 bananaFlyingWingFlapTime,6
 bananaTentaclesFlailTime,6
 bananaTentaclesRestitution,0.4
