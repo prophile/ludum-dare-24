@@ -23,8 +23,8 @@ public class Enemy extends Entity {
         mSprite = sprite;
         mWidth = 200;
         mHeight = 400;
-        mAttributes.mMaxSpeed = 30000;
-        mAttributes.mAccel = 57;
+        mAttributes.mMaxSpeed = 30;
+        mAttributes.mAccel = 57*100.0f/30.0f;
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();

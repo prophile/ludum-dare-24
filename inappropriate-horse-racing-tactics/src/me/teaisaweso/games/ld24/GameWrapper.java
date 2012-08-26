@@ -1,6 +1,7 @@
 package me.teaisaweso.games.ld24;
 
 import java.util.HashSet;
+import java.util.Random;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -31,6 +32,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class GameWrapper implements ApplicationListener {
 
     public static final float PHYSICS_RATIO = 16;
+    public static final Random sRng = new Random();
 
     private OrthographicCamera mCamera;
     private SpriteBatch mBatch;
@@ -81,7 +83,7 @@ public class GameWrapper implements ApplicationListener {
         createCamera();
         mBullet = null;
         mBackgroundManager = new BackgroundManager();
-        mWorld = new World(new Vector2(0, -30), true);
+        mWorld = new World(new Vector2(0, -100), true);
         mWorld.setContactListener(new ContactListener() {
 
             @Override
@@ -171,8 +173,8 @@ public class GameWrapper implements ApplicationListener {
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
         mSdO = new SlowDownObstacle(b);
-        
-        mTso = new TreeStumpObstacle(new Vector2(1000,50), mWorld);
+
+        mTso = new TreeStumpObstacle(new Vector2(1000, 50), mWorld);
     }
 
     private void loadGameOverAssets() {
@@ -264,7 +266,7 @@ public class GameWrapper implements ApplicationListener {
                 mSdO.collide(mEnemy);
                 mRemoveBodies.add(mSdO.mBody);
             }
-            
+
             if (mTso != null && b.getBody() == mTso.mBody) {
                 c.setEnabled(false);
             }
@@ -288,7 +290,7 @@ public class GameWrapper implements ApplicationListener {
             mTso.mBody.setActive(false);
             mWorld.destroyBody(mTso.mBody);
             mTso = null;
-            mTso = new TreeStumpObstacle(new Vector2(mCameraOrigin.x+800, 50), mWorld);
+            mTso = new TreeStumpObstacle(new Vector2(mCameraOrigin.x+800+sRng.nextFloat()*100, 50), mWorld);
         }
         
         mBackgroundManager.update(mCameraOrigin.x);
@@ -305,6 +307,11 @@ public class GameWrapper implements ApplicationListener {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && mIsOnFloor) {
             System.out.println("jumping");
             mPlayer.jump();
+        }
+        
+        if (!mIsOnFloor) {
+            mPlayer.mBody.setLinearVelocity(mPlayer.mBody.getLinearVelocity().x*0.997f, 
+                    mPlayer.mBody.getLinearVelocity().y);
         }
 
     }

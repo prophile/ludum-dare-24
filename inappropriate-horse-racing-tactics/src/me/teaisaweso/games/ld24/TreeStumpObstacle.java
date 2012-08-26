@@ -27,6 +27,7 @@ public class TreeStumpObstacle extends PhysicalObstacle {
         ps.setAsBox(161 / (2 * GameWrapper.PHYSICS_RATIO),
                 122 / (2 * GameWrapper.PHYSICS_RATIO));
         fd.shape = ps;
+        fd.friction = 0;
         bd.position.set(new Vector2(worldPosition.x / GameWrapper.PHYSICS_RATIO,
                 worldPosition.y / GameWrapper.PHYSICS_RATIO));
         Body b = w.createBody(bd);

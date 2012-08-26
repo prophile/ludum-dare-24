@@ -20,8 +20,8 @@ public class Player extends Entity {
 
     public Player(Sprite sprite, World world) {
 
-        mAttributes.mMaxSpeed = 30000;
-        mAttributes.mAccel = 30;
+        mAttributes.mMaxSpeed = 30;
+        mAttributes.mAccel = 100;
         mSprite = sprite;
         mWidth = 200;
         mHeight = 200;
@@ -101,8 +101,7 @@ public class Player extends Entity {
     }
 
     public void jump() {
-        mBody.applyLinearImpulse(0, 2000, mBody.getPosition().x,
-                mBody.getPosition().y);
+        mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, 25));
     }
 
 }
