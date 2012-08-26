@@ -74,7 +74,7 @@ public class GameWrapper implements ApplicationListener {
     private Enemy mEnemy;
     private BackgroundManager mBackgroundManager;
     private Body mFloor;
-    private TreeStumpObstacle mTso;
+    private TreeStumpObstacle mSingleTreeStumpObstacle;
     private SlowDownRegion mSlowDown;
 
     private boolean mIsOnFloor;
@@ -177,7 +177,7 @@ public class GameWrapper implements ApplicationListener {
         fd.density = 1;
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
-        mTso = new TreeStumpObstacle(new Vector2(1000, 50), mWorld);
+        mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(1000, 50), mWorld);
         mSingleSlowDownObstacle = new SlowDownObstacle(b);
     }
 
@@ -225,7 +225,7 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
-        mTso.draw(mBatch);
+        mSingleTreeStumpObstacle.draw(mBatch);
         drawCrosshair(mBatch);
         mBatch.end();
         Matrix4 m = new Matrix4(mCamera.combined);
@@ -277,7 +277,7 @@ public class GameWrapper implements ApplicationListener {
                 mRemoveBodies.add(mSingleSlowDownObstacle.mBody);
             }
 
-            if (mTso != null && b.getBody() == mTso.mBody) {
+            if (mSingleTreeStumpObstacle != null && b.getBody() == mSingleTreeStumpObstacle.mBody) {
                 c.setEnabled(false);
             }
         }
@@ -318,13 +318,13 @@ public class GameWrapper implements ApplicationListener {
 
         mPlayer.update();
         mEnemy.update();
-        mTso.update();
+        mSingleTreeStumpObstacle.update();
 
-        if (mTso.getPosition().x - mCameraOrigin.x < -600) {
-            mTso.mBody.setActive(false);
-            mWorld.destroyBody(mTso.mBody);
-            mTso = null;
-            mTso = new TreeStumpObstacle(new Vector2(mCameraOrigin.x + 800
+        if (mSingleTreeStumpObstacle.getPosition().x - mCameraOrigin.x < -600) {
+            mSingleTreeStumpObstacle.mBody.setActive(false);
+            mWorld.destroyBody(mSingleTreeStumpObstacle.mBody);
+            mSingleTreeStumpObstacle = null;
+            mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(mCameraOrigin.x + 800
                     + sRng.nextFloat() * 100, 50), mWorld);
         }
     }
