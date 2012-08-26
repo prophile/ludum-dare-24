@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -433,7 +434,20 @@ public class GameWrapper implements ApplicationListener {
     private void renderGameOverScreen() {
         mGameOverBatch.begin();
         mGameOverSprite.draw(mGameOverBatch);
+
+        String text = new String();
+        for (ScoreEntry e : mPublicTopScores) {
+            text += e.mName + ": " + e.mScore + "\n";
+        }
+
+        Color oldColor = mTextFont.getColor();
+        ;
+        mTextFont.setColor(1.0f, 1.0f, 0.0f, 0.5f);
+        mTextFont.drawMultiLine(mGameOverBatch, text, 390.0f, 290.0f);
+        mTextFont.setColor(oldColor);
+
         mGameOverBatch.end();
+
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             clearGameOver();
             String username = System.getProperty("user.name");
