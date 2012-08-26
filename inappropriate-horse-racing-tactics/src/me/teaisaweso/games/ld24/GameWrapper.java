@@ -500,30 +500,11 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.drawSky();
         mBatch.begin();
         mBackgroundManager.draw(mBatch);
-        mGunArm.draw(mBatch);
-        mPlayer.draw(mBatch);
-        mEnemy.draw(mBatch);
 
-        if (mBullet != null) {
-            mBullet.draw(mBatch);
-        }
-        if (mSingleRockObstacle != null) {
-            mSingleRockObstacle.draw(mBatch);
-        }
-        if (mTreeStumpObstacle1 != null) {
-            mTreeStumpObstacle1.draw(mBatch);
+        for (Entity e : mEntities) {
+            e.draw(mBatch);
         }
 
-        if (mTreeStumpObstacle2 != null) {
-            mTreeStumpObstacle2.draw(mBatch);
-        }
-
-        if (mSingleSlowDownObstacle != null) {
-            mSingleSlowDownObstacle.draw(mBatch);
-        }
-        if (mSingleSoupObstacle != null) {
-            mSingleSoupObstacle.draw(mBatch);
-        }
         drawCrosshair(mBatch);
 
         mExplosionManager.draw(mBatch);
