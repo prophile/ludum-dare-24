@@ -204,8 +204,7 @@ public class GameWrapper implements ApplicationListener {
     private void createObstacles() {
         createSlowDownObstacle();
         createTreeStumpObstacle();
-        mSingleRockObstacle = new RockObstacle(new Vector2(
-                Constants.getFloat("rockFirstPosition"), 50.0f), mWorld);
+        mSingleRockObstacle = new RockObstacle(Constants.getFloat("rockFirstPosition"), mWorld);
         createSoupObstacle();
     }
 
@@ -682,10 +681,7 @@ public class GameWrapper implements ApplicationListener {
                             - getCameraOrigin().x < -600) {
                 mSingleRockObstacle.mBody.setActive(false);
                 mWorld.destroyBody(mSingleRockObstacle.mBody);
-                mSingleRockObstacle = new RockObstacle(
-                        new Vector2(getCameraOrigin().x
-                                + Constants.getFloat("rockSpacing"), 50),
-                        mWorld);
+                mSingleRockObstacle = new RockObstacle(getCameraOrigin().x + Constants.getFloat("rockSpacing"), mWorld);
             }
         }
         if (mSingleSlowDownObstacle != null) {

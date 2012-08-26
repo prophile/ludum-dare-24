@@ -15,12 +15,13 @@ public class RockObstacle extends PhysicalObstacle {
 
     public boolean mDead;
 
-    public RockObstacle(Vector2 worldPosition, World w) {
+    public RockObstacle(float x, World w) {
         super(null);
+        Vector2 worldPos = new Vector2(x, 50.0f);
         configureAttributes();
         mSprite = new Sprite(loadRockTexture(), (int) mWidth, (int) mHeight);
 
-        createPhysicsBody(worldPosition, w);
+        createPhysicsBody(worldPos, w);
     }
 
     private Texture loadRockTexture() {
