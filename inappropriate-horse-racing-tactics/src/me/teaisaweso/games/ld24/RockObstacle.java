@@ -17,12 +17,17 @@ public class RockObstacle extends PhysicalObstacle {
 
     public RockObstacle(Vector2 worldPosition, World w) {
         super(null);
-        mWidth = 90;
-        mHeight = 90;
-        Texture t = new Texture(Gdx.files.internal("assets/AssetRockDraft.png"));
-        mSprite = new Sprite(t, (int) mWidth, (int) mHeight);
-        mDead = false;
+        configureAttributes();
+        mSprite = new Sprite(loadRockTexture(), (int) mWidth, (int) mHeight);
 
+        createPhysicsBody(worldPosition, w);
+    }
+
+    private Texture loadRockTexture() {
+        return new Texture(Gdx.files.internal("assets/AssetRockDraft.png"));
+    }
+
+    private void createPhysicsBody(Vector2 worldPosition, World w) {
         BodyDef bd = new BodyDef();
         bd.position.set(worldPosition.mul(1.0f / GameWrapper.PHYSICS_RATIO));
         FixtureDef fd = new FixtureDef();
@@ -32,6 +37,12 @@ public class RockObstacle extends PhysicalObstacle {
         fd.shape = ps;
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
+    }
+
+    private void configureAttributes() {
+        mWidth = 90;
+        mHeight = 90;
+        mDead = false;
     }
 
     @Override
