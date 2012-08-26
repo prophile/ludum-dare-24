@@ -63,7 +63,7 @@ public class Enemy extends Entity {
     }
 
     public void catchPlayer() {
-        GameWrapper.setGameOver();
+        GameWrapper.instance.setGameOver();
     }
 
     public float getEffectiveMaxSpeed() {

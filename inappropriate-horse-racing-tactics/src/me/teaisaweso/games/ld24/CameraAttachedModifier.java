@@ -12,7 +12,7 @@ public class CameraAttachedModifier extends StatusModifier {
     @Override
     public void update() {
         Vector2 position = mEntity.getPosition();
-        GameWrapper.setCameraOrigin(new Vector2(position.x, 300));
+        GameWrapper.instance.setCameraOrigin(new Vector2(position.x, 300));
     }
 
     @Override

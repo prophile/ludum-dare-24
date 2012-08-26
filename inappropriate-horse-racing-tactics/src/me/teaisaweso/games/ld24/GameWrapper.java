@@ -31,49 +31,37 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWrapper implements ApplicationListener {
-    private static Vector2 mCameraOrigin = new Vector2(0, 0);
-    public static final float PHYSICS_RATIO = 16;
+    public static GameWrapper instance = null;
 
-    private static boolean sIsGameOver;
-    public static final Random sRng = new Random();
-    public static void clearGameOver() {
-        sIsGameOver = false;
-    }
-    public static Vector2 getCameraOrigin() {
-        return mCameraOrigin;
-    }
-    public static boolean isGameOver() {
-        return sIsGameOver;
-    }
-    public static void setCameraOrigin(Vector2 mCameraOrigin) {
-        GameWrapper.mCameraOrigin = mCameraOrigin;
-    }
-    public static void setGameOver() {
-        sIsGameOver = true;
-    }
+    public static final float PHYSICS_RATIO = 16;
     private BackgroundManager mBackgroundManager;
+
     private SpriteBatch mBatch;
     private Body mBullet = null;
+
     private int mBulletTicks;
+
     private OrthographicCamera mCamera;
+
+    private Vector2 mCameraOrigin = new Vector2(0, 0);
+
     private Sprite mCrosshair;
     private Sound mEvolutionShootsound;
 
     private Box2DDebugRenderer mDebugger;
 
     private Enemy mEnemy;
-
     private Body mFloor;
-
     private SpriteBatch mGameOverBatch;
-
     private Sprite mGameOverSprite;
-
+    private boolean mIsGameOver;
     private boolean mIsOnFloor;
 
     private Player mPlayer;
 
     private final HashSet<Body> mRemoveBodies = new HashSet<Body>();
+
+    public final Random mRng = new Random();
 
     private RockObstacle mSingleRockObstacle;
 
@@ -106,6 +94,10 @@ public class GameWrapper implements ApplicationListener {
         return mBulletTicks > 100 && mBullet != null;
     }
 
+    public void clearGameOver() {
+        mIsGameOver = false;
+    }
+
     private void clearScreen() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -129,6 +121,8 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void create() {
+        assert instance == null || instance == this;
+        instance = this;
         mTicks = 0;
         loadGameOverAssets();
         mEvolutionShootsound = Gdx.audio.newSound(Gdx.files.internal("assets/EvolutionShoot.wav"));
@@ -221,7 +215,7 @@ public class GameWrapper implements ApplicationListener {
 
     private void createTreeStumpObstacle() {
         mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(
-                getCameraOrigin().x + 800 + sRng.nextFloat() * 100, 50), mWorld);
+                getCameraOrigin().x + 800 + mRng.nextFloat() * 100, 50), mWorld);
     }
 
     @Override
@@ -269,6 +263,14 @@ public class GameWrapper implements ApplicationListener {
         mCrosshair.draw(sb);
     }
 
+    public Vector2 getCameraOrigin() {
+        return mCameraOrigin;
+    }
+
+    public Enemy getEnemy() {
+        return mEnemy;
+    }
+
     private Vector2 getMouseLocation() {
         // Fetch mouse location
         Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
@@ -292,7 +294,8 @@ public class GameWrapper implements ApplicationListener {
 
         if (a.getBody() == mPlayer.mBody) {
             if (b.getBody() == mFloor
-                    || b.getBody() == mSingleTreeStumpObstacle.mBody
+                    || mSingleTreeStumpObstacle != null
+                    && b.getBody() == mSingleTreeStumpObstacle.mBody
                     && mPlayer.getPosition().y > mSingleTreeStumpObstacle
                             .getPosition().y + 122) {
                 mIsOnFloor = true;
@@ -337,6 +340,10 @@ public class GameWrapper implements ApplicationListener {
                 c.setEnabled(false);
             }
         }
+    }
+
+    public boolean isGameOver() {
+        return mIsGameOver;
     }
 
     private void loadGameOverAssets() {
@@ -392,7 +399,9 @@ public class GameWrapper implements ApplicationListener {
             clearGameOver();
             String username = System.getProperty("user.name");
             try {
-                URL u = new URL("http://immense-savannah-9950.herokuapp.com/score/" + username + "/" + mTicks);
+                URL u = new URL(
+                        "http://immense-savannah-9950.herokuapp.com/score/"
+                                + username + "/" + mTicks);
                 u.getContent();
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
@@ -421,8 +430,12 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
-        mSingleRockObstacle.draw(mBatch);
-        mSingleTreeStumpObstacle.draw(mBatch);
+        if (mSingleRockObstacle != null) {
+            mSingleRockObstacle.draw(mBatch);
+        }
+        if (mSingleTreeStumpObstacle != null) {
+            mSingleTreeStumpObstacle.draw(mBatch);
+        }
         drawCrosshair(mBatch);
         mBatch.end();
         Matrix4 m = new Matrix4(mCamera.combined);
@@ -442,6 +455,14 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void resume() {
+    }
+
+    public void setCameraOrigin(Vector2 newCameraOrigin) {
+        mCameraOrigin = newCameraOrigin;
+    }
+
+    public void setGameOver() {
+        mIsGameOver = true;
     }
 
     private boolean shouldJump() {
@@ -497,18 +518,25 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void updateObstacles() {
-        mSingleTreeStumpObstacle.update();
-        mSingleRockObstacle.update();
-        if (treeStumpObstacleHasLeftScreen()) {
-            respawnTreeStumpObstacle();
+        if (mSingleTreeStumpObstacle != null) {
+            mSingleTreeStumpObstacle.update();
+            if (treeStumpObstacleHasLeftScreen()) {
+                respawnTreeStumpObstacle();
+            }
         }
-
-        if (mSingleRockObstacle.mDead
-                || mSingleRockObstacle.getPosition().x - getCameraOrigin().x < -600) {
-            mSingleRockObstacle.mBody.setActive(false);
-            mWorld.destroyBody(mSingleRockObstacle.mBody);
-            mSingleRockObstacle = new RockObstacle(new Vector2(
-                    getCameraOrigin().x + 1600, 50), mWorld);
+        if (mSingleRockObstacle != null) {
+            mSingleRockObstacle.update();
+            if (mSingleRockObstacle.mDead
+                    || mSingleRockObstacle.getPosition().x
+                            - getCameraOrigin().x < -600) {
+                mSingleRockObstacle.mBody.setActive(false);
+                mWorld.destroyBody(mSingleRockObstacle.mBody);
+                mSingleRockObstacle = new RockObstacle(new Vector2(
+                        getCameraOrigin().x + 1600, 50), mWorld);
+            }
+        }
+        if (mSingleSlowDownObstacle != null) {
+            mSingleSlowDownObstacle.update();
         }
     }
 
