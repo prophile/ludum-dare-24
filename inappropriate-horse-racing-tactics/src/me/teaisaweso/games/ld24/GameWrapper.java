@@ -58,7 +58,6 @@ public class GameWrapper implements ApplicationListener {
     private ScoreDownloader mPublicTopScores;
 
     private Sprite mCrosshair;
-    private Sound mDarwinHurtSound;
     private GunArmEntity mGunArm;
 
     private Box2DDebugRenderer mDebugger;
@@ -200,7 +199,8 @@ public class GameWrapper implements ApplicationListener {
     private void createObstacles() {
         createSlowDownObstacle();
         createTreeStumpObstacle();
-        mSingleRockObstacle = new RockObstacle(Constants.getFloat("rockFirstPosition"), mWorld);
+        mSingleRockObstacle = new RockObstacle(
+                Constants.getFloat("rockFirstPosition"), mWorld);
         mEntities.add(mSingleRockObstacle);
         createSoupObstacle();
     }
@@ -318,11 +318,11 @@ public class GameWrapper implements ApplicationListener {
     }
 
     void handleCollision(Fixture a, Fixture b, Contact c) {
-        Entity collider_a = (Entity)a.getBody().getUserData();
-        Entity collider_b = (Entity)b.getBody().getUserData();
-        
-        if (collider_a instanceof BulletEntity &&
-                !(collider_b instanceof Player)) {
+        Entity collider_a = (Entity) a.getBody().getUserData();
+        Entity collider_b = (Entity) b.getBody().getUserData();
+
+        if (collider_a instanceof BulletEntity
+                && !(collider_b instanceof Player)) {
             boolean suppressBulletRemoval = false;
 
             // If off screen, ignore collision.
@@ -331,9 +331,9 @@ public class GameWrapper implements ApplicationListener {
             if (pos.x > mCameraOrigin.x + 420 || pos.y > mCameraOrigin.y + 320) {
                 ;
             } else if (collider_b instanceof PhysicalObstacle) {
-                ((PhysicalObstacle)collider_b).hit();
+                ((PhysicalObstacle) collider_b).hit();
             } else if (collider_b instanceof Enemy) {
-                ((BulletEntity)collider_a).reflect();
+                ((BulletEntity) collider_a).reflect();
                 suppressBulletRemoval = true;
             }
 
@@ -349,13 +349,13 @@ public class GameWrapper implements ApplicationListener {
             // he is permitted to jump from.
             if (b.getBody() == mFloor
                     || collider_b instanceof TreeStumpObstacle
-                    && mPlayer.getPosition().y > ((TreeStumpObstacle)collider_b)
+                    && mPlayer.getPosition().y > ((TreeStumpObstacle) collider_b)
                             .getWalkHeight()) {
                 mIsOnFloor = true;
             }
 
             if (collider_b instanceof Enemy) {
-                ((Enemy)collider_b).catchPlayer();
+                ((Enemy) collider_b).catchPlayer();
             }
 
             if (collider_b instanceof PhysicalObstacle) {
@@ -575,10 +575,11 @@ public class GameWrapper implements ApplicationListener {
                 condemned.add(e);
             }
         }
-        
+
         for (Entity c : condemned) {
-            if (c.mBody != null)
+            if (c.mBody != null) {
                 mRemoveBodies.add(c.mBody);
+            }
             mEntities.remove(c);
         }
 
@@ -598,7 +599,8 @@ public class GameWrapper implements ApplicationListener {
                 mSingleRockObstacle.mBody.setActive(false);
                 mWorld.destroyBody(mSingleRockObstacle.mBody);
                 mEntities.remove(mSingleRockObstacle);
-                mSingleRockObstacle = new RockObstacle(getCameraOrigin().x + Constants.getFloat("rockSpacing"), mWorld);
+                mSingleRockObstacle = new RockObstacle(getCameraOrigin().x
+                        + Constants.getFloat("rockSpacing"), mWorld);
                 mEntities.add(mSingleRockObstacle);
             }
         }
