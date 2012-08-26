@@ -568,15 +568,11 @@ public class GameWrapper implements ApplicationListener {
 
     private void updateEntities() {
 
-        mPlayer.update();
-        mEnemy.update(mCameraOrigin.x, mPlayer.getPosition().x);
         List<Entity> condemned = new ArrayList<Entity>();
         for (Entity e : mEntities) {
-            if (e instanceof BulletEntity || e instanceof PhysicalObstacle) {
-                if (e.update()) {
-                    // Exterminate
-                    condemned.add(e);
-                }
+            if (e.update()) {
+                // Exterminate
+                condemned.add(e);
             }
         }
         

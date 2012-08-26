@@ -83,8 +83,10 @@ public class Enemy extends Entity {
         return currentSpeed;
     }
 
-    public void update(float cameraX, float playerX) {
-        super.update();
+    public boolean update() {
+        float cameraX = GameWrapper.instance.getCameraOrigin().x;
+        float playerX = GameWrapper.instance.getPlayer().getPosition().x;
+
         updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
                 mBody.getPosition());
@@ -107,6 +109,7 @@ public class Enemy extends Entity {
                     Constants.getFloat("darwinPlayerCushionSlowDown")));
         }
 
+        return false;
     }
 
     private void updateAndRemoveModifiers() {
