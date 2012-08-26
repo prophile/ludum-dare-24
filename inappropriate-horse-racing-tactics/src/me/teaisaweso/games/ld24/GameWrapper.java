@@ -658,9 +658,8 @@ public class GameWrapper implements ApplicationListener {
 
                 String[] pair = line.split(",");
                 assert pair.length == 2;
-                mPublicTopScores
-                        .add(new ScoreEntry(pair[0], new Integer(pair[1])
-                                .intValue()));
+                mPublicTopScores.add(new ScoreEntry(pair[0], new Integer(
+                        pair[1]).intValue()));
             }
 
         } catch (MalformedURLException e) {
