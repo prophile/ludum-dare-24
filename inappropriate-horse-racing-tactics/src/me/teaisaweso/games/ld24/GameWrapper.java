@@ -499,7 +499,6 @@ public class GameWrapper implements ApplicationListener {
         mBatch.setTransformMatrix(new Matrix4().translate(-getCameraOrigin().x,
                 -getCameraOrigin().y, 0));
 
-        mBackgroundManager.drawSky();
         mBatch.begin();
         mBackgroundManager.draw(mBatch);
 
