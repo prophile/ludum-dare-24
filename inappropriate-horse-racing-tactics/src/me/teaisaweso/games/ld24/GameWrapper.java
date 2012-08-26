@@ -75,7 +75,7 @@ public class GameWrapper implements ApplicationListener {
     private BackgroundManager mBackgroundManager;
     private Body mFloor;
     private TreeStumpObstacle mSingleTreeStumpObstacle;
-    private SlowDownRegion mSlowDown;
+    private SlowDownRegion mSlowDownRegion;
 
     private boolean mIsOnFloor;
 
@@ -165,7 +165,21 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createObstacles() {
-        mSlowDown = new SlowDownRegion(mWorld, 300000000, 0, 100, 20000);
+        createSlowDownRegion();
+        createSlowDownObstacle();
+        createTreeStumpObstacle();
+    }
+
+    private void createSlowDownRegion() {
+        mSlowDownRegion = new SlowDownRegion(mWorld, 300000000, 0, 100, 20000);
+    }
+
+    private void createSlowDownObstacle() {
+        mSingleSlowDownObstacle = new SlowDownObstacle(
+                createSlowDownObstaclePhysicsBody());
+    }
+
+    private Body createSlowDownObstaclePhysicsBody() {
         BodyDef bd = new BodyDef();
         bd.position.set(1000 / 16, 400 / 16);
         bd.type = BodyType.DynamicBody;
@@ -175,10 +189,9 @@ public class GameWrapper implements ApplicationListener {
         fd.shape = cs;
         fd.isSensor = false;
         fd.density = 1;
-        Body b = mWorld.createBody(bd);
-        b.createFixture(fd);
-        mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(1000, 50), mWorld);
-        mSingleSlowDownObstacle = new SlowDownObstacle(b);
+        Body body = mWorld.createBody(bd);
+        body.createFixture(fd);
+        return body;
     }
 
     private void loadGameOverAssets() {
@@ -254,8 +267,8 @@ public class GameWrapper implements ApplicationListener {
                 mIsOnFloor = true;
             }
 
-            if (b.getBody() == mSlowDown.mBody) {
-                mSlowDown.enterRegion(mPlayer);
+            if (b.getBody() == mSlowDownRegion.mBody) {
+                mSlowDownRegion.enterRegion(mPlayer);
             }
 
             if (b.getBody() == mEnemy.mBody) {
@@ -277,7 +290,8 @@ public class GameWrapper implements ApplicationListener {
                 mRemoveBodies.add(mSingleSlowDownObstacle.mBody);
             }
 
-            if (mSingleTreeStumpObstacle != null && b.getBody() == mSingleTreeStumpObstacle.mBody) {
+            if (mSingleTreeStumpObstacle != null
+                    && b.getBody() == mSingleTreeStumpObstacle.mBody) {
                 c.setEnabled(false);
             }
         }
@@ -302,11 +316,15 @@ public class GameWrapper implements ApplicationListener {
         }
 
         if (!mIsOnFloor) {
-            mPlayer.mBody.setLinearVelocity(
-                    mPlayer.mBody.getLinearVelocity().x * 0.997f,
-                    mPlayer.mBody.getLinearVelocity().y);
+            updatePlayerForAirControl();
         }
 
+    }
+
+    private void updatePlayerForAirControl() {
+        mPlayer.mBody.setLinearVelocity(
+                mPlayer.mBody.getLinearVelocity().x * 0.997f,
+                mPlayer.mBody.getLinearVelocity().y);
     }
 
     private void simulatePhysicsStep() {
@@ -318,23 +336,55 @@ public class GameWrapper implements ApplicationListener {
 
         mPlayer.update();
         mEnemy.update();
+        updateObstacles();
+    }
+
+    private void updateObstacles() {
         mSingleTreeStumpObstacle.update();
 
-        if (mSingleTreeStumpObstacle.getPosition().x - mCameraOrigin.x < -600) {
-            mSingleTreeStumpObstacle.mBody.setActive(false);
-            mWorld.destroyBody(mSingleTreeStumpObstacle.mBody);
-            mSingleTreeStumpObstacle = null;
-            mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(mCameraOrigin.x + 800
-                    + sRng.nextFloat() * 100, 50), mWorld);
+        if (treeStumpObstacleHasLeftScreen()) {
+            respawnTreeStumpObstacle();
         }
+    }
+
+    private void respawnTreeStumpObstacle() {
+        removeTreeStumpObstacle();
+        createTreeStumpObstacle();
+    }
+
+    private void createTreeStumpObstacle() {
+        mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(
+                mCameraOrigin.x + 800 + sRng.nextFloat() * 100, 50), mWorld);
+    }
+
+    private void removeTreeStumpObstacle() {
+        mSingleTreeStumpObstacle.mBody.setActive(false);
+        mWorld.destroyBody(mSingleTreeStumpObstacle.mBody);
+        mSingleTreeStumpObstacle = null;
+    }
+
+    private boolean treeStumpObstacleHasLeftScreen() {
+        return mSingleTreeStumpObstacle.getPosition().x - mCameraOrigin.x < -600;
     }
 
     private void updateBullet() {
         mBulletTicks += 1;
-        if (mBulletTicks > 100 && mBullet != null) {
-            mRemoveBodies.add(mBullet);
-            mBullet = null;
+        removeBulletIfExpired();
+    }
+
+    private void removeBulletIfExpired() {
+        if (bulletHasExpired()) {
+            removeBullet();
         }
+    }
+
+    private void removeBullet() {
+        mRemoveBodies.add(mBullet);
+        mBullet = null;
+    }
+
+    private boolean bulletHasExpired() {
+        return mBulletTicks > 100 && mBullet != null;
     }
 
     private boolean shouldJump() {
