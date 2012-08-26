@@ -357,8 +357,7 @@ public class GameWrapper implements ApplicationListener {
     void handleCollision(Fixture a, Fixture b, Contact c) {
         if (mBullet != null && a.getBody() == mBullet.mBody
                 && b.getBody() != mPlayer.mBody) {
-            // Register to remove this body
-            mRemoveBodies.add(mBullet.mBody);
+            boolean suppressBulletRemoval = false;
 
             // If off screen, ignore collision.
             Vector2 pos = b.getBody().getPosition();
@@ -367,9 +366,17 @@ public class GameWrapper implements ApplicationListener {
                 ;
             } else if (b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.hit();
+            } else if (b.getBody() == mEnemy.mBody) {
+                Vector2 velocity = mBullet.mBody.getLinearVelocity();
+                mBullet.mBody.setLinearVelocity(-velocity.x, velocity.y);
+                suppressBulletRemoval = true;
             }
 
-            mBullet = null;
+            if (!suppressBulletRemoval) {
+                // Register to remove this body
+                mRemoveBodies.add(mBullet.mBody);
+                mBullet = null;
+            }
         }
 
         if (a.getBody() == mPlayer.mBody) {
