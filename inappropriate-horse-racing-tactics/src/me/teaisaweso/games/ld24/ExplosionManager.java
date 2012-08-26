@@ -17,7 +17,7 @@ public class ExplosionManager {
 
     public ExplosionManager() {
         ParticleEffect effect = new ParticleEffect();
-        effect.load(Gdx.files.internal("assets/boom"),
+        effect.load(Gdx.files.internal("assets/bananarama"),
                 Gdx.files.internal("assets"));
         mEffectPool = new ParticleEffectPool(effect, 4, 4);
     }
