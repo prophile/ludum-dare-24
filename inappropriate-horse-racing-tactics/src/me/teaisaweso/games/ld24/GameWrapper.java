@@ -90,7 +90,7 @@ public class GameWrapper implements ApplicationListener {
         bd.type = BodyType.StaticBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(3000f, 0.5f);
+        ps.setAsBox(40000000, 0.5f);
         fd.shape = ps;
         bd.fixedRotation = true;
         bd.position.set(0, 0);
