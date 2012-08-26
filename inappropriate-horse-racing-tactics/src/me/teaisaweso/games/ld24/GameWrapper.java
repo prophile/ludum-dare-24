@@ -10,6 +10,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -56,6 +57,7 @@ public class GameWrapper implements ApplicationListener {
     private int mBulletTicks;
     private OrthographicCamera mCamera;
     private Sprite mCrosshair;
+    private Sound mEvolutionShootsound;
 
     private Box2DDebugRenderer mDebugger;
 
@@ -85,6 +87,7 @@ public class GameWrapper implements ApplicationListener {
 
     private World mWorld;
     private int mTicks;
+    private Sound mDarwinHurtSound;
 
     public void addFloor() {
         BodyDef bd = new BodyDef();
@@ -128,10 +131,10 @@ public class GameWrapper implements ApplicationListener {
     public void create() {
         mTicks = 0;
         loadGameOverAssets();
+        mEvolutionShootsound = Gdx.audio.newSound(Gdx.files.internal("assets/EvolutionShoot.wav"));
         createCamera();
         mBullet = null;
         mBackgroundManager = new BackgroundManager();
-
         createPhysicsSimulation();
 
         mBatch = new SpriteBatch();
@@ -147,6 +150,7 @@ public class GameWrapper implements ApplicationListener {
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
     }
 
+    
     private void createCamera() {
         setCameraOrigin(new Vector2(0, 0));
         float w = Gdx.graphics.getWidth();
@@ -259,6 +263,7 @@ public class GameWrapper implements ApplicationListener {
             fd.isSensor = true;
             mBullet = mWorld.createBody(bd);
             mBullet.createFixture(fd);
+            mEvolutionShootsound.play();
         }
 
         mCrosshair.draw(sb);
@@ -487,7 +492,7 @@ public class GameWrapper implements ApplicationListener {
         updateBullet();
 
         mPlayer.update();
-        mEnemy.update();
+        mEnemy.update(mCameraOrigin.x, mPlayer.getPosition().x);
         updateObstacles();
     }
 

@@ -76,15 +76,23 @@ public class Enemy extends Entity {
         return currentSpeed;
     }
 
-    @Override
-    public void update() {
+    public void update(float cameraX, float playerX) {
+        super.update();
         updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
                 mBody.getPosition());
-        if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
-            mBody.setLinearVelocity(getEffectiveMaxSpeed(),
-                    mBody.getLinearVelocity().y);
+        if (this.getPosition().x - cameraX < -600) {
+            System.out.println("boosting");
+            mBody.setLinearVelocity(new Vector2(getEffectiveMaxSpeed()+10000, 0));
+        } else {
+            if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
+                mBody.setLinearVelocity(mBody.getLinearVelocity().x*0.99f,
+                        mBody.getLinearVelocity().y);
+            }
         }
+        
+        
+
     }
 
     private void updateAndRemoveModifiers() {

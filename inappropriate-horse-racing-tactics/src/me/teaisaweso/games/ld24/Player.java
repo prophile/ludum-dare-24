@@ -7,7 +7,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -21,11 +22,14 @@ public class Player extends Entity {
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
     private final Sprite mSprite;
     private int mLastJumpTicks;
+    private Sound mJumpSound, mHurtSound;
 
     public Player(Sprite sprite, World world) {
         configureAttributes();
         mSprite = sprite;
         createPhysicsBody(world);
+        mJumpSound = Gdx.audio.newSound(Gdx.files.internal("assets/Jump.wav"));
+        mHurtSound = Gdx.audio.newSound(Gdx.files.internal("assets/MonkeyHurt.wav"));
     }
 
     private void createPhysicsBody(World world) {
@@ -46,7 +50,7 @@ public class Player extends Entity {
     }
 
     private void configureAttributes() {
-        mAttributes.mMaxSpeed = 30;
+        mAttributes.mMaxSpeed = 33;
         mAttributes.mAccel = 100;
         mWidth = 200;
         mHeight = 200;
@@ -115,6 +119,7 @@ public class Player extends Entity {
         if (mLastJumpTicks > 10) {
             mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, 50));
             mLastJumpTicks = 0;
+            mJumpSound.play();
         }
         
     }
@@ -122,6 +127,7 @@ public class Player extends Entity {
     public void doHurt() {
         mSprite.setColor(0.7f, 0.3f, 0.3f, 1.0f);
         mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.1f));
+        mHurtSound.play();
         Timer t = new Timer();
         t.schedule(new TimerTask() {
             
