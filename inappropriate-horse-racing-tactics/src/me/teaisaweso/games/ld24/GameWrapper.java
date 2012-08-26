@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -74,7 +75,8 @@ public class GameWrapper implements ApplicationListener {
 
     private Player mPlayer;
 
-    private final HashSet<Body> mRemoveBodies = new HashSet<Body>();
+    private final Set<Body> mRemoveBodies = new HashSet<Body>();
+    private final Set<Entity> mEntities = new HashSet<Entity>();
 
     public final Random mRng = new Random();
 
