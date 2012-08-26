@@ -531,6 +531,9 @@ public class GameWrapper implements ApplicationListener {
         if (mSingleSlowDownObstacle != null) {
             mSingleSlowDownObstacle.draw(mBatch);
         }
+        if (mSingleSoupObstacle != null) {
+            mSingleSoupObstacle.draw(mBatch);
+        }
         drawCrosshair(mBatch);
 
         // Reset transform to untransformed, draw distance/score text
