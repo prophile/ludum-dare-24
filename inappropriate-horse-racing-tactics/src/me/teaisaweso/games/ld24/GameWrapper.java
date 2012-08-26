@@ -46,9 +46,7 @@ public class GameWrapper implements ApplicationListener {
     private static Random sRng = new Random();
 
     private SpriteBatch mBatch;
-    private BulletEntity mBullet = null;
-
-    private int mBulletTicks;
+    BulletEntity mBullet = null;
 
     private OrthographicCamera mCamera;
 
@@ -75,8 +73,8 @@ public class GameWrapper implements ApplicationListener {
 
     private Player mPlayer;
 
-    private final Set<Body> mRemoveBodies = new HashSet<Body>();
-    private final Set<Entity> mEntities = new HashSet<Entity>();
+    final Set<Body> mRemoveBodies = new HashSet<Body>();
+    final Set<Entity> mEntities = new HashSet<Entity>();
 
     public final Random mRng = new Random();
 
@@ -109,10 +107,6 @@ public class GameWrapper implements ApplicationListener {
         bd.position.set(0, 0);
         mFloor = mWorld.createBody(bd);
         mFloor.createFixture(fd);
-    }
-
-    private boolean bulletHasExpired() {
-        return mBulletTicks > 50 && mBullet != null;
     }
 
     public void clearGameOver() {
@@ -262,7 +256,6 @@ public class GameWrapper implements ApplicationListener {
 
         if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
             System.out.println("touch");
-            mBulletTicks = 0;
             BodyDef bd = new BodyDef();
             bd.type = BodyType.KinematicBody;
             float px = playerSprite.getX() + playerSprite.getWidth() / 2;
@@ -397,17 +390,6 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void pause() {
-    }
-
-    private void removeBullet() {
-        mRemoveBodies.add(mBullet.mBody);
-        mBullet = null;
-    }
-
-    private void removeBulletIfExpired() {
-        if (bulletHasExpired()) {
-            removeBullet();
-        }
     }
 
     private void removeCondemnedBodies() {
@@ -584,13 +566,7 @@ public class GameWrapper implements ApplicationListener {
 
     }
 
-    private void updateBullet() {
-        mBulletTicks += 1;
-        removeBulletIfExpired();
-    }
-
     private void updateEntities() {
-        updateBullet();
 
         mPlayer.update();
         mEnemy.update(mCameraOrigin.x, mPlayer.getPosition().x);

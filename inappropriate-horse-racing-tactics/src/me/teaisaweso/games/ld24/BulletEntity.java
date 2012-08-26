@@ -61,6 +61,12 @@ public class BulletEntity extends Entity {
         mParticleEffect.setPosition(position.x, position.y);
         mTicks += 1;
         mParticleEffect.update(1.0f / 60.0f);
+        if (mTicks > 50) {
+            // We've expired; remove ourselves from the list of entities
+            GameWrapper.instance.mRemoveBodies.add(this.mBody);
+            GameWrapper.instance.mEntities.remove(this);
+            GameWrapper.instance.mBullet = null;
+        }
     }
 
     public void reflect() {
