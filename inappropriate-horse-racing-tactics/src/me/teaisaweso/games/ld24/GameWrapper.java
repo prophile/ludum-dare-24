@@ -181,7 +181,7 @@ public class GameWrapper implements ApplicationListener {
         b.createFixture(fd);
         mTso = new TreeStumpObstacle(new Vector2(1000, 50), mWorld);
 
-        mRo = new RockObstacle(new Vector2(1500, 50), mWorld);
+        mRo = new RockObstacle(new Vector2(2000, 50), mWorld);
         mSingleSlowDownObstacle = new SlowDownObstacle(b);
     }
 
@@ -255,7 +255,8 @@ public class GameWrapper implements ApplicationListener {
         }
 
         if (a.getBody() == mPlayer.mBody) {
-            if (b.getBody() == mFloor) {
+            if (b.getBody() == mFloor || (b.getBody() == mTso.mBody &&
+                    mPlayer.getPosition().y > mTso.getPosition().y + 122)) {
                 mIsOnFloor = true;
             }
 
@@ -288,6 +289,10 @@ public class GameWrapper implements ApplicationListener {
             }
 
             if (mTso != null && b.getBody() == mTso.mBody) {
+                c.setEnabled(false);
+            }
+            
+            if (mRo != null && b.getBody() == mRo.mBody) {
                 c.setEnabled(false);
             }
         }

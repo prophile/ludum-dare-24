@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Player extends Entity {
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
     private final Sprite mSprite;
+    private int mLastJumpTicks;
 
     public Player(Sprite sprite, World world) {
         configureAttributes();
@@ -87,6 +88,7 @@ public class Player extends Entity {
 
     @Override
     public void update() {
+        mLastJumpTicks++;
         updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
                 mBody.getPosition());
@@ -110,7 +112,11 @@ public class Player extends Entity {
     }
 
     public void jump() {
-        mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, 25));
+        if (mLastJumpTicks > 10) {
+            mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, 50));
+            mLastJumpTicks = 0;
+        }
+        
     }
 
     public void doHurt() {
