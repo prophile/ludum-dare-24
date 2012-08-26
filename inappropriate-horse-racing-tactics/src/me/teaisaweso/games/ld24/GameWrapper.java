@@ -474,7 +474,7 @@ public class GameWrapper implements ApplicationListener {
         // Reset transform to untransformed, draw distance/score text
         mBatch.setTransformMatrix(new Matrix4().translate(0, 0, 0));
         mScore = (int) getCameraOrigin().x;
-        String dist = Integer.toString(mScore);
+        String dist = "Score: " + Integer.toString(mScore);
         mTextFont.draw(mBatch, dist, -390.0f, +290.0f);
 
         mBatch.end();
