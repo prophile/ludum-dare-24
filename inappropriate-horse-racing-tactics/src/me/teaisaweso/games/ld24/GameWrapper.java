@@ -195,7 +195,7 @@ public class GameWrapper implements ApplicationListener {
         Texture crosshair = new Texture(
                 Gdx.files.internal("assets/crosshair.png"));
         mCrosshair = new Sprite(crosshair, 35, 35);
-        
+
     }
 
     private void createDarwin() {
@@ -261,8 +261,7 @@ public class GameWrapper implements ApplicationListener {
         mTreeStumpObstacle1 = new TreeStumpObstacle(new Vector2(position),
                 mWorld, 1);
 
-        if (sRng.nextFloat() < Constants.sInstance.mConstants
-                .get("doubleTreeProbability")) {
+        if (sRng.nextFloat() < Constants.getFloat("doubleTreeProbability")) {
             mTreeStumpObstacle2 = new TreeStumpObstacle(new Vector2(
                     position.add(200, 30)), mWorld, 1.5f);
         }
@@ -281,8 +280,8 @@ public class GameWrapper implements ApplicationListener {
         Vector2 crosshairPosition = computeCrosshairPosition(mouse,
                 playerSprite);
 
-        mCrosshair
-                .setPosition(crosshairPosition.x - 35/2, crosshairPosition.y - 35/2);
+        mCrosshair.setPosition(crosshairPosition.x - 35 / 2,
+                crosshairPosition.y - 35 / 2);
 
         if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
             System.out.println("touch");
@@ -362,14 +361,14 @@ public class GameWrapper implements ApplicationListener {
 
         if (a.getBody() == mPlayer.mBody) {
             if (b.getBody() == mFloor
-                    || (mTreeStumpObstacle1 != null
-                            && b.getBody() == mTreeStumpObstacle1.mBody && mPlayer
-                            .getPosition().y > mTreeStumpObstacle1
-                            .getPosition().y + 122)
-                    || (mTreeStumpObstacle2 != null
-                            && b.getBody() == mTreeStumpObstacle2.mBody && mPlayer
-                            .getPosition().y > mTreeStumpObstacle2
-                            .getPosition().y + 122 * 1.5)) {
+                    || mTreeStumpObstacle1 != null
+                    && b.getBody() == mTreeStumpObstacle1.mBody
+                    && mPlayer.getPosition().y > mTreeStumpObstacle1
+                            .getPosition().y + 122
+                    || mTreeStumpObstacle2 != null
+                    && b.getBody() == mTreeStumpObstacle2.mBody
+                    && mPlayer.getPosition().y > mTreeStumpObstacle2
+                            .getPosition().y + 122 * 1.5) {
                 mIsOnFloor = true;
             }
 

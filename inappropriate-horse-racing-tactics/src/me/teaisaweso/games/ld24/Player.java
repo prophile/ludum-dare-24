@@ -37,12 +37,12 @@ public class Player extends Entity {
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        
-        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO)-4, mHeight
-                / (2 * GameWrapper.PHYSICS_RATIO), new Vector2(-1,0),0);
+
+        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO) - 4, mHeight
+                / (2 * GameWrapper.PHYSICS_RATIO), new Vector2(-1, 0), 0);
         fd.density = 1;
         fd.shape = ps;
-        
+
         bd.type = BodyType.DynamicBody;
         bd.fixedRotation = true;
         bd.position.set(0, 3);
@@ -52,8 +52,8 @@ public class Player extends Entity {
     }
 
     private void configureAttributes() {
-        mAttributes.mMaxSpeed = Constants.sInstance.mConstants.get("playerMaxSpeed");
-        mAttributes.mAccel = Constants.sInstance.mConstants.get("playerAccel");
+        mAttributes.mMaxSpeed = Constants.getFloat("playerMaxSpeed");
+        mAttributes.mAccel = Constants.getFloat("playerAccel");
         mWidth = 200;
         mHeight = 200;
     }
@@ -95,7 +95,8 @@ public class Player extends Entity {
     @Override
     public void update() {
         if (!GameWrapper.instance.isOnFloor()) {
-            mBody.applyForceToCenter(0.0f, Constants.sInstance.mConstants.get("gravity") * mBody.getMass());
+            mBody.applyForceToCenter(0.0f, Constants.getFloat("gravity")
+                    * mBody.getMass());
         }
         mLastJumpTicks++;
         updateAndRemoveModifiers();
@@ -122,7 +123,8 @@ public class Player extends Entity {
 
     public void jump() {
         if (mLastJumpTicks > 10) {
-            mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, Constants.sInstance.mConstants.get("jumpVelocity")));
+            mBody.setLinearVelocity(mBody.getLinearVelocity().add(0,
+                    Constants.getFloat("jumpVelocity")));
             mLastJumpTicks = 0;
             mJumpSound.play();
         }
