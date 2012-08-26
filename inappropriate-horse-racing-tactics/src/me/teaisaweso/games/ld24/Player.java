@@ -19,12 +19,12 @@ public class Player extends Entity {
     private final Sprite mSprite;
 
     public Player(Sprite sprite, World world) {
-
-        mAttributes.mMaxSpeed = 30000;
-        mAttributes.mAccel = 30;
+        configureAttributes();
         mSprite = sprite;
-        mWidth = 200;
-        mHeight = 200;
+        createPhysicsBody(world);
+    }
+
+    private void createPhysicsBody(World world) {
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
@@ -41,6 +41,13 @@ public class Player extends Entity {
         mBody = b;
     }
 
+    private void configureAttributes() {
+        mAttributes.mMaxSpeed = 30000;
+        mAttributes.mAccel = 30;
+        mWidth = 200;
+        mHeight = 200;
+    }
+
     public void addStatusModifier(StatusModifier modifier) {
         mStatusModifiers.add(modifier);
     }
@@ -54,7 +61,6 @@ public class Player extends Entity {
         }
 
         return currentSprite;
-
     }
 
     public float getEffectiveAccel() {
