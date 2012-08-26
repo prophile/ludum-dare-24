@@ -253,8 +253,8 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createSoupObstacle() {
-        mSingleSoupObstacle = new SoupObstacle(new Vector2(getCameraOrigin().x
-                + 800 + mRng.nextFloat() * 100, 50), mWorld);
+        mSingleSoupObstacle = new SoupObstacle(getCameraOrigin().x + 1200
+                + mRng.nextFloat() * 1200, mWorld);
     }
 
     @Override
