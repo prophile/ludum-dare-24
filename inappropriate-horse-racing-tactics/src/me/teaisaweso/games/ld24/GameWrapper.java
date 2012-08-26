@@ -345,6 +345,8 @@ public class GameWrapper implements ApplicationListener {
                 ;
             } else if (b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.hit();
+            } else if (b.getBody() == mSingleSoupObstacle.mBody) {
+                mSingleSoupObstacle.hit();
             }
 
             mBullet = null;

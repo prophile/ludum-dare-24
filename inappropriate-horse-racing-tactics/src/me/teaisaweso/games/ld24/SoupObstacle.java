@@ -68,6 +68,7 @@ public class SoupObstacle extends PhysicalObstacle {
         mBody.createFixture(fd);
         mTicks = 0;
         mDead = false;
+        mStage = EvolutionStage.NORMAL;
     }
 
     @Override
@@ -82,19 +83,31 @@ public class SoupObstacle extends PhysicalObstacle {
 
     @Override
     public void update() {
-        if (mTicks % 21 < 7) {
-            mSprite.setTexture(sSoup1);
-        } else if (mTicks % 21 > 14) {
-            mSprite.setTexture(sSoup2);
+        if (mStage == EvolutionStage.NORMAL) {
+            if (mTicks % 21 < 7) {
+                mSprite.setTexture(sSoup1);
+            } else if (mTicks % 21 > 14) {
+                mSprite.setTexture(sSoup2);
+            } else {
+                mSprite.setTexture(sSoup3);
+            }
         } else {
-            mSprite.setTexture(sSoup3);
+            if (mTicks % 20 < 10) {
+                mSprite.setTexture(sSoupTentacle1);
+            } else {
+                mSprite.setTexture(sSoupTentacle2);
+            }
         }
         mTicks++;
     }
 
     @Override
     public void hit() {
-        // TODO Auto-generated method stub
+        if (mStage == EvolutionStage.NORMAL) {
+            System.out.println("evolving");
+            mStage = EvolutionStage.TENTACLES;
+            mEvolutionSound.play();
+        }
     }
 
     @Override
