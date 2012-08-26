@@ -419,11 +419,13 @@ public class GameWrapper implements ApplicationListener {
     private void removeTreeStumpObstacle() {
         mTreeStumpObstacle1.mBody.setActive(false);
         mWorld.destroyBody(mTreeStumpObstacle1.mBody);
+        mEntities.remove(mTreeStumpObstacle1);
         mTreeStumpObstacle1 = null;
 
         if (mTreeStumpObstacle2 != null) {
             mTreeStumpObstacle2.mBody.setActive(false);
             mWorld.destroyBody(mTreeStumpObstacle2.mBody);
+            mEntities.remove(mTreeStumpObstacle2);
             mTreeStumpObstacle2 = null;
         }
     }
@@ -623,7 +625,9 @@ public class GameWrapper implements ApplicationListener {
                             - getCameraOrigin().x < -600) {
                 mSingleRockObstacle.mBody.setActive(false);
                 mWorld.destroyBody(mSingleRockObstacle.mBody);
+                mEntities.remove(mSingleRockObstacle);
                 mSingleRockObstacle = new RockObstacle(getCameraOrigin().x + Constants.getFloat("rockSpacing"), mWorld);
+                mEntities.add(mSingleRockObstacle);
             }
         }
         if (mSingleSlowDownObstacle != null) {
@@ -633,7 +637,9 @@ public class GameWrapper implements ApplicationListener {
                             - getCameraOrigin().x < -600) {
                 mSingleSlowDownObstacle.mBody.setActive(false);
                 mWorld.destroyBody(mSingleSlowDownObstacle.mBody);
+                mEntities.remove(mSingleSlowDownObstacle);
                 createSlowDownObstacle();
+                mEntities.add(mSingleSlowDownObstacle);
             }
         }
 
@@ -644,7 +650,9 @@ public class GameWrapper implements ApplicationListener {
                             - getCameraOrigin().x < -600) {
                 mSingleSoupObstacle.mBody.setActive(false);
                 mWorld.destroyBody(mSingleSoupObstacle.mBody);
+                mEntities.remove(mSingleSoupObstacle);
                 createSoupObstacle();
+                mEntities.add(mSingleSoupObstacle);
             }
         }
     }
