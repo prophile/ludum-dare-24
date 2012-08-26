@@ -571,11 +571,14 @@ public class GameWrapper implements ApplicationListener {
         mPlayer.update();
         mEnemy.update(mCameraOrigin.x, mPlayer.getPosition().x);
         List<Entity> condemned = new ArrayList<Entity>();
-        for (Entity e : mEntities)
-            if (e instanceof BulletEntity)
-                if (e.update())
+        for (Entity e : mEntities) {
+            if (e instanceof BulletEntity || e instanceof PhysicalObstacle) {
+                if (e.update()) {
                     // Exterminate
                     condemned.add(e);
+                }
+            }
+        }
         
         for (Entity c : condemned) {
             if (c.mBody != null)
@@ -588,18 +591,11 @@ public class GameWrapper implements ApplicationListener {
 
     private void updateObstacles() {
         if (mTreeStumpObstacle1 != null) {
-            mTreeStumpObstacle1.update();
-
-            if (mTreeStumpObstacle2 != null) {
-                mTreeStumpObstacle2.update();
-            }
-
             if (treeStumpObstacleHasLeftScreen()) {
                 respawnTreeStumpObstacle();
             }
         }
         if (mSingleRockObstacle != null) {
-            mSingleRockObstacle.update();
             if (mSingleRockObstacle.mDead
                     || mSingleRockObstacle.getPosition().x
                             - getCameraOrigin().x < -600) {
@@ -611,7 +607,6 @@ public class GameWrapper implements ApplicationListener {
             }
         }
         if (mSingleSlowDownObstacle != null) {
-            mSingleSlowDownObstacle.update();
             if (mSingleSlowDownObstacle.mDead
                     || mSingleSlowDownObstacle.getPosition().x
                             - getCameraOrigin().x < -600) {
@@ -624,7 +619,6 @@ public class GameWrapper implements ApplicationListener {
         }
 
         if (mSingleSoupObstacle != null) {
-            mSingleSoupObstacle.update();
             if (mSingleSoupObstacle.mDead
                     || mSingleSoupObstacle.getPosition().x
                             - getCameraOrigin().x < -600) {
