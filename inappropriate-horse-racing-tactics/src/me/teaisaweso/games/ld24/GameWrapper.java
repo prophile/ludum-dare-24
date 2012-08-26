@@ -55,7 +55,7 @@ public class GameWrapper implements ApplicationListener {
     private SpriteBatch mGameOverBatch;
     private Sprite mGameOverSprite;
     private boolean mIsGameOver;
-    private boolean mIsOnFloor;
+    public boolean mIsOnFloor;
 
     private Player mPlayer;
 
@@ -125,7 +125,8 @@ public class GameWrapper implements ApplicationListener {
         instance = this;
         mTicks = 0;
         loadGameOverAssets();
-        mEvolutionShootsound = Gdx.audio.newSound(Gdx.files.internal("assets/EvolutionShoot.wav"));
+        mEvolutionShootsound = Gdx.audio.newSound(Gdx.files
+                .internal("assets/EvolutionShoot.wav"));
         createCamera();
         mBullet = null;
         mBackgroundManager = new BackgroundManager();
@@ -144,7 +145,6 @@ public class GameWrapper implements ApplicationListener {
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
     }
 
-    
     private void createCamera() {
         setCameraOrigin(new Vector2(0, 0));
         float w = Gdx.graphics.getWidth();
@@ -176,7 +176,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createPhysicsSimulation() {
-        mWorld = new World(new Vector2(0, -100), true);
+        mWorld = new World(new Vector2(0, 0), true);
         mWorld.setContactListener(new WorldContactListener(this));
     }
 
