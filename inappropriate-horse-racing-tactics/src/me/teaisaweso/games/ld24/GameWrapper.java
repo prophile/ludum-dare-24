@@ -8,7 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -534,7 +534,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void setGameOver() {
-        new Thread(mPublicTopScores).start();
+        mPublicTopScores.downloadScoresAgain(mScore);
         mIsGameOver = true;
     }
 
@@ -623,20 +623,25 @@ public class GameWrapper implements ApplicationListener {
 
     private void updatePlayerForAirControl() {
         mPlayer.mBody.setLinearVelocity(
-                mPlayer.mBody.getLinearVelocity().x * 0.997f,
-                mPlayer.mBody.getLinearVelocity().y);
+                mPlayer.mBody.getLinearVelocity().x * 0.997f, mPlayer.mBody
+                        .getLinearVelocity().y);
     }
 
     protected class ScoreDownloader implements Runnable {
-        public ConcurrentLinkedQueue<ScoreEntry> mScoreList;
+        public ConcurrentSkipListSet<ScoreEntry> mScoreList;
 
         public ScoreDownloader() {
-            mScoreList = new ConcurrentLinkedQueue<ScoreEntry>();
+            mScoreList = new ConcurrentSkipListSet<ScoreEntry>();
+        }
+
+        public void downloadScoresAgain(int myScore) {
+            mScoreList.clear();
+            String username = System.getProperty("user.name");
+            mScoreList.add(new ScoreEntry(username, myScore));
+            new Thread(mPublicTopScores).start();
         }
 
         public void run() {
-            mScoreList.clear();
-
             try {
                 // Open scores url,
                 URL u = new URL(
