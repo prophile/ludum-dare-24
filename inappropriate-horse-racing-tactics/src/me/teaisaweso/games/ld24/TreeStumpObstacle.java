@@ -25,7 +25,6 @@ public class TreeStumpObstacle extends PhysicalObstacle {
     }
  
     public TreeStumpObstacle(Vector2 worldPosition, World w, float scale) {
-        super(null);
         Texture t = new Texture(Gdx.files.internal("assets/Stump.png"));
         mSprite = new Sprite(t, 161, 122);
         mSprite.setScale(scale);

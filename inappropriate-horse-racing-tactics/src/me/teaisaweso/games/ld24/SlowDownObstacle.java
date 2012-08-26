@@ -62,7 +62,6 @@ public class SlowDownObstacle extends PhysicalObstacle {
     }
 
     public SlowDownObstacle(World world) {
-        super(null);
         loadTexturesOnDemand();
 
         float minSpacing = Constants.getFloat("bananaMinSpacing");

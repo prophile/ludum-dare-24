@@ -46,7 +46,6 @@ public class SoupObstacle extends PhysicalObstacle {
     }
 
     public SoupObstacle(float x, World w) {
-        super(null);
         loadTexturesOnDemand();
         mWidth = 180;
         mHeight = 115;
