@@ -201,13 +201,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createDarwin() {
-        Texture t;
-        Sprite s;
-        t = new Texture(Gdx.files.internal("assets/Asset_Darwin1.png"));
-        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        s = new Sprite(t, 200, 400);
-
-        mEnemy = new Enemy(s, mWorld);
+        mEnemy = new Enemy(mWorld);
     }
 
     private void createObstacles() {

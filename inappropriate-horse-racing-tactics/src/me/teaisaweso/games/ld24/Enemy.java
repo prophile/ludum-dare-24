@@ -5,22 +5,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Enemy extends Entity {
 
     private final Sprite mSprite;
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
 
-    public Enemy(Sprite sprite, World world) {
-        mSprite = sprite;
+    public Enemy(World world) {
+        Texture t;
+        t = new Texture(Gdx.files.internal("assets/Asset_Darwin1.png"));
+        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        mSprite = new Sprite(t, 200, 400);
         mWidth = 200;
         mHeight = 400;
         mAttributes.mMaxSpeed = Constants.getFloat("darwinMaxSpeed");
