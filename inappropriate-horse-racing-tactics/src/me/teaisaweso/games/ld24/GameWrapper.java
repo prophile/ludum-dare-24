@@ -77,6 +77,8 @@ public class GameWrapper implements ApplicationListener {
     private TreeStumpObstacle mTso;
     private SlowDownRegion mSlowDown;
 
+    private RockObstacle mRo;
+
     private boolean mIsOnFloor;
 
     private Sprite mGameOverSprite;
@@ -178,6 +180,8 @@ public class GameWrapper implements ApplicationListener {
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
         mTso = new TreeStumpObstacle(new Vector2(1000, 50), mWorld);
+
+        mRo = new RockObstacle(new Vector2(1500, 50), mWorld);
         mSingleSlowDownObstacle = new SlowDownObstacle(b);
     }
 
@@ -225,6 +229,7 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
+        mRo.draw(mBatch);
         mTso.draw(mBatch);
         drawCrosshair(mBatch);
         mBatch.end();
@@ -265,6 +270,11 @@ public class GameWrapper implements ApplicationListener {
             if (mSingleSlowDownObstacle != null
                     && b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.collide(mPlayer);
+                c.setEnabled(false);
+            }
+
+            if (mRo != null && b.getBody() == mRo.mBody) {
+                mRo.collide(mPlayer);
                 c.setEnabled(false);
             }
 
@@ -319,6 +329,7 @@ public class GameWrapper implements ApplicationListener {
         mPlayer.update();
         mEnemy.update();
         mTso.update();
+        mRo.update();
 
         if (mTso.getPosition().x - mCameraOrigin.x < -600) {
             mTso.mBody.setActive(false);
@@ -326,6 +337,13 @@ public class GameWrapper implements ApplicationListener {
             mTso = null;
             mTso = new TreeStumpObstacle(new Vector2(mCameraOrigin.x + 800
                     + sRng.nextFloat() * 100, 50), mWorld);
+        }
+
+        if (mRo.mDead || mRo.getPosition().x - mCameraOrigin.x < -600) {
+            mRo.mBody.setActive(false);
+            mWorld.destroyBody(mRo.mBody);
+            mRo = new RockObstacle(new Vector2(mCameraOrigin.x + 1600, 50),
+                    mWorld);
         }
     }
 

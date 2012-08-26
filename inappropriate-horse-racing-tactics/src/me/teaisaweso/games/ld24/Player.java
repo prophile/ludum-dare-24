@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -108,6 +111,20 @@ public class Player extends Entity {
 
     public void jump() {
         mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, 25));
+    }
+
+    public void doHurt() {
+        mSprite.setColor(0.7f, 0.3f, 0.3f, 1.0f);
+        mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.1f));
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            
+            @Override
+            public void run() {
+                mSprite.setColor(1.0f,1.0f,1.0f,1.0f);
+                mBody.setLinearVelocity(mBody.getLinearVelocity().mul(3f));
+            }
+        }, 1000);
     }
 
 }
