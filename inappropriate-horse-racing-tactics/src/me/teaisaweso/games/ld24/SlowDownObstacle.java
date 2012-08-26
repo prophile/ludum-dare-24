@@ -8,14 +8,16 @@ import com.badlogic.gdx.physics.box2d.Body;
 public class SlowDownObstacle extends PhysicalObstacle {
 
     public boolean mIsEvolved = false;
-    private Sound mDarwinHurtSound;
-    private Sound mEvolutionSound;
+    private final Sound mDarwinHurtSound;
+    private final Sound mEvolutionSound;
 
     public SlowDownObstacle(Body b) {
         super(b);
         // TODO Auto-generated constructor stub
-        mDarwinHurtSound = Gdx.audio.newSound(Gdx.files.internal("assets/DarwinHurt.wav"));
-        mEvolutionSound = Gdx.audio.newSound(Gdx.files.internal("assets/Evolve.wav"));
+        mDarwinHurtSound = Gdx.audio.newSound(Gdx.files
+                .internal("assets/DarwinHurt.wav"));
+        mEvolutionSound = Gdx.audio.newSound(Gdx.files
+                .internal("assets/Evolve.wav"));
     }
 
     @Override
@@ -23,6 +25,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
         if (e instanceof Enemy && mIsEvolved) {
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
+            enemy.mBody.setLinearVelocity(0.0f, 0.0f);
             mDarwinHurtSound.play();
         }
     }
@@ -42,7 +45,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
             Vector2 position = getPosition();
             Enemy e = GameWrapper.instance.getEnemy();
             Vector2 target = e.getPosition();
-            target.add(new Vector2(0, 250));
+            target.add(new Vector2(0, 150));
             target.sub(position);
             target.mul(1.8f);
             mBody.applyForceToCenter(target);
@@ -54,5 +57,4 @@ public class SlowDownObstacle extends PhysicalObstacle {
     public StatusModifier freshStatusModifier() {
         return new SlowDownModifier();
     }
-
 }

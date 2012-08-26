@@ -22,14 +22,15 @@ public class Player extends Entity {
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
     private final Sprite mSprite;
     private int mLastJumpTicks;
-    private Sound mJumpSound, mHurtSound;
+    private final Sound mJumpSound, mHurtSound;
 
     public Player(Sprite sprite, World world) {
         configureAttributes();
         mSprite = sprite;
         createPhysicsBody(world);
         mJumpSound = Gdx.audio.newSound(Gdx.files.internal("assets/Jump.wav"));
-        mHurtSound = Gdx.audio.newSound(Gdx.files.internal("assets/MonkeyHurt.wav"));
+        mHurtSound = Gdx.audio.newSound(Gdx.files
+                .internal("assets/MonkeyHurt.wav"));
     }
 
     private void createPhysicsBody(World world) {
@@ -92,6 +93,9 @@ public class Player extends Entity {
 
     @Override
     public void update() {
+        if (!GameWrapper.instance.isOnFloor()) {
+            mBody.applyForceToCenter(0.0f, -98f * mBody.getMass());
+        }
         mLastJumpTicks++;
         updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
@@ -121,7 +125,7 @@ public class Player extends Entity {
             mLastJumpTicks = 0;
             mJumpSound.play();
         }
-        
+
     }
 
     public void doHurt() {
@@ -130,10 +134,10 @@ public class Player extends Entity {
         mHurtSound.play();
         Timer t = new Timer();
         t.schedule(new TimerTask() {
-            
+
             @Override
             public void run() {
-                mSprite.setColor(1.0f,1.0f,1.0f,1.0f);
+                mSprite.setColor(1.0f, 1.0f, 1.0f, 1.0f);
                 mBody.setLinearVelocity(mBody.getLinearVelocity().mul(3f));
             }
         }, 1000);

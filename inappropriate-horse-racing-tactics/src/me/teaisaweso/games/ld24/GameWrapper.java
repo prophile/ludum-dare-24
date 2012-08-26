@@ -46,15 +46,17 @@ public class GameWrapper implements ApplicationListener {
     private Vector2 mCameraOrigin = new Vector2(0, 0);
 
     private Sprite mCrosshair;
-    private Sound mEvolutionShootsound;
+    private Sound mDarwinHurtSound;
 
     private Box2DDebugRenderer mDebugger;
 
     private Enemy mEnemy;
+    private Sound mEvolutionShootsound;
     private Body mFloor;
     private SpriteBatch mGameOverBatch;
     private Sprite mGameOverSprite;
     private boolean mIsGameOver;
+
     private boolean mIsOnFloor;
 
     private Player mPlayer;
@@ -72,10 +74,8 @@ public class GameWrapper implements ApplicationListener {
     private SlowDownRegion mSlowDownRegion;
 
     private Texture mTexture;
-
-    private World mWorld;
     private int mTicks;
-    private Sound mDarwinHurtSound;
+    private World mWorld;
 
     private boolean mSplashScreen = true;
 
@@ -129,6 +129,7 @@ public class GameWrapper implements ApplicationListener {
         instance = this;
         mTicks = 0;
         loadGameOverAssets();
+
         Texture t = new Texture(Gdx.files.internal("assets/splash.png"));
         Sprite s = new Sprite(t, 800, 600);
         mSplashScreenSprite = s;
@@ -151,7 +152,6 @@ public class GameWrapper implements ApplicationListener {
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
     }
 
-    
     private void createCamera() {
         setCameraOrigin(new Vector2(0, 0));
         float w = Gdx.graphics.getWidth();
@@ -183,7 +183,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createPhysicsSimulation() {
-        mWorld = new World(new Vector2(0, -100), true);
+        mWorld = new World(new Vector2(0, 0), true);
         mWorld.setContactListener(new WorldContactListener(this));
     }
 
@@ -351,6 +351,10 @@ public class GameWrapper implements ApplicationListener {
 
     public boolean isGameOver() {
         return mIsGameOver;
+    }
+
+    public boolean isOnFloor() {
+        return mIsOnFloor;
     }
 
     private void loadGameOverAssets() {
