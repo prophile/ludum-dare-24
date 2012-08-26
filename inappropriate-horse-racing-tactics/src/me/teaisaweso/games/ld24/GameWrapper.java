@@ -27,52 +27,60 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWrapper implements ApplicationListener {
-    public static final float PHYSICS_RATIO = 16;
-    public static final Random sRng = new Random();
-
-    private OrthographicCamera mCamera;
-    private SpriteBatch mBatch;
-    private SpriteBatch mGameOverBatch;
-    private Texture mTexture;
-    private Sprite mCrosshair;
-    private Player mPlayer;
-    private World mWorld;
-    private Box2DDebugRenderer mDebugger;
-    private Enemy mEnemy;
-    private BackgroundManager mBackgroundManager;
-    private Body mFloor;
-    private TreeStumpObstacle mSingleTreeStumpObstacle;
-    private SlowDownRegion mSlowDownRegion;
-
-    private RockObstacle mSingleRockObstacle;
-
-    private boolean mIsOnFloor;
-
-    private Sprite mGameOverSprite;
-
-    private SlowDownObstacle mSingleSlowDownObstacle;
-
-    private Body mBullet = null;
-
-    private final HashSet<Body> mRemoveBodies = new HashSet<Body>();
-
-    private int mBulletTicks;
-
     private static Vector2 mCameraOrigin = new Vector2(0, 0);
+    public static final float PHYSICS_RATIO = 16;
 
     private static boolean sIsGameOver;
-
-    public static boolean isGameOver() {
-        return sIsGameOver;
-    }
-
-    public static void setGameOver() {
-        sIsGameOver = true;
-    }
-
+    public static final Random sRng = new Random();
     public static void clearGameOver() {
         sIsGameOver = false;
     }
+    public static Vector2 getCameraOrigin() {
+        return mCameraOrigin;
+    }
+    public static boolean isGameOver() {
+        return sIsGameOver;
+    }
+    public static void setCameraOrigin(Vector2 mCameraOrigin) {
+        GameWrapper.mCameraOrigin = mCameraOrigin;
+    }
+    public static void setGameOver() {
+        sIsGameOver = true;
+    }
+    private BackgroundManager mBackgroundManager;
+    private SpriteBatch mBatch;
+    private Body mBullet = null;
+    private int mBulletTicks;
+    private OrthographicCamera mCamera;
+    private Sprite mCrosshair;
+
+    private Box2DDebugRenderer mDebugger;
+
+    private Enemy mEnemy;
+
+    private Body mFloor;
+
+    private SpriteBatch mGameOverBatch;
+
+    private Sprite mGameOverSprite;
+
+    private boolean mIsOnFloor;
+
+    private Player mPlayer;
+
+    private final HashSet<Body> mRemoveBodies = new HashSet<Body>();
+
+    private RockObstacle mSingleRockObstacle;
+
+    private SlowDownObstacle mSingleSlowDownObstacle;
+
+    private TreeStumpObstacle mSingleTreeStumpObstacle;
+
+    private SlowDownRegion mSlowDownRegion;
+
+    private Texture mTexture;
+
+    private World mWorld;
 
     public void addFloor() {
         BodyDef bd = new BodyDef();
@@ -85,6 +93,31 @@ public class GameWrapper implements ApplicationListener {
         bd.position.set(0, 0);
         mFloor = mWorld.createBody(bd);
         mFloor.createFixture(fd);
+    }
+
+    private boolean bulletHasExpired() {
+        return mBulletTicks > 100 && mBullet != null;
+    }
+
+    private void clearScreen() {
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    }
+
+    private Vector2 computeCrosshairPosition(Vector2 mousePosition,
+            Sprite playerSprite) {
+        // Work out center of where the player is on the display,
+        float px = playerSprite.getX() + playerSprite.getWidth() / 2;
+        float py = playerSprite.getY() + playerSprite.getHeight() / 2;
+        Vector2 pos = new Vector2(px, py);
+
+        // Work out where the put the crosshair,
+        pos.sub(getCameraOrigin());
+        pos.sub(mousePosition);
+        pos.mul(0.7f);
+        pos.add(mousePosition);
+        pos.add(getCameraOrigin());
+        return pos;
     }
 
     @Override
@@ -109,22 +142,17 @@ public class GameWrapper implements ApplicationListener {
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
     }
 
-    private void createPhysicsSimulation() {
-        mWorld = new World(new Vector2(0, -100), true);
-        mWorld.setContactListener(new WorldContactListener(this));
+    private void createCamera() {
+        setCameraOrigin(new Vector2(0, 0));
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+        mCamera = new OrthographicCamera(w, h);
     }
 
     private void createCrosshair() {
         Texture crosshair = new Texture(
                 Gdx.files.internal("assets/crosshair.png"));
         mCrosshair = new Sprite(crosshair, 10, 10);
-    }
-
-    private void createCamera() {
-        setCameraOrigin(new Vector2(0, 0));
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-        mCamera = new OrthographicCamera(w, h);
     }
 
     private void createDarwin() {
@@ -137,15 +165,6 @@ public class GameWrapper implements ApplicationListener {
         mEnemy = new Enemy(s, mWorld);
     }
 
-    private void createPlayer() {
-        mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
-        mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Sprite s = new Sprite(mTexture, 200, 200);
-        mPlayer = new Player(s, mWorld);
-        mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
-    }
-
     private void createObstacles() {
         createSlowDownRegion();
         createSlowDownObstacle();
@@ -153,8 +172,18 @@ public class GameWrapper implements ApplicationListener {
         mSingleRockObstacle = new RockObstacle(new Vector2(2000, 50), mWorld);
     }
 
-    private void createSlowDownRegion() {
-        mSlowDownRegion = new SlowDownRegion(mWorld, 300000000, 0, 100, 20000);
+    private void createPhysicsSimulation() {
+        mWorld = new World(new Vector2(0, -100), true);
+        mWorld.setContactListener(new WorldContactListener(this));
+    }
+
+    private void createPlayer() {
+        mTexture = new Texture(
+                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
+        mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        Sprite s = new Sprite(mTexture, 200, 200);
+        mPlayer = new Player(s, mWorld);
+        mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
     }
 
     private void createSlowDownObstacle() {
@@ -177,63 +206,68 @@ public class GameWrapper implements ApplicationListener {
         return body;
     }
 
-    private void loadGameOverAssets() {
-        Texture t;
-        t = new Texture(Gdx.files.internal("assets/gameoverscreen.png"));
-        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        mGameOverSprite = new Sprite(t, 800, 600);
-        mGameOverBatch = new SpriteBatch();
+    private void createSlowDownRegion() {
+        mSlowDownRegion = new SlowDownRegion(mWorld, 300000000, 0, 100, 20000);
+    }
+
+    private void createTreeStumpObstacle() {
+        mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(
+                getCameraOrigin().x + 800 + sRng.nextFloat() * 100, 50), mWorld);
     }
 
     @Override
-    public void render() {
-        if (!isGameOver()) {
-            renderGameWorld();
-        } else {
-            renderGameOverScreen();
+    public void dispose() {
+        mBatch.dispose();
+    }
+
+    public void drawCrosshair(SpriteBatch sb) {
+        Vector2 mouse = getMouseLocation();
+
+        Sprite playerSprite = mPlayer.getCurrentSprite();
+
+        Vector2 crosshairPosition = computeCrosshairPosition(mouse,
+                playerSprite);
+
+        mCrosshair
+                .setPosition(crosshairPosition.x - 5, crosshairPosition.y - 5);
+
+        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
+            System.out.println("touch");
+            mBulletTicks = 0;
+            BodyDef bd = new BodyDef();
+            bd.type = BodyType.KinematicBody;
+            float px = playerSprite.getX() + playerSprite.getWidth() / 2;
+            float py = playerSprite.getY() + playerSprite.getHeight() / 2;
+            crosshairPosition.sub(new Vector2(px, py));
+            crosshairPosition.nor();
+            crosshairPosition.mul(PHYSICS_RATIO * 3);
+
+            bd.linearVelocity.set(crosshairPosition);
+            bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
+                    / PHYSICS_RATIO,
+                    (playerSprite.getY() + playerSprite.getHeight() / 2)
+                            / PHYSICS_RATIO);
+            FixtureDef fd = new FixtureDef();
+            CircleShape cs = new CircleShape();
+            cs.setRadius(2);
+            fd.shape = cs;
+            fd.isSensor = true;
+            mBullet = mWorld.createBody(bd);
+            mBullet.createFixture(fd);
         }
 
+        mCrosshair.draw(sb);
     }
 
-    private void renderGameOverScreen() {
-        mGameOverBatch.begin();
-        mGameOverSprite.draw(mGameOverBatch);
-        mGameOverBatch.end();
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
-            clearGameOver();
-            create();
-        } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            System.exit(0);
-        }
-    }
+    private Vector2 getMouseLocation() {
+        // Fetch mouse location
+        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
 
-    private void renderGameWorld() {
-        update();
-
-        clearScreen();
-
-        mBatch.setProjectionMatrix(mCamera.combined);
-        mBatch.setTransformMatrix(new Matrix4().translate(-getCameraOrigin().x,
-                -getCameraOrigin().y, 0));
-
-        mBackgroundManager.drawSky();
-        mBatch.begin();
-        mBackgroundManager.draw(mBatch);
-        mPlayer.draw(mBatch);
-        mEnemy.draw(mBatch);
-        mSingleRockObstacle.draw(mBatch);
-        mSingleTreeStumpObstacle.draw(mBatch);
-        drawCrosshair(mBatch);
-        mBatch.end();
-        Matrix4 m = new Matrix4(mCamera.combined);
-        m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
-        m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
-        mDebugger.render(mWorld, m);
-    }
-
-    private void clearScreen() {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        // Work around mouse x/y being from top left
+        mouse.y = 600 - mouse.y;
+        mouse.y -= 300;
+        mouse.x -= 400;
+        return mouse;
     }
 
     void handleCollision(Fixture a, Fixture b, Contact c) {
@@ -295,6 +329,114 @@ public class GameWrapper implements ApplicationListener {
         }
     }
 
+    private void loadGameOverAssets() {
+        Texture t;
+        t = new Texture(Gdx.files.internal("assets/gameoverscreen.png"));
+        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        mGameOverSprite = new Sprite(t, 800, 600);
+        mGameOverBatch = new SpriteBatch();
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    private void removeBullet() {
+        mRemoveBodies.add(mBullet);
+        mBullet = null;
+    }
+
+    private void removeBulletIfExpired() {
+        if (bulletHasExpired()) {
+            removeBullet();
+        }
+    }
+
+    private void removeCondemnedBodies() {
+        for (Body b : mRemoveBodies) {
+            b.setTransform(new Vector2(-9000, -9000), 0);
+        }
+    }
+
+    private void removeTreeStumpObstacle() {
+        mSingleTreeStumpObstacle.mBody.setActive(false);
+        mWorld.destroyBody(mSingleTreeStumpObstacle.mBody);
+        mSingleTreeStumpObstacle = null;
+    }
+
+    @Override
+    public void render() {
+        if (!isGameOver()) {
+            renderGameWorld();
+        } else {
+            renderGameOverScreen();
+        }
+
+    }
+
+    private void renderGameOverScreen() {
+        mGameOverBatch.begin();
+        mGameOverSprite.draw(mGameOverBatch);
+        mGameOverBatch.end();
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+            clearGameOver();
+            create();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            System.exit(0);
+        }
+    }
+
+    private void renderGameWorld() {
+        update();
+
+        clearScreen();
+
+        mBatch.setProjectionMatrix(mCamera.combined);
+        mBatch.setTransformMatrix(new Matrix4().translate(-getCameraOrigin().x,
+                -getCameraOrigin().y, 0));
+
+        mBackgroundManager.drawSky();
+        mBatch.begin();
+        mBackgroundManager.draw(mBatch);
+        mPlayer.draw(mBatch);
+        mEnemy.draw(mBatch);
+        mSingleRockObstacle.draw(mBatch);
+        mSingleTreeStumpObstacle.draw(mBatch);
+        drawCrosshair(mBatch);
+        mBatch.end();
+        Matrix4 m = new Matrix4(mCamera.combined);
+        m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
+        m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
+        mDebugger.render(mWorld, m);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+    }
+
+    private void respawnTreeStumpObstacle() {
+        removeTreeStumpObstacle();
+        createTreeStumpObstacle();
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    private boolean shouldJump() {
+        boolean shouldJump = Gdx.input.isKeyPressed(Input.Keys.SPACE)
+                && mIsOnFloor;
+        return shouldJump;
+    }
+
+    private void simulatePhysicsStep() {
+        mWorld.step((float) (1.0 / 60.0), 3, 3);
+    }
+
+    private boolean treeStumpObstacleHasLeftScreen() {
+        return mSingleTreeStumpObstacle.getPosition().x - getCameraOrigin().x < -600;
+    }
+
     private void update() {
         mIsOnFloor = false;
         simulatePhysicsStep();
@@ -319,14 +461,9 @@ public class GameWrapper implements ApplicationListener {
 
     }
 
-    private void updatePlayerForAirControl() {
-        mPlayer.mBody.setLinearVelocity(
-                mPlayer.mBody.getLinearVelocity().x * 0.997f,
-                mPlayer.mBody.getLinearVelocity().y);
-    }
-
-    private void simulatePhysicsStep() {
-        mWorld.step((float) (1.0 / 60.0), 3, 3);
+    private void updateBullet() {
+        mBulletTicks += 1;
+        removeBulletIfExpired();
     }
 
     private void updateEntities() {
@@ -353,146 +490,9 @@ public class GameWrapper implements ApplicationListener {
         }
     }
 
-    private void respawnTreeStumpObstacle() {
-        removeTreeStumpObstacle();
-        createTreeStumpObstacle();
-    }
-
-    private void createTreeStumpObstacle() {
-        mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(
-                getCameraOrigin().x + 800 + sRng.nextFloat() * 100, 50), mWorld);
-    }
-
-    private void removeTreeStumpObstacle() {
-        mSingleTreeStumpObstacle.mBody.setActive(false);
-        mWorld.destroyBody(mSingleTreeStumpObstacle.mBody);
-        mSingleTreeStumpObstacle = null;
-    }
-
-    private boolean treeStumpObstacleHasLeftScreen() {
-        return mSingleTreeStumpObstacle.getPosition().x - getCameraOrigin().x < -600;
-    }
-
-    private void updateBullet() {
-        mBulletTicks += 1;
-        removeBulletIfExpired();
-    }
-
-    private void removeBulletIfExpired() {
-        if (bulletHasExpired()) {
-            removeBullet();
-        }
-    }
-
-    private void removeBullet() {
-        mRemoveBodies.add(mBullet);
-        mBullet = null;
-    }
-
-    private boolean bulletHasExpired() {
-        return mBulletTicks > 100 && mBullet != null;
-    }
-
-    private boolean shouldJump() {
-        boolean shouldJump = Gdx.input.isKeyPressed(Input.Keys.SPACE)
-                && mIsOnFloor;
-        return shouldJump;
-    }
-
-    private void removeCondemnedBodies() {
-        for (Body b : mRemoveBodies) {
-            b.setTransform(new Vector2(-9000, -9000), 0);
-        }
-    }
-
-    public void drawCrosshair(SpriteBatch sb) {
-        Vector2 mouse = getMouseLocation();
-
-        Sprite playerSprite = mPlayer.getCurrentSprite();
-
-        Vector2 crosshairPosition = computeCrosshairPosition(mouse,
-                playerSprite);
-
-        mCrosshair
-                .setPosition(crosshairPosition.x - 5, crosshairPosition.y - 5);
-
-        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
-            System.out.println("touch");
-            mBulletTicks = 0;
-            BodyDef bd = new BodyDef();
-            bd.type = BodyType.KinematicBody;
-            float px = playerSprite.getX() + playerSprite.getWidth() / 2;
-            float py = playerSprite.getY() + playerSprite.getHeight() / 2;
-            crosshairPosition.sub(new Vector2(px, py));
-            crosshairPosition.nor();
-            crosshairPosition.mul(PHYSICS_RATIO * 3);
-
-            bd.linearVelocity.set(crosshairPosition);
-            bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
-                    / PHYSICS_RATIO,
-                    (playerSprite.getY() + playerSprite.getHeight() / 2)
-                            / PHYSICS_RATIO);
-            FixtureDef fd = new FixtureDef();
-            CircleShape cs = new CircleShape();
-            cs.setRadius(2);
-            fd.shape = cs;
-            fd.isSensor = true;
-            mBullet = mWorld.createBody(bd);
-            mBullet.createFixture(fd);
-        }
-
-        mCrosshair.draw(sb);
-    }
-
-    private Vector2 computeCrosshairPosition(Vector2 mousePosition,
-            Sprite playerSprite) {
-        // Work out center of where the player is on the display,
-        float px = playerSprite.getX() + playerSprite.getWidth() / 2;
-        float py = playerSprite.getY() + playerSprite.getHeight() / 2;
-        Vector2 pos = new Vector2(px, py);
-
-        // Work out where the put the crosshair,
-        pos.sub(getCameraOrigin());
-        pos.sub(mousePosition);
-        pos.mul(0.7f);
-        pos.add(mousePosition);
-        pos.add(getCameraOrigin());
-        return pos;
-    }
-
-    private Vector2 getMouseLocation() {
-        // Fetch mouse location
-        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-
-        // Work around mouse x/y being from top left
-        mouse.y = 600 - mouse.y;
-        mouse.y -= 300;
-        mouse.x -= 400;
-        return mouse;
-    }
-
-    @Override
-    public void resize(int width, int height) {
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void dispose() {
-        mBatch.dispose();
-    }
-
-    public static Vector2 getCameraOrigin() {
-        return mCameraOrigin;
-    }
-
-    public static void setCameraOrigin(Vector2 mCameraOrigin) {
-        GameWrapper.mCameraOrigin = mCameraOrigin;
+    private void updatePlayerForAirControl() {
+        mPlayer.mBody.setLinearVelocity(
+                mPlayer.mBody.getLinearVelocity().x * 0.997f,
+                mPlayer.mBody.getLinearVelocity().y);
     }
 }
