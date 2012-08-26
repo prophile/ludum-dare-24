@@ -24,7 +24,7 @@ public class Enemy extends Entity {
         mWidth = 200;
         mHeight = 400;
         mAttributes.mMaxSpeed = 30;
-        mAttributes.mAccel = 57*100.0f/30.0f;
+        mAttributes.mAccel = 57 * 100.0f / 30.0f;
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
@@ -63,7 +63,7 @@ public class Enemy extends Entity {
     }
 
     public void catchPlayer() {
-        GameWrapper.sIsGameOver = true;
+        GameWrapper.setGameOver();
     }
 
     public float getEffectiveMaxSpeed() {

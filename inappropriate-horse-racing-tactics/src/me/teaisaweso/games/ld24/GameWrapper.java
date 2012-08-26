@@ -60,7 +60,19 @@ public class GameWrapper implements ApplicationListener {
 
     private static Vector2 mCameraOrigin = new Vector2(0, 0);
 
-    public static boolean sIsGameOver;
+    private static boolean sIsGameOver;
+
+    public static boolean isGameOver() {
+        return sIsGameOver;
+    }
+
+    public static void setGameOver() {
+        sIsGameOver = true;
+    }
+
+    public static void clearGameOver() {
+        sIsGameOver = false;
+    }
 
     public void addFloor() {
         BodyDef bd = new BodyDef();
@@ -175,7 +187,7 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void render() {
-        if (!sIsGameOver) {
+        if (!isGameOver()) {
             renderGameWorld();
         } else {
             renderGameOverScreen();
@@ -188,7 +200,7 @@ public class GameWrapper implements ApplicationListener {
         mGameOverSprite.draw(mGameOverBatch);
         mGameOverBatch.end();
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
-            sIsGameOver = false;
+            clearGameOver();
             create();
         } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             System.exit(0);
