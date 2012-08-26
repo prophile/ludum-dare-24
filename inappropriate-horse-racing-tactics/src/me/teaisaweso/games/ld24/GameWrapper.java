@@ -1,16 +1,21 @@
 package me.teaisaweso.games.ld24;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -38,7 +43,7 @@ public class GameWrapper implements ApplicationListener {
     private BackgroundManager mBackgroundManager;
 
     private SpriteBatch mBatch;
-    private Body mBullet = null;
+    private BulletEntity mBullet = null;
 
     private int mBulletTicks;
 
@@ -48,6 +53,7 @@ public class GameWrapper implements ApplicationListener {
 
     private BitmapFont mTextFont;
     private int mScore;
+    private ScoreDownloader mPublicTopScores;
 
     private Sprite mCrosshair;
     private Sound mDarwinHurtSound;
@@ -90,7 +96,7 @@ public class GameWrapper implements ApplicationListener {
         bd.type = BodyType.StaticBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(3000f, 0.5f);
+        ps.setAsBox(40000000, 0.5f);
         fd.shape = ps;
         bd.fixedRotation = true;
         bd.position.set(0, 0);
@@ -150,6 +156,8 @@ public class GameWrapper implements ApplicationListener {
         mTextFont.getRegion().getTexture()
                 .setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mScore = 0;
+        // Blank list of top scores, in case intertubes fail.
+        mPublicTopScores = new ScoreDownloader();
 
         createCrosshair();
 
@@ -264,8 +272,8 @@ public class GameWrapper implements ApplicationListener {
             crosshairPosition.nor();
             crosshairPosition.mul(PHYSICS_RATIO * 3);
 
-            bd.linearVelocity.set(crosshairPosition.add(mPlayer.mBody
-                    .getLinearVelocity()));
+            bd.linearVelocity.set(crosshairPosition.add(
+                    mPlayer.mBody.getLinearVelocity().x, 0));
             bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
                     / PHYSICS_RATIO,
                     (playerSprite.getY() + playerSprite.getHeight() / 2)
@@ -275,8 +283,9 @@ public class GameWrapper implements ApplicationListener {
             cs.setRadius(2);
             fd.shape = cs;
             fd.isSensor = true;
-            mBullet = mWorld.createBody(bd);
-            mBullet.createFixture(fd);
+            mBullet = new BulletEntity(mWorld.createBody(bd));
+
+            mBullet.mBody.createFixture(fd);
             mEvolutionShootsound.play();
         }
 
@@ -311,8 +320,9 @@ public class GameWrapper implements ApplicationListener {
     }
 
     void handleCollision(Fixture a, Fixture b, Contact c) {
-        if (a.getBody() == mBullet && b.getBody() != mPlayer.mBody) {
-            mRemoveBodies.add(mBullet);
+        if (mBullet != null && a.getBody() == mBullet.mBody
+                && b.getBody() != mPlayer.mBody) {
+            mRemoveBodies.add(mBullet.mBody);
             if (b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.hit();
             }
@@ -391,7 +401,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void removeBullet() {
-        mRemoveBodies.add(mBullet);
+        mRemoveBodies.add(mBullet.mBody);
         mBullet = null;
     }
 
@@ -438,7 +448,20 @@ public class GameWrapper implements ApplicationListener {
     private void renderGameOverScreen() {
         mGameOverBatch.begin();
         mGameOverSprite.draw(mGameOverBatch);
+
+        String text = new String();
+        for (ScoreEntry e : mPublicTopScores.mScoreList) {
+            text += e.mName + ": " + e.mScore + "\n";
+        }
+
+        Color oldColor = mTextFont.getColor();
+        ;
+        mTextFont.setColor(1.0f, 1.0f, 0.0f, 0.5f);
+        mTextFont.drawMultiLine(mGameOverBatch, text, 390.0f, 290.0f);
+        mTextFont.setColor(oldColor);
+
         mGameOverBatch.end();
+
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             clearGameOver();
             String username = System.getProperty("user.name");
@@ -474,6 +497,9 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
+        if (mBullet != null) {
+            mBullet.draw(mBatch);
+        }
         if (mSingleRockObstacle != null) {
             mSingleRockObstacle.draw(mBatch);
         }
@@ -517,6 +543,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void setGameOver() {
+        mPublicTopScores.downloadScoresAgain(mScore);
         mIsGameOver = true;
     }
 
@@ -569,6 +596,9 @@ public class GameWrapper implements ApplicationListener {
 
         mPlayer.update();
         mEnemy.update(mCameraOrigin.x, mPlayer.getPosition().x);
+        if (mBullet != null) {
+            mBullet.update();
+        }
         updateObstacles();
     }
 
@@ -606,5 +636,85 @@ public class GameWrapper implements ApplicationListener {
         mPlayer.mBody.setLinearVelocity(
                 mPlayer.mBody.getLinearVelocity().x * 0.997f,
                 mPlayer.mBody.getLinearVelocity().y);
+    }
+
+    protected class ScoreDownloader implements Runnable {
+        public ConcurrentSkipListSet<ScoreEntry> mScoreList;
+
+        public ScoreDownloader() {
+            mScoreList = new ConcurrentSkipListSet<ScoreEntry>();
+        }
+
+        public void downloadScoresAgain(int myScore) {
+            mScoreList.clear();
+            String username = System.getProperty("user.name");
+            mScoreList.add(new ScoreEntry(username, myScore));
+            new Thread(mPublicTopScores).start();
+        }
+
+        @Override
+        public void run() {
+            try {
+                // Open scores url,
+                URL u = new URL(
+                        "http://immense-savannah-9950.herokuapp.com/csv_scores");
+                u.getContent();
+
+                // Setup read from it
+                InputStream in = u.openStream();
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(in));
+                String line = new String();
+
+                // Read from it until we pass the Body tag,
+                while (!line.contains("<body>")) {
+                    line = reader.readLine();
+                }
+
+                // Now a blank line,
+                line = reader.readLine();
+
+                // And now some pairs of scores, until another blank line
+                while (true) {
+                    line = reader.readLine();
+                    if (!line.contains(",")) {
+                        break;
+                    }
+
+                    String[] pair = line.split(",");
+                    assert pair.length == 2;
+                    mScoreList.add(new ScoreEntry(pair[0], new Integer(pair[1])
+                            .intValue()));
+                }
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected class ScoreEntry implements Comparable<ScoreEntry> {
+        public ScoreEntry(String n, int s) {
+            mName = n;
+            mScore = s;
+        }
+
+        @Override
+        public int compareTo(ScoreEntry o) {
+            if (o.mScore < mScore) {
+                return -1;
+            } else if (o.mScore > mScore) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        String mName;
+        int mScore;
     }
 }
