@@ -8,7 +8,7 @@ public class SlowDownModifier extends StatusModifier {
 
     @Override
     public float adjustSpeed(float speed) {
-        return 1f;
+        return speed * 0.4f;
     }
 
     @Override
