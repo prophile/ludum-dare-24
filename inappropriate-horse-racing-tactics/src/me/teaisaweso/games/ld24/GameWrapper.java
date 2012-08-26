@@ -147,6 +147,7 @@ public class GameWrapper implements ApplicationListener {
         assert instance == null || instance == this;
         instance = this;
         mTicks = 0;
+        mEntities.clear();
 
         loadGameOverAssets();
 
@@ -179,6 +180,7 @@ public class GameWrapper implements ApplicationListener {
         addFloor();
         createObstacles();
         mGunArm = new GunArmEntity(mPlayer);
+        mEntities.add(mGunArm);
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
     }
 
@@ -198,12 +200,14 @@ public class GameWrapper implements ApplicationListener {
 
     private void createDarwin() {
         mEnemy = new Enemy(mWorld);
+        mEntities.add(mEnemy);
     }
 
     private void createObstacles() {
         createSlowDownObstacle();
         createTreeStumpObstacle();
         mSingleRockObstacle = new RockObstacle(Constants.getFloat("rockFirstPosition"), mWorld);
+        mEntities.add(mSingleRockObstacle);
         createSoupObstacle();
     }
 
@@ -215,24 +219,29 @@ public class GameWrapper implements ApplicationListener {
     private void createPlayer() {
         mPlayer = new Player(mWorld);
         mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
+        mEntities.add(mPlayer);
     }
 
     private void createSlowDownObstacle() {
         mSingleSlowDownObstacle = new SlowDownObstacle(mWorld);
+        mEntities.add(mSingleSlowDownObstacle);
     }
 
     private void createTreeStumpObstacle() {
 
         mTreeStumpObstacle1 = TreeStumpObstacle.createStumpObstacle(mWorld, 1);
+        mEntities.add(mTreeStumpObstacle1);
 
         if (sRng.nextFloat() < Constants.getFloat("doubleTreeProbability")) {
             mTreeStumpObstacle2 = mTreeStumpObstacle1.createNearbyStump(mWorld);
+            mEntities.add(mTreeStumpObstacle2);
         }
     }
 
     private void createSoupObstacle() {
         mSingleSoupObstacle = new SoupObstacle(getCameraOrigin().x + 1200
                 + mRng.nextFloat() * 1200, mWorld);
+        mEntities.add(mSingleSoupObstacle);
     }
 
     @Override
@@ -278,6 +287,7 @@ public class GameWrapper implements ApplicationListener {
             fd.shape = cs;
             fd.isSensor = true;
             mBullet = new BulletEntity(mWorld.createBody(bd));
+            mEntities.add(mBullet);
 
             mBullet.mBody.createFixture(fd);
             mEvolutionShootsound.play();
