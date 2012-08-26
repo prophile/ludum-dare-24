@@ -1,5 +1,8 @@
 package me.teaisaweso.games.ld24;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -81,6 +84,7 @@ public class GameWrapper implements ApplicationListener {
     private Texture mTexture;
 
     private World mWorld;
+    private int mTicks;
 
     public void addFloor() {
         BodyDef bd = new BodyDef();
@@ -122,6 +126,7 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void create() {
+        mTicks = 0;
         loadGameOverAssets();
         createCamera();
         mBullet = null;
@@ -380,6 +385,17 @@ public class GameWrapper implements ApplicationListener {
         mGameOverBatch.end();
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             clearGameOver();
+            String username = System.getProperty("user.name");
+            try {
+                URL u = new URL("http://immense-savannah-9950.herokuapp.com/score/" + username + "/" + mTicks);
+                u.getContent();
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             create();
         } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             System.exit(0);
@@ -439,6 +455,7 @@ public class GameWrapper implements ApplicationListener {
 
     private void update() {
         mIsOnFloor = false;
+        mTicks++;
         simulatePhysicsStep();
         updateEntities();
         mBackgroundManager.update(getCameraOrigin().x);
