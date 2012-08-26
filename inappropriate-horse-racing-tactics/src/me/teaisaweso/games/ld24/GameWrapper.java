@@ -106,7 +106,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private boolean bulletHasExpired() {
-        return mBulletTicks > 100 && mBullet != null;
+        return mBulletTicks > 50 && mBullet != null;
     }
 
     public void clearGameOver() {
@@ -274,7 +274,7 @@ public class GameWrapper implements ApplicationListener {
             float py = playerSprite.getY() + playerSprite.getHeight() / 2;
             crosshairPosition.sub(new Vector2(px, py));
             crosshairPosition.nor();
-            crosshairPosition.mul(PHYSICS_RATIO * 3);
+            crosshairPosition.mul(PHYSICS_RATIO * 6);
 
             bd.linearVelocity.set(crosshairPosition.add(
                     mPlayer.mBody.getLinearVelocity().x, 0));
