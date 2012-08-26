@@ -338,8 +338,16 @@ public class GameWrapper implements ApplicationListener {
     void handleCollision(Fixture a, Fixture b, Contact c) {
         if (mBullet != null && a.getBody() == mBullet.mBody
                 && b.getBody() != mPlayer.mBody) {
+            // Register to remove this body
             mRemoveBodies.add(mBullet.mBody);
-            if (b.getBody() == mSingleSlowDownObstacle.mBody) {
+
+            // If off screen, ignore collision.
+            Vector2 pos = b.getBody().getPosition();
+            pos.mul(PHYSICS_RATIO);
+            if (pos.x > (mCameraOrigin.x + 420)
+                    || pos.y > (mCameraOrigin.y + 320)) {
+                ;
+            } else if (b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.hit();
             }
 
