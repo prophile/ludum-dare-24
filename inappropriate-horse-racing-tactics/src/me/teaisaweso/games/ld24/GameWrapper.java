@@ -20,8 +20,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -78,6 +81,36 @@ public class GameWrapper implements ApplicationListener {
         mBullet = null;
         mBackgroundManager = new BackgroundManager();
         mWorld = new World(new Vector2(0, -30), true);
+        mWorld.setContactListener(new ContactListener() {
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+                handleCollision(contact.getFixtureA(), contact.getFixtureB(),
+                        contact);
+                handleCollision(contact.getFixtureB(), contact.getFixtureA(),
+                        contact);
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void beginContact(Contact contact) {
+                handleCollision(contact.getFixtureA(), contact.getFixtureB(),
+                        contact);
+                handleCollision(contact.getFixtureB(), contact.getFixtureA(),
+                        contact);
+            }
+        });
 
         mBatch = new SpriteBatch();
 
@@ -127,12 +160,12 @@ public class GameWrapper implements ApplicationListener {
         mSlowDown = new SlowDownRegion(mWorld, 3000, 0, 100, 20000);
         BodyDef bd = new BodyDef();
         bd.position.set(1000 / 16, 400 / 16);
-        bd.type = BodyType.KinematicBody;
+        bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
         cs.setRadius(1);
         fd.shape = cs;
-        fd.isSensor = true;
+        fd.isSensor = false;
         fd.density = 1;
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
@@ -192,7 +225,7 @@ public class GameWrapper implements ApplicationListener {
         mDebugger.render(mWorld, m);
     }
 
-    private void handleCollision(Fixture a, Fixture b) {
+    private void handleCollision(Fixture a, Fixture b, Contact c) {
         if (a.getBody() == mBullet && b.getBody() != mPlayer.mBody) {
             mRemoveBodies.add(mBullet);
             if (b.getBody() == mSdO.mBody) {
@@ -217,6 +250,15 @@ public class GameWrapper implements ApplicationListener {
 
             if (mSdO != null && b.getBody() == mSdO.mBody) {
                 mSdO.collide(mPlayer);
+                c.setEnabled(false);
+            }
+
+        }
+
+        if (a.getBody() == mEnemy.mBody) {
+            if (mSdO != null && b.getBody() == mSdO.mBody) {
+                mSdO.collide(mEnemy);
+                mRemoveBodies.add(mSdO.mBody);
             }
         }
     }
@@ -225,11 +267,6 @@ public class GameWrapper implements ApplicationListener {
         mIsOnFloor = false;
         mWorld.step((float) (1.0 / 60.0), 3, 3);
         mBulletTicks += 1;
-        if (mSdO != null && mSdO.mEvolved) {
-            mSdO.mBody.setActive(false);
-            mWorld.destroyBody(mSdO.mBody);
-            mSdO = null;
-        }
         if (mBulletTicks > 100 && mBullet != null) {
             mRemoveBodies.add(mBullet);
             mBullet = null;
@@ -239,9 +276,13 @@ public class GameWrapper implements ApplicationListener {
         mEnemy.update();
         mBackgroundManager.update(mCameraOrigin.x);
 
-        for (Contact c : mWorld.getContactList()) {
-            handleCollision(c.getFixtureA(), c.getFixtureB());
-            handleCollision(c.getFixtureB(), c.getFixtureA());
+        // for (Contact c : mWorld.getContactList()) {
+        // handleCollision(c.getFixtureA(), c.getFixtureB(), c);
+        // handleCollision(c.getFixtureB(), c.getFixtureA(), c);
+        // }
+        
+        for (Body b : mRemoveBodies) {
+            b.setTransform(new Vector2(-9000,-9000), 0);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && mIsOnFloor) {

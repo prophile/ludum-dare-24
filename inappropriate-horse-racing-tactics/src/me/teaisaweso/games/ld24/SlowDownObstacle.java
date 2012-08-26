@@ -13,9 +13,11 @@ public class SlowDownObstacle extends PhysicalObstacle {
 
     @Override
     public void collide(Entity e) {
-        if (e instanceof Player && !mEvolved) {
-            Player p = (Player)e;
-            p.addStatusModifier(this.freshStatusModifier());
+        
+        
+        if (e instanceof Enemy && mEvolved) {
+            Enemy en = (Enemy)e;
+            en.addStatusModifier(this.freshStatusModifier());
         }
     }
 

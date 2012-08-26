@@ -99,5 +99,9 @@ public class Enemy extends Entity {
 
         mStatusModifiers.removeAll(endedModifiers);
     }
+    
+    public void addStatusModifier(StatusModifier sm) {
+        mStatusModifiers.add(sm);
+    }
 
 }
