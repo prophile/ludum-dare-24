@@ -355,8 +355,8 @@ public class GameWrapper implements ApplicationListener {
                 mIsOnFloor = true;
             }
 
-            if (b.getBody() == mEnemy.mBody) {
-                mEnemy.catchPlayer();
+            if (collider_b instanceof Enemy) {
+                ((Enemy)collider_b).catchPlayer();
             }
 
             if (collider_b instanceof PhysicalObstacle) {
