@@ -402,6 +402,11 @@ public class GameWrapper implements ApplicationListener {
                     && b.getBody() == mSingleRockObstacle.mBody) {
                 c.setEnabled(false);
             }
+
+            if (mSingleSoupObstacle != null
+                    && b.getBody() == mSingleSoupObstacle.mBody) {
+                c.setEnabled(false);
+            }
         }
     }
 
