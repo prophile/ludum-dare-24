@@ -58,15 +58,19 @@ public class SoupObstacle extends PhysicalObstacle {
     }
 
     @Override
-    public StatusModifier freshStatusModifier() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public void hit() {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public Sprite getCurrentSprite() {
+        return mSprite;
+    }
+
+    @Override
+    public StatusModifier freshStatusModifier() {
+        return new SlowDownModifier();
     }
 
 }
