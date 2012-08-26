@@ -58,10 +58,10 @@ public class SoupObstacle extends PhysicalObstacle {
         bd.type = BodyType.StaticBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(mWidth, mHeight);
+        ps.setAsBox(mWidth/GameWrapper.PHYSICS_RATIO, mHeight/GameWrapper.PHYSICS_RATIO);
         fd.shape = ps;
         bd.fixedRotation = true;
-        bd.position.set(v.x, v.y);
+        bd.position.set(new Vector2(v.x/GameWrapper.PHYSICS_RATIO, v.y/GameWrapper.PHYSICS_RATIO));
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
     }
