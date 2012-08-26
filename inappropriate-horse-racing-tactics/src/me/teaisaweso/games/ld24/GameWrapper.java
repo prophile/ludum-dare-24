@@ -85,8 +85,6 @@ public class GameWrapper implements ApplicationListener {
     private TreeStumpObstacle mTreeStumpObstacle1;
     private TreeStumpObstacle mTreeStumpObstacle2;
 
-    private SlowDownRegion mSlowDownRegion;
-
     private SoupObstacle mSingleSoupObstacle;
 
     private int mTicks;
@@ -204,7 +202,6 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createObstacles() {
-        createSlowDownRegion();
         createSlowDownObstacle();
         createTreeStumpObstacle();
         mSingleRockObstacle = new RockObstacle(new Vector2(
@@ -224,10 +221,6 @@ public class GameWrapper implements ApplicationListener {
 
     private void createSlowDownObstacle() {
         mSingleSlowDownObstacle = new SlowDownObstacle(mWorld);
-    }
-
-    private void createSlowDownRegion() {
-        mSlowDownRegion = new SlowDownRegion(mWorld, 300000000, 0, 100, 20000);
     }
 
     private void createTreeStumpObstacle() {
@@ -370,10 +363,6 @@ public class GameWrapper implements ApplicationListener {
                     && mPlayer.getPosition().y > mTreeStumpObstacle2
                             .getPosition().y + 122 * 1.5) {
                 mIsOnFloor = true;
-            }
-
-            if (b.getBody() == mSlowDownRegion.mBody) {
-                mSlowDownRegion.enterRegion(mPlayer);
             }
 
             if (b.getBody() == mEnemy.mBody) {
