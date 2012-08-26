@@ -182,7 +182,7 @@ public class GameWrapper implements ApplicationListener {
 
     private void createPlayer() {
         mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkeyDraft.png"));
+                Gdx.files.internal("assets/AssetMonkey.png"));
         mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Sprite s = new Sprite(mTexture, 200, 200);
         mPlayer = new Player(s, mWorld);
