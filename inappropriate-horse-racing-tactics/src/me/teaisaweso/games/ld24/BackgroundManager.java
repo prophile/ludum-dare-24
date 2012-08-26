@@ -10,30 +10,37 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class BackgroundManager {
 
-    private final Sprite mBackgroundSprite1;
-    private final Sprite mBackgroundSprite2;
+    private static final TextureFilter BACKGROUND_TEXTURE_FILTER = TextureFilter.Linear;
+    private final Sprite[] mBackgroundSprites = new Sprite[2];
     private final ShapeRenderer mSkyGradientRenderer;
 
     public BackgroundManager() {
-        Texture t = new Texture(
-                Gdx.files.internal("assets/background-transparent.png"));
-        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        mBackgroundSprite1 = new Sprite(t, 800, 600);
-        mBackgroundSprite1.setPosition(-400, 0);
-        mBackgroundSprite2 = new Sprite(t, 800, 600);
-        mBackgroundSprite2.setPosition(400, 0);
+        createBackgroundSprites();
         mSkyGradientRenderer = new ShapeRenderer();
     }
 
-    public void update(float cameraPosition) {
-        if (mBackgroundSprite1.getX() + 800 - cameraPosition < -400) {
-            mBackgroundSprite1.setPosition(mBackgroundSprite1.getX() + 800 * 2,
-                    0);
-        }
+    private void createBackgroundSprites() {
+        Texture background = loadBackgroundTexture();
+        mBackgroundSprites[0] = new Sprite(background, 800, 600);
+        mBackgroundSprites[0].setPosition(-400, 0);
+        mBackgroundSprites[1] = new Sprite(background, 800, 600);
+        mBackgroundSprites[1].setPosition(400, 0);
+    }
 
-        if (mBackgroundSprite2.getX() + 800 - cameraPosition < -400) {
-            mBackgroundSprite2.setPosition(mBackgroundSprite2.getX() + 800 * 2,
-                    0);
+    private Texture loadBackgroundTexture() {
+        Texture background = new Texture(
+                Gdx.files.internal("assets/background-transparent.png"));
+        background.setFilter(BACKGROUND_TEXTURE_FILTER,
+                BACKGROUND_TEXTURE_FILTER);
+        return background;
+    }
+
+    public void update(float cameraPosition) {
+        for (Sprite backgroundSprite : mBackgroundSprites) {
+            if (backgroundSprite.getX() + 800 - cameraPosition < -400) {
+                backgroundSprite.setPosition(backgroundSprite.getX() + 800 * 2,
+                        0);
+            }
         }
     }
 
@@ -48,7 +55,8 @@ public class BackgroundManager {
     }
 
     public void draw(SpriteBatch sb) {
-        mBackgroundSprite1.draw(sb);
-        mBackgroundSprite2.draw(sb);
+        for (Sprite backgroundSprite : mBackgroundSprites) {
+            backgroundSprite.draw(sb);
+        }
     }
 }

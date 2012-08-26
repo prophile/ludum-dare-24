@@ -74,8 +74,8 @@ public class GameWrapper implements ApplicationListener {
     private Enemy mEnemy;
     private BackgroundManager mBackgroundManager;
     private Body mFloor;
-    private TreeStumpObstacle mTso;
-    private SlowDownRegion mSlowDown;
+    private TreeStumpObstacle mSingleTreeStumpObstacle;
+    private SlowDownRegion mSlowDownRegion;
 
     private RockObstacle mRo;
 
@@ -167,7 +167,22 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createObstacles() {
-        mSlowDown = new SlowDownRegion(mWorld, 300000000, 0, 100, 20000);
+        createSlowDownRegion();
+        createSlowDownObstacle();
+        createTreeStumpObstacle();
+        mRo = new RockObstacle(new Vector2(2000, 50), mWorld);
+    }
+
+    private void createSlowDownRegion() {
+        mSlowDownRegion = new SlowDownRegion(mWorld, 300000000, 0, 100, 20000);
+    }
+
+    private void createSlowDownObstacle() {
+        mSingleSlowDownObstacle = new SlowDownObstacle(
+                createSlowDownObstaclePhysicsBody());
+    }
+
+    private Body createSlowDownObstaclePhysicsBody() {
         BodyDef bd = new BodyDef();
         bd.position.set(1000 / 16, 400 / 16);
         bd.type = BodyType.DynamicBody;
@@ -177,12 +192,9 @@ public class GameWrapper implements ApplicationListener {
         fd.shape = cs;
         fd.isSensor = false;
         fd.density = 1;
-        Body b = mWorld.createBody(bd);
-        b.createFixture(fd);
-        mTso = new TreeStumpObstacle(new Vector2(1000, 50), mWorld);
-
-        mRo = new RockObstacle(new Vector2(2000, 50), mWorld);
-        mSingleSlowDownObstacle = new SlowDownObstacle(b);
+        Body body = mWorld.createBody(bd);
+        body.createFixture(fd);
+        return body;
     }
 
     private void loadGameOverAssets() {
@@ -230,7 +242,7 @@ public class GameWrapper implements ApplicationListener {
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
         mRo.draw(mBatch);
-        mTso.draw(mBatch);
+        mSingleTreeStumpObstacle.draw(mBatch);
         drawCrosshair(mBatch);
         mBatch.end();
         Matrix4 m = new Matrix4(mCamera.combined);
@@ -255,13 +267,14 @@ public class GameWrapper implements ApplicationListener {
         }
 
         if (a.getBody() == mPlayer.mBody) {
-            if (b.getBody() == mFloor || (b.getBody() == mTso.mBody &&
-                    mPlayer.getPosition().y > mTso.getPosition().y + 122)) {
+            if (b.getBody() == mFloor
+                    || (b.getBody() == mSingleTreeStumpObstacle.mBody && mPlayer
+                            .getPosition().y > mSingleTreeStumpObstacle.getPosition().y + 122)) {
                 mIsOnFloor = true;
             }
 
-            if (b.getBody() == mSlowDown.mBody) {
-                mSlowDown.enterRegion(mPlayer);
+            if (b.getBody() == mSlowDownRegion.mBody) {
+                mSlowDownRegion.enterRegion(mPlayer);
             }
 
             if (b.getBody() == mEnemy.mBody) {
@@ -288,10 +301,11 @@ public class GameWrapper implements ApplicationListener {
                 mRemoveBodies.add(mSingleSlowDownObstacle.mBody);
             }
 
-            if (mTso != null && b.getBody() == mTso.mBody) {
+            if (mSingleTreeStumpObstacle != null
+                    && b.getBody() == mSingleTreeStumpObstacle.mBody) {
                 c.setEnabled(false);
             }
-            
+
             if (mRo != null && b.getBody() == mRo.mBody) {
                 c.setEnabled(false);
             }
@@ -317,11 +331,15 @@ public class GameWrapper implements ApplicationListener {
         }
 
         if (!mIsOnFloor) {
-            mPlayer.mBody.setLinearVelocity(
-                    mPlayer.mBody.getLinearVelocity().x * 0.997f,
-                    mPlayer.mBody.getLinearVelocity().y);
+            updatePlayerForAirControl();
         }
 
+    }
+
+    private void updatePlayerForAirControl() {
+        mPlayer.mBody.setLinearVelocity(
+                mPlayer.mBody.getLinearVelocity().x * 0.997f,
+                mPlayer.mBody.getLinearVelocity().y);
     }
 
     private void simulatePhysicsStep() {
@@ -333,15 +351,14 @@ public class GameWrapper implements ApplicationListener {
 
         mPlayer.update();
         mEnemy.update();
-        mTso.update();
-        mRo.update();
+        updateObstacles();
+    }
 
-        if (mTso.getPosition().x - mCameraOrigin.x < -600) {
-            mTso.mBody.setActive(false);
-            mWorld.destroyBody(mTso.mBody);
-            mTso = null;
-            mTso = new TreeStumpObstacle(new Vector2(mCameraOrigin.x + 800
-                    + sRng.nextFloat() * 100, 50), mWorld);
+    private void updateObstacles() {
+        mSingleTreeStumpObstacle.update();
+        mRo.update();
+        if (treeStumpObstacleHasLeftScreen()) {
+            respawnTreeStumpObstacle();
         }
 
         if (mRo.mDead || mRo.getPosition().x - mCameraOrigin.x < -600) {
@@ -352,12 +369,44 @@ public class GameWrapper implements ApplicationListener {
         }
     }
 
+    private void respawnTreeStumpObstacle() {
+        removeTreeStumpObstacle();
+        createTreeStumpObstacle();
+    }
+
+    private void createTreeStumpObstacle() {
+        mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(
+                mCameraOrigin.x + 800 + sRng.nextFloat() * 100, 50), mWorld);
+    }
+
+    private void removeTreeStumpObstacle() {
+        mSingleTreeStumpObstacle.mBody.setActive(false);
+        mWorld.destroyBody(mSingleTreeStumpObstacle.mBody);
+        mSingleTreeStumpObstacle = null;
+    }
+
+    private boolean treeStumpObstacleHasLeftScreen() {
+        return mSingleTreeStumpObstacle.getPosition().x - mCameraOrigin.x < -600;
+    }
+
     private void updateBullet() {
         mBulletTicks += 1;
-        if (mBulletTicks > 100 && mBullet != null) {
-            mRemoveBodies.add(mBullet);
-            mBullet = null;
+        removeBulletIfExpired();
+    }
+
+    private void removeBulletIfExpired() {
+        if (bulletHasExpired()) {
+            removeBullet();
         }
+    }
+
+    private void removeBullet() {
+        mRemoveBodies.add(mBullet);
+        mBullet = null;
+    }
+
+    private boolean bulletHasExpired() {
+        return mBulletTicks > 100 && mBullet != null;
     }
 
     private boolean shouldJump() {
