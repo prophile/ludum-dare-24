@@ -58,7 +58,9 @@ public class TreeStumpObstacle extends PhysicalObstacle {
 
     @Override
     public void collide(Entity e, Contact c) {
-        // TODO Auto-generated method stub
+        // Re-enabled collision for players
+        if (e instanceof Player)
+            c.setEnabled(true);
 
     }
 
