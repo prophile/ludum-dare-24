@@ -221,6 +221,7 @@ public class GameWrapper implements ApplicationListener {
         cs.setRadius(1);
         fd.shape = cs;
         fd.isSensor = false;
+        fd.restitution = 0.4f;
         fd.density = 1;
         Body body = mWorld.createBody(bd);
         body.createFixture(fd);
@@ -263,7 +264,8 @@ public class GameWrapper implements ApplicationListener {
             crosshairPosition.nor();
             crosshairPosition.mul(PHYSICS_RATIO * 3);
 
-            bd.linearVelocity.set(crosshairPosition.add(mPlayer.mBody.getLinearVelocity()));
+            bd.linearVelocity.set(crosshairPosition.add(mPlayer.mBody
+                    .getLinearVelocity()));
             bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
                     / PHYSICS_RATIO,
                     (playerSprite.getY() + playerSprite.getHeight() / 2)
@@ -283,6 +285,10 @@ public class GameWrapper implements ApplicationListener {
 
     public Vector2 getCameraOrigin() {
         return mCameraOrigin;
+    }
+
+    public Random getRNG() {
+        return mRng;
     }
 
     public Enemy getEnemy() {
@@ -490,7 +496,7 @@ public class GameWrapper implements ApplicationListener {
         Matrix4 m = new Matrix4(mCamera.combined);
         m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
         m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
-        mDebugger.render(mWorld, m);
+        // mDebugger.render(mWorld, m);
     }
 
     @Override
