@@ -594,12 +594,13 @@ public class GameWrapper implements ApplicationListener {
                 mPlayer.mBody.getLinearVelocity().y);
     }
 
-    protected class ScoreEntry {
+    protected class ScoreEntry implements Comparable<ScoreEntry> {
         public ScoreEntry(String n, int s) {
             mName = n;
             mScore = s;
         }
 
+        @Override
         public int compareTo(ScoreEntry o) {
             if (o.mScore < mScore)
                 return 1;
