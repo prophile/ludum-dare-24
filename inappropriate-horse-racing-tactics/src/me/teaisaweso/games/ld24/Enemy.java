@@ -92,6 +92,11 @@ public class Enemy extends Entity {
         }
         
         
+        if (playerX - this.getPosition().x < 240) {
+            mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.99f));
+        }
+        
+        
 
     }
 
