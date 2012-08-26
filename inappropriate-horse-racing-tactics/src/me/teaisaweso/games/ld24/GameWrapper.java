@@ -87,6 +87,8 @@ public class GameWrapper implements ApplicationListener {
 
     private SlowDownRegion mSlowDownRegion;
 
+    private SoupObstacle mSingleSoupObstacle;
+
     private Texture mTexture;
     private int mTicks;
     private World mWorld;
@@ -201,7 +203,7 @@ public class GameWrapper implements ApplicationListener {
     private void createDarwin() {
         Texture t;
         Sprite s;
-        t = new Texture(Gdx.files.internal("assets/DarwinDraft.png"));
+        t = new Texture(Gdx.files.internal("assets/Asset_Darwin1.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         s = new Sprite(t, 200, 400);
 
@@ -214,6 +216,7 @@ public class GameWrapper implements ApplicationListener {
         createTreeStumpObstacle();
         mSingleRockObstacle = new RockObstacle(new Vector2(
                 Constants.getFloat("rockFirstPosition"), 50.0f), mWorld);
+        createSoupObstacle();
     }
 
     private void createPhysicsSimulation() {
@@ -276,6 +279,11 @@ public class GameWrapper implements ApplicationListener {
         }
     }
 
+    private void createSoupObstacle() {
+        mSingleSoupObstacle = new SoupObstacle(getCameraOrigin().x + 1200
+                + mRng.nextFloat() * 1200, mWorld);
+    }
+
     @Override
     public void dispose() {
         mBatch.dispose();
@@ -322,6 +330,7 @@ public class GameWrapper implements ApplicationListener {
 
             mBullet.mBody.createFixture(fd);
             mEvolutionShootsound.play();
+            mGunArm.fire();
         }
 
         mCrosshair.draw(sb);
@@ -370,6 +379,8 @@ public class GameWrapper implements ApplicationListener {
                 Vector2 velocity = mBullet.mBody.getLinearVelocity();
                 mBullet.mBody.setLinearVelocity(-velocity.x, velocity.y);
                 suppressBulletRemoval = true;
+            } else if (b.getBody() == mSingleSoupObstacle.mBody) {
+                mSingleSoupObstacle.hit();
             }
 
             if (!suppressBulletRemoval) {
@@ -412,6 +423,11 @@ public class GameWrapper implements ApplicationListener {
                 c.setEnabled(false);
             }
 
+            if (mSingleSoupObstacle != null
+                    && b.getBody() == mSingleSoupObstacle.mBody) {
+                mSingleSoupObstacle.collide(mPlayer);
+                c.setEnabled(false);
+            }
         }
 
         if (a.getBody() == mEnemy.mBody) {
@@ -435,6 +451,11 @@ public class GameWrapper implements ApplicationListener {
 
             if (mSingleRockObstacle != null
                     && b.getBody() == mSingleRockObstacle.mBody) {
+                c.setEnabled(false);
+            }
+
+            if (mSingleSoupObstacle != null
+                    && b.getBody() == mSingleSoupObstacle.mBody) {
                 c.setEnabled(false);
             }
         }
@@ -582,6 +603,9 @@ public class GameWrapper implements ApplicationListener {
         if (mSingleSlowDownObstacle != null) {
             mSingleSlowDownObstacle.draw(mBatch);
         }
+        if (mSingleSoupObstacle != null) {
+            mSingleSoupObstacle.draw(mBatch);
+        }
         drawCrosshair(mBatch);
 
         mExplosionManager.draw(mBatch);
@@ -714,6 +738,17 @@ public class GameWrapper implements ApplicationListener {
                 mSingleSlowDownObstacle.mBody.setActive(false);
                 mWorld.destroyBody(mSingleSlowDownObstacle.mBody);
                 createSlowDownObstacle();
+            }
+        }
+
+        if (mSingleSoupObstacle != null) {
+            mSingleSoupObstacle.update();
+            if (mSingleSoupObstacle.mDead
+                    || mSingleSoupObstacle.getPosition().x
+                            - getCameraOrigin().x < -600) {
+                mSingleSoupObstacle.mBody.setActive(false);
+                mWorld.destroyBody(mSingleSoupObstacle.mBody);
+                createSoupObstacle();
             }
         }
     }
