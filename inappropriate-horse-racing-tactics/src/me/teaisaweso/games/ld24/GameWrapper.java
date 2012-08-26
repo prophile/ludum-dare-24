@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
@@ -44,6 +45,8 @@ public class GameWrapper implements ApplicationListener {
     private OrthographicCamera mCamera;
 
     private Vector2 mCameraOrigin = new Vector2(0, 0);
+
+    private BitmapFont mTextFont;
 
     private Sprite mCrosshair;
     private Sound mDarwinHurtSound;
@@ -140,6 +143,10 @@ public class GameWrapper implements ApplicationListener {
         createPhysicsSimulation();
 
         mBatch = new SpriteBatch();
+
+        mTextFont = new BitmapFont();
+        mTextFont.getRegion().getTexture().setFilter(TextureFilter.Linear,
+                TextureFilter.Linear);
 
         createCrosshair();
 
@@ -460,7 +467,13 @@ public class GameWrapper implements ApplicationListener {
             mSingleTreeStumpObstacle.draw(mBatch);
         }
         drawCrosshair(mBatch);
+
+        // Reset transform to untransformed, draw distance/score text
+        mBatch.setTransformMatrix(new Matrix4().translate(0, 0, 0));
+        mTextFont.draw(mBatch, "my-string", -390.0f, +290.0f);
+
         mBatch.end();
+
         Matrix4 m = new Matrix4(mCamera.combined);
         m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
         m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
