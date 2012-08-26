@@ -233,6 +233,7 @@ public class GameWrapper implements ApplicationListener {
         cs.setRadius(1);
         fd.shape = cs;
         fd.isSensor = false;
+        fd.restitution = 0.4f;
         fd.density = 1;
         Body body = mWorld.createBody(bd);
         body.createFixture(fd);
@@ -275,7 +276,8 @@ public class GameWrapper implements ApplicationListener {
             crosshairPosition.nor();
             crosshairPosition.mul(PHYSICS_RATIO * 3);
 
-            bd.linearVelocity.set(crosshairPosition.add(mPlayer.mBody.getLinearVelocity().x, 0));
+            bd.linearVelocity.set(crosshairPosition.add(
+                    mPlayer.mBody.getLinearVelocity().x, 0));
             bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
                     / PHYSICS_RATIO,
                     (playerSprite.getY() + playerSprite.getHeight() / 2)
@@ -286,7 +288,7 @@ public class GameWrapper implements ApplicationListener {
             fd.shape = cs;
             fd.isSensor = true;
             mBullet = new BulletEntity(mWorld.createBody(bd));
-            
+
             mBullet.mBody.createFixture(fd);
             mEvolutionShootsound.play();
         }
@@ -296,6 +298,10 @@ public class GameWrapper implements ApplicationListener {
 
     public Vector2 getCameraOrigin() {
         return mCameraOrigin;
+    }
+
+    public Random getRNG() {
+        return mRng;
     }
 
     public Enemy getEnemy() {
@@ -318,7 +324,8 @@ public class GameWrapper implements ApplicationListener {
     }
 
     void handleCollision(Fixture a, Fixture b, Contact c) {
-        if (mBullet != null && a.getBody() == mBullet.mBody && b.getBody() != mPlayer.mBody) {
+        if (mBullet != null && a.getBody() == mBullet.mBody
+                && b.getBody() != mPlayer.mBody) {
             mRemoveBodies.add(mBullet.mBody);
             if (b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.hit();
@@ -495,8 +502,10 @@ public class GameWrapper implements ApplicationListener {
         mGunArm.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
-        
-        if (mBullet != null) mBullet.draw(mBatch);
+
+        if (mBullet != null) {
+            mBullet.draw(mBatch);
+        }
         if (mSingleRockObstacle != null) {
             mSingleRockObstacle.draw(mBatch);
         }
@@ -519,7 +528,7 @@ public class GameWrapper implements ApplicationListener {
         Matrix4 m = new Matrix4(mCamera.combined);
         m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
         m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
-        mDebugger.render(mWorld, m);
+        // mDebugger.render(mWorld, m);
     }
 
     @Override
@@ -593,7 +602,9 @@ public class GameWrapper implements ApplicationListener {
 
         mPlayer.update();
         mEnemy.update(mCameraOrigin.x, mPlayer.getPosition().x);
-        if (mBullet != null) mBullet.update();
+        if (mBullet != null) {
+            mBullet.update();
+        }
         updateObstacles();
     }
 
@@ -629,8 +640,8 @@ public class GameWrapper implements ApplicationListener {
 
     private void updatePlayerForAirControl() {
         mPlayer.mBody.setLinearVelocity(
-                mPlayer.mBody.getLinearVelocity().x * 0.997f, mPlayer.mBody
-                        .getLinearVelocity().y);
+                mPlayer.mBody.getLinearVelocity().x * 0.997f,
+                mPlayer.mBody.getLinearVelocity().y);
     }
 
     protected class ScoreDownloader implements Runnable {
@@ -647,6 +658,7 @@ public class GameWrapper implements ApplicationListener {
             new Thread(mPublicTopScores).start();
         }
 
+        @Override
         public void run() {
             try {
                 // Open scores url,
@@ -661,8 +673,9 @@ public class GameWrapper implements ApplicationListener {
                 String line = new String();
 
                 // Read from it until we pass the Body tag,
-                while (!line.contains("<body>"))
+                while (!line.contains("<body>")) {
                     line = reader.readLine();
+                }
 
                 // Now a blank line,
                 line = reader.readLine();
@@ -670,8 +683,9 @@ public class GameWrapper implements ApplicationListener {
                 // And now some pairs of scores, until another blank line
                 while (true) {
                     line = reader.readLine();
-                    if (!line.contains(","))
+                    if (!line.contains(",")) {
                         break;
+                    }
 
                     String[] pair = line.split(",");
                     assert pair.length == 2;
@@ -697,12 +711,13 @@ public class GameWrapper implements ApplicationListener {
 
         @Override
         public int compareTo(ScoreEntry o) {
-            if (o.mScore < mScore)
+            if (o.mScore < mScore) {
                 return -1;
-            else if (o.mScore > mScore)
+            } else if (o.mScore > mScore) {
                 return 1;
-            else
+            } else {
                 return 0;
+            }
         }
 
         String mName;
