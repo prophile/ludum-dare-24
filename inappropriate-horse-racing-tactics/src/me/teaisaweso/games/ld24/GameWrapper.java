@@ -43,7 +43,7 @@ public class GameWrapper implements ApplicationListener {
     private BackgroundManager mBackgroundManager;
 
     private SpriteBatch mBatch;
-    private Body mBullet = null;
+    private BulletEntity mBullet = null;
 
     private int mBulletTicks;
 
@@ -281,8 +281,9 @@ public class GameWrapper implements ApplicationListener {
             cs.setRadius(2);
             fd.shape = cs;
             fd.isSensor = true;
-            mBullet = mWorld.createBody(bd);
-            mBullet.createFixture(fd);
+            mBullet = new BulletEntity(mWorld.createBody(bd));
+            
+            mBullet.mBody.createFixture(fd);
             mEvolutionShootsound.play();
         }
 
@@ -313,8 +314,8 @@ public class GameWrapper implements ApplicationListener {
     }
 
     void handleCollision(Fixture a, Fixture b, Contact c) {
-        if (a.getBody() == mBullet && b.getBody() != mPlayer.mBody) {
-            mRemoveBodies.add(mBullet);
+        if (mBullet != null && a.getBody() == mBullet.mBody && b.getBody() != mPlayer.mBody) {
+            mRemoveBodies.add(mBullet.mBody);
             if (b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.hit();
             }
@@ -393,7 +394,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void removeBullet() {
-        mRemoveBodies.add(mBullet);
+        mRemoveBodies.add(mBullet.mBody);
         mBullet = null;
     }
 
@@ -489,6 +490,7 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
+        if (mBullet != null) mBullet.draw(mBatch);
         if (mSingleRockObstacle != null) {
             mSingleRockObstacle.draw(mBatch);
         }
@@ -585,6 +587,7 @@ public class GameWrapper implements ApplicationListener {
 
         mPlayer.update();
         mEnemy.update(mCameraOrigin.x, mPlayer.getPosition().x);
+        if (mBullet != null) mBullet.update();
         updateObstacles();
     }
 
