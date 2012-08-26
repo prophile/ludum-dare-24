@@ -63,4 +63,8 @@ public class BulletEntity extends Entity {
         mParticleEffect.update(1.0f / 60.0f);
     }
 
+    public void reflect() {
+        Vector2 velocity = mBody.getLinearVelocity();
+        mBody.setLinearVelocity(-velocity.x, velocity.y);
+    }
 }

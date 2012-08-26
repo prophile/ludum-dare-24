@@ -327,9 +327,8 @@ public class GameWrapper implements ApplicationListener {
                 ;
             } else if (collider_b instanceof PhysicalObstacle) {
                 ((PhysicalObstacle)collider_b).hit();
-            } else if (b.getBody() == mEnemy.mBody) {
-                Vector2 velocity = mBullet.mBody.getLinearVelocity();
-                mBullet.mBody.setLinearVelocity(-velocity.x, velocity.y);
+            } else if (collider_b instanceof Enemy) {
+                ((BulletEntity)collider_a).reflect();
                 suppressBulletRemoval = true;
             }
 
