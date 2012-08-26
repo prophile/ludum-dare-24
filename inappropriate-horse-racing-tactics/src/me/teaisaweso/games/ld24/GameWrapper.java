@@ -57,6 +57,7 @@ public class GameWrapper implements ApplicationListener {
 
     private Sprite mCrosshair;
     private Sound mDarwinHurtSound;
+    private GunArmEntity mGunArm;
 
     private Box2DDebugRenderer mDebugger;
 
@@ -127,9 +128,11 @@ public class GameWrapper implements ApplicationListener {
         // Work out where the put the crosshair,
         pos.sub(getCameraOrigin());
         pos.sub(mousePosition);
-        pos.mul(0.7f);
+        
+        pos.mul(0.0f);
         pos.add(mousePosition);
         pos.add(getCameraOrigin());
+        mGunArm.passMousePosition(pos);
         return pos;
     }
 
@@ -138,6 +141,7 @@ public class GameWrapper implements ApplicationListener {
         assert instance == null || instance == this;
         instance = this;
         mTicks = 0;
+        
         loadGameOverAssets();
 
         Texture t = new Texture(Gdx.files.internal("assets/splash.png"));
@@ -166,7 +170,7 @@ public class GameWrapper implements ApplicationListener {
 
         addFloor();
         createObstacles();
-
+        mGunArm = new GunArmEntity(mPlayer);
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
     }
 
@@ -488,8 +492,10 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.drawSky();
         mBatch.begin();
         mBackgroundManager.draw(mBatch);
+        mGunArm.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
+        
         if (mBullet != null) mBullet.draw(mBatch);
         if (mSingleRockObstacle != null) {
             mSingleRockObstacle.draw(mBatch);
