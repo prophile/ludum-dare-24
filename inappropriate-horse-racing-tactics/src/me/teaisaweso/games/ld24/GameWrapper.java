@@ -284,7 +284,8 @@ public class GameWrapper implements ApplicationListener {
 
         if (a.getBody() == mPlayer.mBody) {
             if (b.getBody() == mFloor
-                    || b.getBody() == mSingleTreeStumpObstacle.mBody
+                    || mSingleTreeStumpObstacle != null
+                    && b.getBody() == mSingleTreeStumpObstacle.mBody
                     && mPlayer.getPosition().y > mSingleTreeStumpObstacle
                             .getPosition().y + 122) {
                 mIsOnFloor = true;
@@ -406,8 +407,12 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
-        mSingleRockObstacle.draw(mBatch);
-        mSingleTreeStumpObstacle.draw(mBatch);
+        if (mSingleRockObstacle != null) {
+            mSingleRockObstacle.draw(mBatch);
+        }
+        if (mSingleTreeStumpObstacle != null) {
+            mSingleTreeStumpObstacle.draw(mBatch);
+        }
         drawCrosshair(mBatch);
         mBatch.end();
         Matrix4 m = new Matrix4(mCamera.combined);
@@ -489,18 +494,25 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void updateObstacles() {
-        mSingleTreeStumpObstacle.update();
-        mSingleRockObstacle.update();
-        if (treeStumpObstacleHasLeftScreen()) {
-            respawnTreeStumpObstacle();
+        if (mSingleTreeStumpObstacle != null) {
+            mSingleTreeStumpObstacle.update();
+            if (treeStumpObstacleHasLeftScreen()) {
+                respawnTreeStumpObstacle();
+            }
         }
-
-        if (mSingleRockObstacle.mDead
-                || mSingleRockObstacle.getPosition().x - getCameraOrigin().x < -600) {
-            mSingleRockObstacle.mBody.setActive(false);
-            mWorld.destroyBody(mSingleRockObstacle.mBody);
-            mSingleRockObstacle = new RockObstacle(new Vector2(
-                    getCameraOrigin().x + 1600, 50), mWorld);
+        if (mSingleRockObstacle != null) {
+            mSingleRockObstacle.update();
+            if (mSingleRockObstacle.mDead
+                    || mSingleRockObstacle.getPosition().x
+                            - getCameraOrigin().x < -600) {
+                mSingleRockObstacle.mBody.setActive(false);
+                mWorld.destroyBody(mSingleRockObstacle.mBody);
+                mSingleRockObstacle = new RockObstacle(new Vector2(
+                        getCameraOrigin().x + 1600, 50), mWorld);
+            }
+        }
+        if (mSingleSlowDownObstacle != null) {
+            mSingleSlowDownObstacle.update();
         }
     }
 
