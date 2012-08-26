@@ -68,24 +68,26 @@ public class SlowDownObstacle extends PhysicalObstacle {
         mIsEvolved = true;
         mEvolutionSound.play();
         Vector2 position = getPosition();
-        mBody.applyLinearImpulse(new Vector2(0, 50), position);
+        mBody.applyLinearImpulse(new Vector2(120, 0), position);
     }
 
     @Override
     public void update() {
         if (mIsEvolved) {
             ++mHitTicks;
-            Vector2 position = getPosition();
-            Enemy e = GameWrapper.instance.getEnemy();
-            Vector2 target = e.getPosition();
-            target.add(new Vector2(0, 150));
-            target.sub(position);
-            target.mul(3.8f);
-            mBody.applyForceToCenter(target);
-            if (mHitTicks < 6) {
+            if (mHitTicks > 60) {
+                Vector2 position = getPosition();
+                Enemy e = GameWrapper.instance.getEnemy();
+                Vector2 target = e.getPosition();
+                target.add(new Vector2(30, 150));
+                target.sub(position);
+                target.mul(1.2f);
+                mBody.applyForceToCenter(target);
+            }
+            if (mHitTicks < 18) {
                 mSprite.setTexture(poofTexture);
             } else {
-                if (mHitTicks % 6 < 3) {
+                if (mHitTicks % 12 < 6) {
                     mSprite.setTexture(flapTextureHigh);
                 } else {
                     mSprite.setTexture(flapTextureLow);
