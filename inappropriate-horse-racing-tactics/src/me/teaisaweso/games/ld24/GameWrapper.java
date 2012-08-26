@@ -77,6 +77,10 @@ public class GameWrapper implements ApplicationListener {
     private int mTicks;
     private Sound mDarwinHurtSound;
 
+    private boolean mSplashScreen = true;
+
+    private Sprite mSplashScreenSprite;
+
     public void addFloor() {
         BodyDef bd = new BodyDef();
         bd.type = BodyType.StaticBody;
@@ -125,6 +129,9 @@ public class GameWrapper implements ApplicationListener {
         instance = this;
         mTicks = 0;
         loadGameOverAssets();
+        Texture t = new Texture(Gdx.files.internal("assets/splash.png"));
+        Sprite s = new Sprite(t, 800, 600);
+        mSplashScreenSprite = s;
         mEvolutionShootsound = Gdx.audio.newSound(Gdx.files.internal("assets/EvolutionShoot.wav"));
         createCamera();
         mBullet = null;
@@ -383,12 +390,24 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void render() {
-        if (!isGameOver()) {
+        if (mSplashScreen) {
+            renderSplashScreen();
+        } else if (!isGameOver()) {
             renderGameWorld();
         } else {
             renderGameOverScreen();
         }
 
+    }
+
+    private void renderSplashScreen() {
+        mBatch.begin();
+        mSplashScreenSprite.draw(mBatch);
+        mBatch.end();
+        
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+            mSplashScreen = false;
+        }
     }
 
     private void renderGameOverScreen() {
