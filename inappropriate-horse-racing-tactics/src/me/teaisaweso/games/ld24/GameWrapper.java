@@ -655,6 +655,10 @@ public class GameWrapper implements ApplicationListener {
                 createSlowDownObstacle();
             }
         }
+
+        if (mSingleSoupObstacle != null) {
+            mSingleSoupObstacle.update();
+        }
     }
 
     private void updatePlayerForAirControl() {

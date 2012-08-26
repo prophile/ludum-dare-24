@@ -25,6 +25,7 @@ public class SoupObstacle extends PhysicalObstacle {
     private EvolutionStage mStage;
     private Sprite mSprite;
     private Sound mEvolutionSound;
+    private int mTicks;
 
     private static void loadTexturesOnDemand() {
         if (!sTexturesLoaded) {
@@ -56,12 +57,15 @@ public class SoupObstacle extends PhysicalObstacle {
         bd.type = BodyType.StaticBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(mWidth/GameWrapper.PHYSICS_RATIO, mHeight/GameWrapper.PHYSICS_RATIO);
+        ps.setAsBox(mWidth / GameWrapper.PHYSICS_RATIO, mHeight
+                / GameWrapper.PHYSICS_RATIO);
         fd.shape = ps;
         bd.fixedRotation = true;
-        bd.position.set(new Vector2(v.x/GameWrapper.PHYSICS_RATIO, 0/GameWrapper.PHYSICS_RATIO));
+        bd.position.set(new Vector2(v.x / GameWrapper.PHYSICS_RATIO,
+                0 / GameWrapper.PHYSICS_RATIO));
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
+        mTicks = 0;
     }
 
     @Override
@@ -71,6 +75,18 @@ public class SoupObstacle extends PhysicalObstacle {
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
         }
+    }
+
+    @Override
+    public void update() {
+        if (mTicks % 21 < 7) {
+            mSprite.setTexture(sSoup1);
+        } else if (mTicks % 21 > 14) {
+            mSprite.setTexture(sSoup2);
+        } else {
+            mSprite.setTexture(sSoup3);
+        }
+        mTicks++;
     }
 
     @Override
@@ -87,5 +103,4 @@ public class SoupObstacle extends PhysicalObstacle {
     public StatusModifier freshStatusModifier() {
         return new SlowDownModifier();
     }
-
 }
