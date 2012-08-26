@@ -37,11 +37,12 @@ public class Player extends Entity {
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO), mHeight
-                / (2 * GameWrapper.PHYSICS_RATIO));
+        
+        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO)-4, mHeight
+                / (2 * GameWrapper.PHYSICS_RATIO), new Vector2(-1,0),0);
         fd.density = 1;
         fd.shape = ps;
-        bd.fixedRotation = true;
+        
         bd.type = BodyType.DynamicBody;
         bd.fixedRotation = true;
         bd.position.set(0, 3);
@@ -141,6 +142,12 @@ public class Player extends Entity {
                 mBody.setLinearVelocity(mBody.getLinearVelocity().mul(3f));
             }
         }, 1000);
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        // TODO Auto-generated method stub
+        return super.getPosition().add(32, 0);
     }
 
 }

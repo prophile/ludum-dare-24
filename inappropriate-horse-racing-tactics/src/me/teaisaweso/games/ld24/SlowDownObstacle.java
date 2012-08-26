@@ -2,6 +2,8 @@ package me.teaisaweso.games.ld24;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
@@ -10,10 +12,39 @@ public class SlowDownObstacle extends PhysicalObstacle {
     public boolean mIsEvolved = false;
     private final Sound mDarwinHurtSound;
     private final Sound mEvolutionSound;
+    private final Sprite mSprite;
+    private static Texture unevolvedTexture, poofTexture, flapTextureHigh,
+            flapTextureLow;
+    private static boolean texturesLoaded = false;
+    private int mHitTicks = 0;
+    public boolean mDead = false;
+
+    private static void loadTexturesOnDemand() {
+        if (!texturesLoaded) {
+            loadTextures();
+            texturesLoaded = true;
+        }
+    }
+
+    private static void loadTextures() {
+        unevolvedTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_1.png"));
+        poofTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_2.png"));
+        flapTextureHigh = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_3.png"));
+        flapTextureLow = new Texture(
+                Gdx.files.internal("assets/Asset_Banana_4.png"));
+    }
 
     public SlowDownObstacle(Body b) {
         super(b);
-        // TODO Auto-generated constructor stub
+        loadTexturesOnDemand();
+        mWidth = 150;
+        mHeight = 150;
+        mSprite = new Sprite(unevolvedTexture, (int) mWidth, (int) mHeight);
+        mSprite.setOrigin(-120.0f, 210.0f);
+        mSprite.setScale(1.2f);
         mDarwinHurtSound = Gdx.audio.newSound(Gdx.files
                 .internal("assets/DarwinHurt.wav"));
         mEvolutionSound = Gdx.audio.newSound(Gdx.files
@@ -27,6 +58,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
             mDarwinHurtSound.play();
+            mDead = true;
         }
     }
 
@@ -36,21 +68,39 @@ public class SlowDownObstacle extends PhysicalObstacle {
         mIsEvolved = true;
         mEvolutionSound.play();
         Vector2 position = getPosition();
-        mBody.applyLinearImpulse(new Vector2(0, 150), position);
+        mBody.applyLinearImpulse(new Vector2(120, 0), position);
     }
 
     @Override
     public void update() {
         if (mIsEvolved) {
-            Vector2 position = getPosition();
-            Enemy e = GameWrapper.instance.getEnemy();
-            Vector2 target = e.getPosition();
-            target.add(new Vector2(0, 150));
-            target.sub(position);
-            target.mul(1.8f);
-            mBody.applyForceToCenter(target);
+            ++mHitTicks;
+            if (mHitTicks > 60) {
+                Vector2 position = getPosition();
+                Enemy e = GameWrapper.instance.getEnemy();
+                Vector2 target = e.getPosition();
+                target.add(new Vector2(30, 150));
+                target.sub(position);
+                target.mul(1.2f);
+                mBody.applyForceToCenter(target);
+            }
+            if (mHitTicks < 18) {
+                mSprite.setTexture(poofTexture);
+            } else {
+                if (mHitTicks % 12 < 6) {
+                    mSprite.setTexture(flapTextureHigh);
+                } else {
+                    mSprite.setTexture(flapTextureLow);
+                }
+            }
+            System.out.println(mHitTicks);
         }
 
+    }
+
+    @Override
+    public Sprite getCurrentSprite() {
+        return mSprite;
     }
 
     @Override

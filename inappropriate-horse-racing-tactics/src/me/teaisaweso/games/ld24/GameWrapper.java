@@ -143,7 +143,8 @@ public class GameWrapper implements ApplicationListener {
         Texture t = new Texture(Gdx.files.internal("assets/splash.png"));
         Sprite s = new Sprite(t, 800, 600);
         mSplashScreenSprite = s;
-        mEvolutionShootsound = Gdx.audio.newSound(Gdx.files.internal("assets/EvolutionShoot.wav"));
+        mEvolutionShootsound = Gdx.audio.newSound(Gdx.files
+                .internal("assets/EvolutionShoot.wav"));
         createCamera();
         mBullet = null;
         mBackgroundManager = new BackgroundManager();
@@ -152,8 +153,8 @@ public class GameWrapper implements ApplicationListener {
         mBatch = new SpriteBatch();
 
         mTextFont = new BitmapFont();
-        mTextFont.getRegion().getTexture().setFilter(TextureFilter.Linear,
-                TextureFilter.Linear);
+        mTextFont.getRegion().getTexture()
+                .setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mScore = 0;
         // Blank list of top scores, in case intertubes fail.
         mPublicTopScores = new TreeSet<ScoreEntry>();
@@ -205,8 +206,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createPlayer() {
-        mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkey.png"));
+        mTexture = new Texture(Gdx.files.internal("assets/AssetMonkey.png"));
         mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Sprite s = new Sprite(mTexture, 200, 200);
         mPlayer = new Player(s, mWorld);
@@ -220,7 +220,9 @@ public class GameWrapper implements ApplicationListener {
 
     private Body createSlowDownObstaclePhysicsBody() {
         BodyDef bd = new BodyDef();
-        bd.position.set(1000 / 16, 400 / 16);
+        bd.position.set(
+                (getCameraOrigin().x + 600 + mRng.nextFloat() * 1200) / 16,
+                400 / 16);
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
@@ -269,7 +271,7 @@ public class GameWrapper implements ApplicationListener {
             crosshairPosition.nor();
             crosshairPosition.mul(PHYSICS_RATIO * 3);
 
-            bd.linearVelocity.set(crosshairPosition);
+            bd.linearVelocity.set(crosshairPosition.add(mPlayer.mBody.getLinearVelocity()));
             bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
                     / PHYSICS_RATIO,
                     (playerSprite.getY() + playerSprite.getHeight() / 2)
@@ -293,6 +295,10 @@ public class GameWrapper implements ApplicationListener {
 
     public Enemy getEnemy() {
         return mEnemy;
+    }
+
+    public Player getPlayer() {
+        return mPlayer;
     }
 
     private Vector2 getMouseLocation() {
@@ -351,7 +357,7 @@ public class GameWrapper implements ApplicationListener {
             if (mSingleSlowDownObstacle != null
                     && b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.collide(mEnemy);
-                mRemoveBodies.add(mSingleSlowDownObstacle.mBody);
+                c.setEnabled(false);
             }
 
             if (mSingleTreeStumpObstacle != null
@@ -425,7 +431,7 @@ public class GameWrapper implements ApplicationListener {
         mBatch.begin();
         mSplashScreenSprite.draw(mBatch);
         mBatch.end();
-        
+
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             mSplashScreen = false;
         }
@@ -488,6 +494,9 @@ public class GameWrapper implements ApplicationListener {
         }
         if (mSingleTreeStumpObstacle != null) {
             mSingleTreeStumpObstacle.draw(mBatch);
+        }
+        if (mSingleSlowDownObstacle != null) {
+            mSingleSlowDownObstacle.draw(mBatch);
         }
         drawCrosshair(mBatch);
 
@@ -599,6 +608,13 @@ public class GameWrapper implements ApplicationListener {
         }
         if (mSingleSlowDownObstacle != null) {
             mSingleSlowDownObstacle.update();
+            if (mSingleSlowDownObstacle.mDead
+                    || mSingleSlowDownObstacle.getPosition().x
+                            - getCameraOrigin().x < -600) {
+                mSingleSlowDownObstacle.mBody.setActive(false);
+                mWorld.destroyBody(mSingleSlowDownObstacle.mBody);
+                createSlowDownObstacle();
+            }
         }
     }
 

@@ -24,7 +24,7 @@ public class TreeStumpObstacle extends PhysicalObstacle {
         bd.type = BodyType.StaticBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(161 / (2 * GameWrapper.PHYSICS_RATIO),
+        ps.setAsBox(161 / (2 * GameWrapper.PHYSICS_RATIO) - 2,
                 122 / (2 * GameWrapper.PHYSICS_RATIO));
         fd.shape = ps;
         fd.friction = 0;
