@@ -1,6 +1,7 @@
 package me.teaisaweso.games.ld24;
 
 import java.io.IOException;
+import java.lang.Integer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -47,6 +48,7 @@ public class GameWrapper implements ApplicationListener {
     private Vector2 mCameraOrigin = new Vector2(0, 0);
 
     private BitmapFont mTextFont;
+    private int mScore;
 
     private Sprite mCrosshair;
     private Sound mDarwinHurtSound;
@@ -147,6 +149,7 @@ public class GameWrapper implements ApplicationListener {
         mTextFont = new BitmapFont();
         mTextFont.getRegion().getTexture().setFilter(TextureFilter.Linear,
                 TextureFilter.Linear);
+        mScore = 0;
 
         createCrosshair();
 
@@ -470,7 +473,9 @@ public class GameWrapper implements ApplicationListener {
 
         // Reset transform to untransformed, draw distance/score text
         mBatch.setTransformMatrix(new Matrix4().translate(0, 0, 0));
-        mTextFont.draw(mBatch, "my-string", -390.0f, +290.0f);
+        mScore = (int) getCameraOrigin().x;
+        String dist = Integer.toString(mScore);
+        mTextFont.draw(mBatch, dist, -390.0f, +290.0f);
 
         mBatch.end();
 
