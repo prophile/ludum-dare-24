@@ -586,4 +586,23 @@ public class GameWrapper implements ApplicationListener {
                 mPlayer.mBody.getLinearVelocity().x * 0.997f,
                 mPlayer.mBody.getLinearVelocity().y);
     }
+
+    protected class ScoreEntry {
+        public ScoreEntry(String n, int s) {
+            mName = n;
+            mScore = s;
+        }
+
+        public int compareTo(ScoreEntry o) {
+            if (o.mScore < mScore)
+                return 1;
+            else if (o.mScore > mScore)
+                return -1;
+            else
+                return 0;
+        }
+
+        String mName;
+        int mScore;
+    }
 }
