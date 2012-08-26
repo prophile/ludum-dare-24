@@ -15,6 +15,7 @@ public class BulletEntity extends Entity {
     private int mTicks;
     private final ParticleEffectPool.PooledEffect mParticleEffect;
     private static ParticleEffectPool sEffectPool = null;
+    private final int mRotateSpeed;
 
     private static ParticleEffectPool getEffectPool() {
         if (sEffectPool == null) {
@@ -28,8 +29,8 @@ public class BulletEntity extends Entity {
 
     public BulletEntity(Body b) {
 
-        mWidth = 40;
-        mHeight = 40;
+        mRotateSpeed = Constants.getInt("bulletSpriteRotateSpeed");
+        mWidth = mHeight = Constants.getInt("bulletSpriteSize");
         mTicks = 0;
         for (int i = 1; i < 5; i++) {
             Texture t = new Texture(Gdx.files.internal("assets/bullet" + i
@@ -44,7 +45,7 @@ public class BulletEntity extends Entity {
 
     @Override
     public Sprite getCurrentSprite() {
-        return mBulletSprites[mTicks % 40 / 10];
+        return mBulletSprites[mTicks % (4 * mRotateSpeed) / mRotateSpeed];
     }
 
     @Override

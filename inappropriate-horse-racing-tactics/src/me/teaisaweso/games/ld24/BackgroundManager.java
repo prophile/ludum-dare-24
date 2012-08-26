@@ -12,7 +12,13 @@ public class BackgroundManager {
 
     private static final TextureFilter BACKGROUND_TEXTURE_FILTER = TextureFilter.Linear;
     private final Sprite[] mBackgroundSprites = new Sprite[6];
-    private final static float[] sShifts = { 2.0f, 2.0f, 0.8f, 0.8f, 0.0f, 0.0f };
+    private final static float[] sShifts = {
+            Constants.getFloat("backBGLayerScrollSpeed"),
+            Constants.getFloat("backBGLayerScrollSpeed"),
+            Constants.getFloat("middleBGLayerScrollSpeed"),
+            Constants.getFloat("middleBGLayerScrollSpeed"),
+            Constants.getFloat("frontBGLayerScrollSpeed"),
+            Constants.getFloat("frontBGLayerScrollSpeed") };
     private final ShapeRenderer mSkyGradientRenderer;
 
     private static Texture sBackLayer, sMidLayer, sFrontLayer;
