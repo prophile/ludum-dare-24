@@ -293,43 +293,32 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void drawCrosshair(SpriteBatch sb) {
-        // Fetch mouse location
-        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        Vector2 mouse = getMouseLocation();
 
-        // Work out center of where the player is on the display,
-        Sprite s = mPlayer.getCurrentSprite();
-        float px = s.getX() + s.getWidth() / 2;
-        float py = s.getY() + s.getHeight() / 2;
-        Vector2 pos = new Vector2(px, py);
+        Sprite playerSprite = mPlayer.getCurrentSprite();
 
-        // Work around mouse x/y being from top left
-        mouse.y = 600 - mouse.y;
-        mouse.y -= 300;
-        mouse.x -= 400;
+        Vector2 crosshairPosition = computeCrosshairPosition(mouse,
+                playerSprite);
 
-        // Work out where the put the crosshair,
-        pos.sub(mCameraOrigin);
-        pos.sub(mouse);
-        pos.mul(0.7f);
-        pos.add(mouse);
-        pos.add(mCameraOrigin);
-
-        mCrosshair.setPosition(pos.x - 5, pos.y - 5);
+        mCrosshair
+                .setPosition(crosshairPosition.x - 5, crosshairPosition.y - 5);
 
         if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
             System.out.println("touch");
             mBulletTicks = 0;
             BodyDef bd = new BodyDef();
             bd.type = BodyType.KinematicBody;
-            px = s.getX() + (s.getWidth() / 2);
-            py = s.getY() + (s.getHeight() / 2);
-            pos.sub(new Vector2(px, py));
-            pos.nor();
-            pos.mul(PHYSICS_RATIO * 3);
+            float px = playerSprite.getX() + playerSprite.getWidth() / 2;
+            float py = playerSprite.getY() + playerSprite.getHeight() / 2;
+            crosshairPosition.sub(new Vector2(px, py));
+            crosshairPosition.nor();
+            crosshairPosition.mul(PHYSICS_RATIO * 3);
 
-            bd.linearVelocity.set(pos);
-            bd.position.set((s.getX() + s.getWidth() / 2) / PHYSICS_RATIO,
-                    (s.getY() + s.getHeight() / 2) / PHYSICS_RATIO);
+            bd.linearVelocity.set(crosshairPosition);
+            bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
+                    / PHYSICS_RATIO,
+                    (playerSprite.getY() + playerSprite.getHeight() / 2)
+                            / PHYSICS_RATIO);
             FixtureDef fd = new FixtureDef();
             CircleShape cs = new CircleShape();
             cs.setRadius(2);
@@ -340,6 +329,33 @@ public class GameWrapper implements ApplicationListener {
         }
 
         mCrosshair.draw(sb);
+    }
+
+    private Vector2 computeCrosshairPosition(Vector2 mousePosition,
+            Sprite playerSprite) {
+        // Work out center of where the player is on the display,
+        float px = playerSprite.getX() + playerSprite.getWidth() / 2;
+        float py = playerSprite.getY() + playerSprite.getHeight() / 2;
+        Vector2 pos = new Vector2(px, py);
+
+        // Work out where the put the crosshair,
+        pos.sub(mCameraOrigin);
+        pos.sub(mousePosition);
+        pos.mul(0.7f);
+        pos.add(mousePosition);
+        pos.add(mCameraOrigin);
+        return pos;
+    }
+
+    private Vector2 getMouseLocation() {
+        // Fetch mouse location
+        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+
+        // Work around mouse x/y being from top left
+        mouse.y = 600 - mouse.y;
+        mouse.y -= 300;
+        mouse.x -= 400;
+        return mouse;
     }
 
     @Override
