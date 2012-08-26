@@ -23,8 +23,8 @@ public class Enemy extends Entity {
         mSprite = sprite;
         mWidth = 200;
         mHeight = 400;
-        mEa.mMaxSpeed = 30000;
-        mEa.mAccel = 57;
+        mAttributes.mMaxSpeed = 30000;
+        mAttributes.mAccel = 57;
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
@@ -54,7 +54,7 @@ public class Enemy extends Entity {
     }
 
     public float getEffectiveAccel() {
-        float currentAccel = mEa.mAccel;
+        float currentAccel = mAttributes.mAccel;
         for (StatusModifier modifier : mStatusModifiers) {
             currentAccel = modifier.adjustAccel(currentAccel);
         }
@@ -67,7 +67,7 @@ public class Enemy extends Entity {
     }
 
     public float getEffectiveMaxSpeed() {
-        float currentSpeed = mEa.mMaxSpeed;
+        float currentSpeed = mAttributes.mMaxSpeed;
 
         for (StatusModifier modifier : mStatusModifiers) {
             currentSpeed = modifier.adjustMaxSpeed(currentSpeed);

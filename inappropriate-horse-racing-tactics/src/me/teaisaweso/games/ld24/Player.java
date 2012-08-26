@@ -20,8 +20,8 @@ public class Player extends Entity {
 
     public Player(Sprite sprite, World world) {
 
-        mEa.mMaxSpeed = 30000;
-        mEa.mAccel = 30;
+        mAttributes.mMaxSpeed = 30000;
+        mAttributes.mAccel = 30;
         mSprite = sprite;
         mWidth = 200;
         mHeight = 200;
@@ -58,7 +58,7 @@ public class Player extends Entity {
     }
 
     public float getEffectiveAccel() {
-        float currentAccel = mEa.mAccel;
+        float currentAccel = mAttributes.mAccel;
         for (StatusModifier modifier : mStatusModifiers) {
             currentAccel = modifier.adjustAccel(currentAccel);
         }
@@ -67,7 +67,7 @@ public class Player extends Entity {
     }
 
     public float getEffectiveMaxSpeed() {
-        float currentSpeed = mEa.mMaxSpeed;
+        float currentSpeed = mAttributes.mMaxSpeed;
 
         for (StatusModifier modifier : mStatusModifiers) {
             currentSpeed = modifier.adjustMaxSpeed(currentSpeed);
