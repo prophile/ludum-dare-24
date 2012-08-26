@@ -15,17 +15,18 @@ public class TreeStumpObstacle extends PhysicalObstacle {
 
     private Sprite mSprite;
 
-    public TreeStumpObstacle(Vector2 worldPosition, World w) {
+    public TreeStumpObstacle(Vector2 worldPosition, World w, float scale) {
         super(null);
         Texture t = new Texture(Gdx.files.internal("assets/Stump.png"));
-        mSprite = new Sprite(t, 161, 122);
+        mSprite = new Sprite(t, (int)(161), (int)(122));
+        mSprite.setScale(scale);
 
         BodyDef bd = new BodyDef();
         bd.type = BodyType.StaticBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(161 / (2 * GameWrapper.PHYSICS_RATIO) - 2,
-                122 / (2 * GameWrapper.PHYSICS_RATIO));
+        ps.setAsBox(161*scale / (2 * GameWrapper.PHYSICS_RATIO) - 2,
+                122*scale / (2 * GameWrapper.PHYSICS_RATIO));
         fd.shape = ps;
         fd.friction = 0;
         bd.position.set(new Vector2(worldPosition.x / GameWrapper.PHYSICS_RATIO,
@@ -33,8 +34,8 @@ public class TreeStumpObstacle extends PhysicalObstacle {
         Body b = w.createBody(bd);
         b.createFixture(fd);
         mBody = b;
-        mWidth = 161;
-        mHeight = 122;
+        mWidth = 161*scale;
+        mHeight = 122*scale;
     }
 
     @Override

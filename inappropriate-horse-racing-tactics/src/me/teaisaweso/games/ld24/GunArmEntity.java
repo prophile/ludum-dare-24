@@ -37,7 +37,7 @@ public class GunArmEntity extends Entity {
 
     @Override
     public Vector2 getPosition() {
-        return mPlayer.getPosition().add(64, -32);
+        return mPlayer.getPosition().add(80, 0);
     }
 
 }

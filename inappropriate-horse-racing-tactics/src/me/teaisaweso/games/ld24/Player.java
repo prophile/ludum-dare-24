@@ -53,7 +53,7 @@ public class Player extends Entity {
 
     private void configureAttributes() {
         mAttributes.mMaxSpeed = 33;
-        mAttributes.mAccel = 100;
+        mAttributes.mAccel = 200;
         mWidth = 200;
         mHeight = 200;
     }
@@ -95,7 +95,7 @@ public class Player extends Entity {
     @Override
     public void update() {
         if (!GameWrapper.instance.isOnFloor()) {
-            mBody.applyForceToCenter(0.0f, -98f * mBody.getMass());
+            mBody.applyForceToCenter(0.0f, -400f * mBody.getMass());
         }
         mLastJumpTicks++;
         updateAndRemoveModifiers();
@@ -122,7 +122,7 @@ public class Player extends Entity {
 
     public void jump() {
         if (mLastJumpTicks > 10) {
-            mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, 50));
+            mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, 160));
             mLastJumpTicks = 0;
             mJumpSound.play();
         }
