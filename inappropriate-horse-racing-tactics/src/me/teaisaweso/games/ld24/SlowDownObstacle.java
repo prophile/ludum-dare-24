@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 public class SlowDownObstacle extends PhysicalObstacle {
 
     public boolean mIsEvolved = false;
-    
+
     public SlowDownObstacle(Body b) {
         super(b);
         // TODO Auto-generated constructor stub
@@ -13,11 +13,9 @@ public class SlowDownObstacle extends PhysicalObstacle {
 
     @Override
     public void collide(Entity e) {
-        
-        
         if (e instanceof Enemy && mIsEvolved) {
-            Enemy en = (Enemy)e;
-            en.addStatusModifier(this.freshStatusModifier());
+            Enemy enemy = (Enemy) e;
+            enemy.addStatusModifier(freshStatusModifier());
         }
     }
 
