@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -98,7 +99,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
     }
 
     @Override
-    public void collide(Entity e) {
+    public void collide(Entity e, Contact c) {
         if (e instanceof Enemy && mStage != EvolutionStage.NORMAL) {
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());

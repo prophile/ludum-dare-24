@@ -313,6 +313,9 @@ public class GameWrapper implements ApplicationListener {
     }
 
     void handleCollision(Fixture a, Fixture b, Contact c) {
+        Entity collider_a = (Entity)a.getBody().getUserData();
+        Entity collider_b = (Entity)b.getBody().getUserData();
+        
         if (mBullet != null && a.getBody() == mBullet.mBody
                 && b.getBody() != mPlayer.mBody) {
             boolean suppressBulletRemoval = false;
@@ -358,19 +361,19 @@ public class GameWrapper implements ApplicationListener {
 
             if (mSingleSlowDownObstacle != null
                     && b.getBody() == mSingleSlowDownObstacle.mBody) {
-                mSingleSlowDownObstacle.collide(mPlayer);
+                mSingleSlowDownObstacle.collide(mPlayer, c);
                 c.setEnabled(false);
             }
 
             if (mSingleRockObstacle != null
                     && b.getBody() == mSingleRockObstacle.mBody) {
-                mSingleRockObstacle.collide(mPlayer);
+                mSingleRockObstacle.collide(mPlayer, c);
                 c.setEnabled(false);
             }
 
             if (mSingleSoupObstacle != null
                     && b.getBody() == mSingleSoupObstacle.mBody) {
-                mSingleSoupObstacle.collide(mPlayer);
+                mSingleSoupObstacle.collide(mPlayer, c);
                 c.setEnabled(false);
             }
         }
@@ -379,7 +382,7 @@ public class GameWrapper implements ApplicationListener {
             if (mSingleSlowDownObstacle != null
                     && b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mExplosionManager.pew(mSingleSlowDownObstacle.getPosition());
-                mSingleSlowDownObstacle.collide(mEnemy);
+                mSingleSlowDownObstacle.collide(mEnemy, c);
                 c.setEnabled(false);
             }
 
