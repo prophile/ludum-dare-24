@@ -213,7 +213,9 @@ public class GameWrapper implements ApplicationListener {
 
     private Body createSlowDownObstaclePhysicsBody() {
         BodyDef bd = new BodyDef();
-        bd.position.set(1000 / 16, 400 / 16);
+        bd.position.set(
+                (getCameraOrigin().x + 600 + mRng.nextFloat() * 1200) / 16,
+                400 / 16);
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
@@ -344,7 +346,7 @@ public class GameWrapper implements ApplicationListener {
             if (mSingleSlowDownObstacle != null
                     && b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.collide(mEnemy);
-                mRemoveBodies.add(mSingleSlowDownObstacle.mBody);
+                c.setEnabled(false);
             }
 
             if (mSingleTreeStumpObstacle != null
@@ -469,6 +471,9 @@ public class GameWrapper implements ApplicationListener {
         if (mSingleTreeStumpObstacle != null) {
             mSingleTreeStumpObstacle.draw(mBatch);
         }
+        if (mSingleSlowDownObstacle != null) {
+            mSingleSlowDownObstacle.draw(mBatch);
+        }
         drawCrosshair(mBatch);
 
         // Reset transform to untransformed, draw distance/score text
@@ -482,7 +487,7 @@ public class GameWrapper implements ApplicationListener {
         Matrix4 m = new Matrix4(mCamera.combined);
         m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
         m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
-        mDebugger.render(mWorld, m);
+        // mDebugger.render(mWorld, m);
     }
 
     @Override
@@ -578,6 +583,13 @@ public class GameWrapper implements ApplicationListener {
         }
         if (mSingleSlowDownObstacle != null) {
             mSingleSlowDownObstacle.update();
+            if (mSingleSlowDownObstacle.mDead
+                    || mSingleSlowDownObstacle.getPosition().x
+                            - getCameraOrigin().x < -600) {
+                mSingleSlowDownObstacle.mBody.setActive(false);
+                mWorld.destroyBody(mSingleSlowDownObstacle.mBody);
+                createSlowDownObstacle();
+            }
         }
     }
 
