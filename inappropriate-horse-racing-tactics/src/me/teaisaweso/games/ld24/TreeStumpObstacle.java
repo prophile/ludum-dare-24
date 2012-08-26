@@ -43,6 +43,7 @@ public class TreeStumpObstacle extends PhysicalObstacle {
         Body b = w.createBody(bd);
         b.createFixture(fd);
         mBody = b;
+        mBody.setUserData(this);
         mWidth = 161 * scale;
         mHeight = 122 * scale;
     }

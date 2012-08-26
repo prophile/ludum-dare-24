@@ -84,6 +84,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
         fd.density = 1;
         mBody = world.createBody(bd);
         mBody.createFixture(fd);
+        mBody.setUserData(this);
 
         mWidth = 150;
         mHeight = 150;

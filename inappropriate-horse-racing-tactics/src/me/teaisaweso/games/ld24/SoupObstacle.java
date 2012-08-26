@@ -65,6 +65,7 @@ public class SoupObstacle extends PhysicalObstacle {
         bd.position.set(new Vector2(x / GameWrapper.PHYSICS_RATIO, 0/GameWrapper.PHYSICS_RATIO));
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
+        mBody.setUserData(this);
         mTicks = 0;
         mDead = false;
         mStage = EvolutionStage.NORMAL;

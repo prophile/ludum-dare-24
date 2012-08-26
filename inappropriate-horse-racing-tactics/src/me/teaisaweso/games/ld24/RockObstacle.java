@@ -37,6 +37,7 @@ public class RockObstacle extends PhysicalObstacle {
         fd.shape = ps;
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
+        mBody.setUserData(this);
     }
 
     private void configureAttributes() {

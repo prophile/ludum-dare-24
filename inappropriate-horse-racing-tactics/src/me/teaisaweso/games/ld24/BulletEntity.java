@@ -39,6 +39,7 @@ public class BulletEntity extends Entity {
         }
 
         mBody = b;
+        mBody.setUserData(this);
 
         mParticleEffect = getEffectPool().obtain();
     }

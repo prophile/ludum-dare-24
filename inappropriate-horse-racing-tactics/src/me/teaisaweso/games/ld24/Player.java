@@ -53,6 +53,7 @@ public class Player extends Entity {
         Body b = world.createBody(bd);
         b.createFixture(fd);
         mBody = b;
+        mBody.setUserData(this);
     }
 
     private void configureAttributes() {
