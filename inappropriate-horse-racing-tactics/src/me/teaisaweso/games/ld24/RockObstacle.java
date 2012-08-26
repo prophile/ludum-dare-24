@@ -11,33 +11,34 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class RockObstacle extends PhysicalObstacle {
 
-    private Sprite mSprite;
-    
+    private final Sprite mSprite;
+
     public boolean mDead;
-    
+
     public RockObstacle(Vector2 worldPosition, World w) {
         super(null);
         mWidth = 90;
         mHeight = 90;
         Texture t = new Texture(Gdx.files.internal("assets/AssetRockDraft.png"));
-        mSprite = new Sprite(t, (int)mWidth, (int)mHeight);
+        mSprite = new Sprite(t, (int) mWidth, (int) mHeight);
         mDead = false;
-        
+
         BodyDef bd = new BodyDef();
-        bd.position.set(worldPosition.mul(1.0f/GameWrapper.PHYSICS_RATIO));
+        bd.position.set(worldPosition.mul(1.0f / GameWrapper.PHYSICS_RATIO));
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(mWidth/(2*GameWrapper.PHYSICS_RATIO),  mHeight/(2*GameWrapper.PHYSICS_RATIO));
+        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO), mHeight
+                / (2 * GameWrapper.PHYSICS_RATIO));
         fd.shape = ps;
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
     }
-    
+
     @Override
     public void collide(Entity e) {
         if (e instanceof Player && !mDead) {
             mDead = true;
-            Player p = (Player)e;
+            Player p = (Player) e;
             p.doHurt();
         }
     }
@@ -45,7 +46,7 @@ public class RockObstacle extends PhysicalObstacle {
     @Override
     public void hit() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
