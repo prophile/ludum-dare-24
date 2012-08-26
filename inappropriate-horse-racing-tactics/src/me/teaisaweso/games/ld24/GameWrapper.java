@@ -79,12 +79,9 @@ public class GameWrapper implements ApplicationListener {
     public final Random mRng = new Random();
 
     private RockObstacle mSingleRockObstacle;
-
     private SlowDownObstacle mSingleSlowDownObstacle;
-
     private TreeStumpObstacle mTreeStumpObstacle1;
     private TreeStumpObstacle mTreeStumpObstacle2;
-
     private SoupObstacle mSingleSoupObstacle;
 
     private int mTicks;
