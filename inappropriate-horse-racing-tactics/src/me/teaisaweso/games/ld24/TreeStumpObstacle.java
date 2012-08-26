@@ -64,6 +64,10 @@ public class TreeStumpObstacle extends PhysicalObstacle {
 
     }
 
+    public float getWalkHeight() {
+        return 122 * mSprite.getScaleY();
+    }
+
     @Override
     public void hit() {
         // TODO Auto-generated method stub

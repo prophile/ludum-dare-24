@@ -342,16 +342,13 @@ public class GameWrapper implements ApplicationListener {
             }
         }
 
-        if (a.getBody() == mPlayer.mBody) {
+        if (collider_a instanceof Player) {
+            // Enable player jumping if player is on top of an object that
+            // he is permitted to jump from.
             if (b.getBody() == mFloor
-                    || mTreeStumpObstacle1 != null
-                    && b.getBody() == mTreeStumpObstacle1.mBody
-                    && mPlayer.getPosition().y > mTreeStumpObstacle1
-                            .getPosition().y + 122
-                    || mTreeStumpObstacle2 != null
-                    && b.getBody() == mTreeStumpObstacle2.mBody
-                    && mPlayer.getPosition().y > mTreeStumpObstacle2
-                            .getPosition().y + 122 * 1.5) {
+                    || collider_b instanceof TreeStumpObstacle
+                    && mPlayer.getPosition().y > ((TreeStumpObstacle)collider_b)
+                            .getWalkHeight()) {
                 mIsOnFloor = true;
             }
 
