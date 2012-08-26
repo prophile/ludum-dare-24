@@ -379,13 +379,6 @@ public class GameWrapper implements ApplicationListener {
         }
 
         if (a.getBody() == mEnemy.mBody) {
-            if (mSingleSlowDownObstacle != null
-                    && b.getBody() == mSingleSlowDownObstacle.mBody) {
-                mExplosionManager.pew(mSingleSlowDownObstacle.getPosition());
-                mSingleSlowDownObstacle.collide(mEnemy, c);
-                c.setEnabled(false);
-            }
-
             if (collider_b instanceof PhysicalObstacle) {
                 ((PhysicalObstacle) collider_b).collide(collider_a, c);
                 c.setEnabled(false);
