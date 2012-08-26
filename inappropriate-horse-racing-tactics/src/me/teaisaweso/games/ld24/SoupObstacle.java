@@ -26,6 +26,7 @@ public class SoupObstacle extends PhysicalObstacle {
     private Sprite mSprite;
     private Sound mEvolutionSound;
     private int mTicks;
+    public boolean mDead;
 
     private static void loadTexturesOnDemand() {
         if (!sTexturesLoaded) {
@@ -66,6 +67,7 @@ public class SoupObstacle extends PhysicalObstacle {
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
         mTicks = 0;
+        mDead = false;
     }
 
     @Override
@@ -74,6 +76,7 @@ public class SoupObstacle extends PhysicalObstacle {
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
+            mDead = true;
         }
     }
 

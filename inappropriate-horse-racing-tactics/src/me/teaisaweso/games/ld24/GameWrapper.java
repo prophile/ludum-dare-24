@@ -658,6 +658,13 @@ public class GameWrapper implements ApplicationListener {
 
         if (mSingleSoupObstacle != null) {
             mSingleSoupObstacle.update();
+            if (mSingleSoupObstacle.mDead
+                    || mSingleSoupObstacle.getPosition().x
+                            - getCameraOrigin().x < -600) {
+                mSingleSoupObstacle.mBody.setActive(false);
+                mWorld.destroyBody(mSingleSoupObstacle.mBody);
+                createSoupObstacle();
+            }
         }
     }
 
