@@ -94,6 +94,11 @@ public class GameWrapper implements ApplicationListener {
     private boolean mSplashScreen = true;
 
     private Sprite mSplashScreenSprite;
+    private ExplosionManager mExplosionManager;
+
+    public ExplosionManager getExplosionManager() {
+        return mExplosionManager;
+    }
 
     public void addFloor() {
         BodyDef bd = new BodyDef();
@@ -165,6 +170,8 @@ public class GameWrapper implements ApplicationListener {
         mScore = 0;
         // Blank list of top scores, in case intertubes fail.
         mPublicTopScores = new ScoreDownloader();
+
+        mExplosionManager = new ExplosionManager();
 
         createCrosshair();
 
@@ -344,8 +351,7 @@ public class GameWrapper implements ApplicationListener {
             // If off screen, ignore collision.
             Vector2 pos = b.getBody().getPosition();
             pos.mul(PHYSICS_RATIO);
-            if (pos.x > (mCameraOrigin.x + 420)
-                    || pos.y > (mCameraOrigin.y + 320)) {
+            if (pos.x > mCameraOrigin.x + 420 || pos.y > mCameraOrigin.y + 320) {
                 ;
             } else if (b.getBody() == mSingleSlowDownObstacle.mBody) {
                 mSingleSlowDownObstacle.hit();
@@ -392,6 +398,7 @@ public class GameWrapper implements ApplicationListener {
         if (a.getBody() == mEnemy.mBody) {
             if (mSingleSlowDownObstacle != null
                     && b.getBody() == mSingleSlowDownObstacle.mBody) {
+                mExplosionManager.pew(mSingleSlowDownObstacle.getPosition());
                 mSingleSlowDownObstacle.collide(mEnemy);
                 c.setEnabled(false);
             }
@@ -558,6 +565,8 @@ public class GameWrapper implements ApplicationListener {
         }
         drawCrosshair(mBatch);
 
+        mExplosionManager.draw(mBatch);
+
         // Reset transform to untransformed, draw distance/score text
         mBatch.setTransformMatrix(new Matrix4().translate(0, 0, 0));
         mScore = (int) getCameraOrigin().x;
@@ -630,6 +639,8 @@ public class GameWrapper implements ApplicationListener {
         if (!mIsOnFloor) {
             updatePlayerForAirControl();
         }
+
+        mExplosionManager.update();
 
     }
 
