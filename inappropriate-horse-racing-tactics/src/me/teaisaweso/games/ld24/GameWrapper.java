@@ -8,7 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -53,7 +53,7 @@ public class GameWrapper implements ApplicationListener {
 
     private BitmapFont mTextFont;
     private int mScore;
-    private TreeSet<ScoreEntry> mPublicTopScores;
+    private ScoreDownloader mPublicTopScores;
 
     private Sprite mCrosshair;
     private Sound mDarwinHurtSound;
@@ -157,7 +157,7 @@ public class GameWrapper implements ApplicationListener {
                 .setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mScore = 0;
         // Blank list of top scores, in case intertubes fail.
-        mPublicTopScores = new TreeSet<ScoreEntry>();
+        mPublicTopScores = new ScoreDownloader();
 
         createCrosshair();
 
@@ -442,7 +442,7 @@ public class GameWrapper implements ApplicationListener {
         mGameOverSprite.draw(mGameOverBatch);
 
         String text = new String();
-        for (ScoreEntry e : mPublicTopScores) {
+        for (ScoreEntry e : mPublicTopScores.mScoreList) {
             text += e.mName + ": " + e.mScore + "\n";
         }
 
@@ -532,7 +532,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void setGameOver() {
-        fetchScores();
+        new Thread(mPublicTopScores).start();
         mIsGameOver = true;
     }
 
@@ -624,6 +624,57 @@ public class GameWrapper implements ApplicationListener {
                 mPlayer.mBody.getLinearVelocity().y);
     }
 
+    protected class ScoreDownloader implements Runnable {
+        public ConcurrentLinkedQueue<ScoreEntry> mScoreList;
+
+        public ScoreDownloader() {
+            mScoreList = new ConcurrentLinkedQueue<ScoreEntry>();
+        }
+
+        public void run() {
+            mScoreList.clear();
+
+            try {
+                // Open scores url,
+                URL u = new URL(
+                        "http://immense-savannah-9950.herokuapp.com/csv_scores");
+                u.getContent();
+
+                // Setup read from it
+                InputStream in = u.openStream();
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(in));
+                String line = new String();
+
+                // Read from it until we pass the Body tag,
+                while (!line.contains("<body>"))
+                    line = reader.readLine();
+
+                // Now a blank line,
+                line = reader.readLine();
+
+                // And now some pairs of scores, until another blank line
+                while (true) {
+                    line = reader.readLine();
+                    if (!line.contains(","))
+                        break;
+
+                    String[] pair = line.split(",");
+                    assert pair.length == 2;
+                    mScoreList.add(new ScoreEntry(pair[0], new Integer(pair[1])
+                            .intValue()));
+                }
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
     protected class ScoreEntry implements Comparable<ScoreEntry> {
         public ScoreEntry(String n, int s) {
             mName = n;
@@ -642,49 +693,5 @@ public class GameWrapper implements ApplicationListener {
 
         String mName;
         int mScore;
-    }
-
-    protected void fetchScores() {
-        mPublicTopScores.clear();
-
-        try {
-            // Open scores url,
-            URL u = new URL(
-                    "http://immense-savannah-9950.herokuapp.com/csv_scores");
-            u.getContent();
-
-            // Setup read from it
-            InputStream in = u.openStream();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(in));
-            String line = new String();
-
-            // Read from it until we pass the Body tag,
-            while (!line.contains("<body>"))
-                line = reader.readLine();
-
-            // Now a blank line,
-            line = reader.readLine();
-
-            // And now some pairs of scores, until another blank line
-            while (true) {
-                line = reader.readLine();
-                if (!line.contains(","))
-                    break;
-
-                String[] pair = line.split(",");
-                assert pair.length == 2;
-                mPublicTopScores.add(new ScoreEntry(pair[0], new Integer(
-                        pair[1]).intValue()));
-            }
-
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
     }
 }
