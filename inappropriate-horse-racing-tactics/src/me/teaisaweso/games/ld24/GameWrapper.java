@@ -29,54 +29,34 @@ import com.badlogic.gdx.physics.box2d.World;
 public class GameWrapper implements ApplicationListener {
     public static GameWrapper instance = null;
 
-    private Vector2 mCameraOrigin = new Vector2(0, 0);
     public static final float PHYSICS_RATIO = 16;
-
-    private boolean mIsGameOver;
-    public final Random mRng = new Random();
-
-    public void clearGameOver() {
-        mIsGameOver = false;
-    }
-
-    public Vector2 getCameraOrigin() {
-        return mCameraOrigin;
-    }
-
-    public boolean isGameOver() {
-        return mIsGameOver;
-    }
-
-    public void setCameraOrigin(Vector2 newCameraOrigin) {
-        mCameraOrigin = newCameraOrigin;
-    }
-
-    public void setGameOver() {
-        mIsGameOver = true;
-    }
-
     private BackgroundManager mBackgroundManager;
+
     private SpriteBatch mBatch;
     private Body mBullet = null;
+
     private int mBulletTicks;
+
     private OrthographicCamera mCamera;
+
+    private Vector2 mCameraOrigin = new Vector2(0, 0);
+
     private Sprite mCrosshair;
 
     private Box2DDebugRenderer mDebugger;
 
     private Enemy mEnemy;
-
     private Body mFloor;
-
     private SpriteBatch mGameOverBatch;
-
     private Sprite mGameOverSprite;
-
+    private boolean mIsGameOver;
     private boolean mIsOnFloor;
 
     private Player mPlayer;
 
     private final HashSet<Body> mRemoveBodies = new HashSet<Body>();
+
+    public final Random mRng = new Random();
 
     private RockObstacle mSingleRockObstacle;
 
@@ -105,6 +85,10 @@ public class GameWrapper implements ApplicationListener {
 
     private boolean bulletHasExpired() {
         return mBulletTicks > 100 && mBullet != null;
+    }
+
+    public void clearGameOver() {
+        mIsGameOver = false;
     }
 
     private void clearScreen() {
@@ -269,6 +253,14 @@ public class GameWrapper implements ApplicationListener {
         mCrosshair.draw(sb);
     }
 
+    public Vector2 getCameraOrigin() {
+        return mCameraOrigin;
+    }
+
+    public Enemy getEnemy() {
+        return mEnemy;
+    }
+
     private Vector2 getMouseLocation() {
         // Fetch mouse location
         Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
@@ -337,6 +329,10 @@ public class GameWrapper implements ApplicationListener {
                 c.setEnabled(false);
             }
         }
+    }
+
+    public boolean isGameOver() {
+        return mIsGameOver;
     }
 
     private void loadGameOverAssets() {
@@ -431,6 +427,14 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void resume() {
+    }
+
+    public void setCameraOrigin(Vector2 newCameraOrigin) {
+        mCameraOrigin = newCameraOrigin;
+    }
+
+    public void setGameOver() {
+        mIsGameOver = true;
     }
 
     private boolean shouldJump() {
