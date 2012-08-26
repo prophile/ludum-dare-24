@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 public class Entity {
     protected Body mBody;
     protected float mWidth = 0, mHeight = 0;
-    protected EntityAttributes mAttributes = new EntityAttributes();
+    protected final EntityAttributes mAttributes = new EntityAttributes();
 
     public Sprite getCurrentSprite() {
         return null;
