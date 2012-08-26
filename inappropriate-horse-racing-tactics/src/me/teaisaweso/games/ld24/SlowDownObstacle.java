@@ -3,6 +3,7 @@ package me.teaisaweso.games.ld24;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -30,6 +31,11 @@ public class SlowDownObstacle extends PhysicalObstacle {
         }
     }
 
+    private static void setupFiltering(Texture texture) {
+        texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        // texture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+    }
+
     private static void loadTextures() {
         sUnevolvedTexture = new Texture(
                 Gdx.files.internal("assets/Asset_Banana_1.png"));
@@ -43,6 +49,12 @@ public class SlowDownObstacle extends PhysicalObstacle {
                 Gdx.files.internal("assets/Asset_Banana_Tentacle1.png"));
         sTentacleTextureLow = new Texture(
                 Gdx.files.internal("assets/Asset_Banana_Tentacle2.png"));
+        setupFiltering(sUnevolvedTexture);
+        setupFiltering(sPoofTexture);
+        setupFiltering(sFlapTextureHigh);
+        setupFiltering(sFlapTextureLow);
+        setupFiltering(sTentacleTextureHigh);
+        setupFiltering(sTentacleTextureLow);
     }
 
     public SlowDownObstacle(Body b) {
