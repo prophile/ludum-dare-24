@@ -17,6 +17,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
             flapTextureLow;
     private static boolean texturesLoaded = false;
     private int mHitTicks = 0;
+    public boolean mDead = false;
 
     private static void loadTexturesOnDemand() {
         if (!texturesLoaded) {
@@ -57,6 +58,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
             mDarwinHurtSound.play();
+            mDead = true;
         }
     }
 
