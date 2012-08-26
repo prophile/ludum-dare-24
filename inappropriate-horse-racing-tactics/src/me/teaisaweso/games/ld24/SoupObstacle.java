@@ -82,7 +82,7 @@ public class SoupObstacle extends PhysicalObstacle {
     }
 
     @Override
-    public void update() {
+    public boolean update() {
         if (mStage == EvolutionStage.NORMAL) {
             if (mTicks % 21 < 7) {
                 mSprite.setTexture(sSoup1);
@@ -99,6 +99,8 @@ public class SoupObstacle extends PhysicalObstacle {
             }
         }
         mTicks++;
+
+        return false;
     }
 
     @Override

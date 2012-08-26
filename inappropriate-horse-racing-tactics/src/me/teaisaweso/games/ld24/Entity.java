@@ -20,8 +20,8 @@ public class Entity {
         return physicsPosition;
     }
 
-    public void update() {
-
+    public boolean update() {
+        return false;
     }
 
     public void draw(SpriteBatch sb) {

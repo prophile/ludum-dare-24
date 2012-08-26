@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -46,7 +48,6 @@ public class GameWrapper implements ApplicationListener {
     private static Random sRng = new Random();
 
     private SpriteBatch mBatch;
-    BulletEntity mBullet = null;
 
     private OrthographicCamera mCamera;
 
@@ -151,7 +152,6 @@ public class GameWrapper implements ApplicationListener {
         mEvolutionShootsound = Gdx.audio.newSound(Gdx.files
                 .internal("assets/EvolutionShoot.wav"));
         createCamera();
-        mBullet = null;
         mBackgroundManager = new BackgroundManager();
         createPhysicsSimulation();
 
@@ -254,7 +254,7 @@ public class GameWrapper implements ApplicationListener {
         mCrosshair.setPosition(crosshairPosition.x - 35 / 2,
                 crosshairPosition.y - 35 / 2);
 
-        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
+        if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
             System.out.println("touch");
             BodyDef bd = new BodyDef();
             bd.type = BodyType.KinematicBody;
@@ -279,10 +279,10 @@ public class GameWrapper implements ApplicationListener {
             cs.setRadius(2);
             fd.shape = cs;
             fd.isSensor = true;
-            mBullet = new BulletEntity(mWorld.createBody(bd));
-            mEntities.add(mBullet);
+            BulletEntity b = new BulletEntity(mWorld.createBody(bd));
+            mEntities.add(b);
 
-            mBullet.mBody.createFixture(fd);
+            b.mBody.createFixture(fd);
             mEvolutionShootsound.play();
             mGunArm.fire();
         }
@@ -339,8 +339,8 @@ public class GameWrapper implements ApplicationListener {
 
             if (!suppressBulletRemoval) {
                 // Register to remove this body
-                mRemoveBodies.add(mBullet.mBody);
-                mBullet = null;
+                mRemoveBodies.add(collider_a.mBody);
+                mEntities.remove(collider_a);
             }
         }
 
@@ -570,9 +570,19 @@ public class GameWrapper implements ApplicationListener {
 
         mPlayer.update();
         mEnemy.update(mCameraOrigin.x, mPlayer.getPosition().x);
-        if (mBullet != null) {
-            mBullet.update();
+        List<Entity> condemned = new ArrayList<Entity>();
+        for (Entity e : mEntities)
+            if (e instanceof BulletEntity)
+                if (e.update())
+                    // Exterminate
+                    condemned.add(e);
+        
+        for (Entity c : condemned) {
+            if (c.mBody != null)
+                mRemoveBodies.add(c.mBody);
+            mEntities.remove(c);
         }
+
         updateObstacles();
     }
 

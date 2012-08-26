@@ -142,7 +142,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
     }
 
     @Override
-    public void update() {
+    public boolean update() {
         if (mStage != EvolutionStage.NORMAL) {
             ++mHitTicks;
             if (mHitTicks > Constants.getInt("bananaFlyingHoldTime")
@@ -180,6 +180,7 @@ public class SlowDownObstacle extends PhysicalObstacle {
             System.out.println(mHitTicks);
         }
 
+        return false;
     }
 
     @Override

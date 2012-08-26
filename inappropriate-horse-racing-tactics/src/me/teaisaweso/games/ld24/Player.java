@@ -98,7 +98,7 @@ public class Player extends Entity {
     }
 
     @Override
-    public void update() {
+    public boolean update() {
         if (!GameWrapper.instance.isOnFloor()) {
             mBody.applyForceToCenter(0.0f, Constants.getFloat("gravity")
                     * mBody.getMass());
@@ -111,6 +111,8 @@ public class Player extends Entity {
             mBody.setLinearVelocity(getEffectiveMaxSpeed(),
                     mBody.getLinearVelocity().y);
         }
+
+        return false;
     }
 
     private void updateAndRemoveModifiers() {
