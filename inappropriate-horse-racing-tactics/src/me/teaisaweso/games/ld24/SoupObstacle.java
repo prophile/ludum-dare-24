@@ -55,12 +55,13 @@ public class SoupObstacle extends PhysicalObstacle {
                 .internal("assets/Evolve.wav"));
 
         BodyDef bd = new BodyDef();
-        bd.type = BodyType.StaticBody;
+        bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(mWidth / GameWrapper.PHYSICS_RATIO, mHeight
                 / GameWrapper.PHYSICS_RATIO);
         fd.shape = ps;
+        fd.density = 1;
         bd.fixedRotation = true;
         bd.position.set(new Vector2(v.x / GameWrapper.PHYSICS_RATIO,
                 0 / GameWrapper.PHYSICS_RATIO));
