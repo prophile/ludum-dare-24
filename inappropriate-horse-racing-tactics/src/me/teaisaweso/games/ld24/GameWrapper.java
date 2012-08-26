@@ -21,45 +21,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWrapper implements ApplicationListener {
-    private final class WorldContactListener implements ContactListener {
-        @Override
-        public void preSolve(Contact contact, Manifold oldManifold) {
-            handleCollision(contact.getFixtureA(), contact.getFixtureB(),
-                    contact);
-            handleCollision(contact.getFixtureB(), contact.getFixtureA(),
-                    contact);
-        }
-
-        @Override
-        public void postSolve(Contact contact, ContactImpulse impulse) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void endContact(Contact contact) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void beginContact(Contact contact) {
-            handleCollision(contact.getFixtureA(), contact.getFixtureB(),
-                    contact);
-            handleCollision(contact.getFixtureB(), contact.getFixtureA(),
-                    contact);
-        }
-    }
-
     public static final float PHYSICS_RATIO = 16;
     public static final Random sRng = new Random();
 
@@ -132,7 +99,7 @@ public class GameWrapper implements ApplicationListener {
 
     private void createPhysicsSimulation() {
         mWorld = new World(new Vector2(0, -100), true);
-        mWorld.setContactListener(new WorldContactListener());
+        mWorld.setContactListener(new WorldContactListener(this));
     }
 
     private void createCrosshair() {
@@ -257,7 +224,7 @@ public class GameWrapper implements ApplicationListener {
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
     }
 
-    private void handleCollision(Fixture a, Fixture b, Contact c) {
+    void handleCollision(Fixture a, Fixture b, Contact c) {
         if (a.getBody() == mBullet && b.getBody() != mPlayer.mBody) {
             mRemoveBodies.add(mBullet);
             if (b.getBody() == mSingleSlowDownObstacle.mBody) {
