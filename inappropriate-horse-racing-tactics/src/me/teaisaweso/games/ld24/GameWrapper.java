@@ -89,7 +89,6 @@ public class GameWrapper implements ApplicationListener {
 
     private SoupObstacle mSingleSoupObstacle;
 
-    private Texture mTexture;
     private int mTicks;
     private World mWorld;
 
@@ -219,36 +218,12 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createPlayer() {
-        mTexture = new Texture(Gdx.files.internal("assets/AssetMonkey.png"));
-        mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Sprite s = new Sprite(mTexture, 200, 200);
-        mPlayer = new Player(s, mWorld);
+        mPlayer = new Player(mWorld);
         mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
     }
 
     private void createSlowDownObstacle() {
-        mSingleSlowDownObstacle = new SlowDownObstacle(
-                createSlowDownObstaclePhysicsBody());
-    }
-
-    private Body createSlowDownObstaclePhysicsBody() {
-        float minSpacing = Constants.getFloat("bananaMinSpacing");
-        float maxSpacing = Constants.getFloat("bananaMaxSpacing");
-        float spacingRange = maxSpacing - minSpacing;
-        BodyDef bd = new BodyDef();
-        bd.position.set((getCameraOrigin().x + minSpacing + mRng.nextFloat()
-                * spacingRange) / 16, Constants.getFloat("bananaHeight") / 16);
-        bd.type = BodyType.DynamicBody;
-        FixtureDef fd = new FixtureDef();
-        CircleShape cs = new CircleShape();
-        cs.setRadius(1);
-        fd.shape = cs;
-        fd.isSensor = false;
-        fd.restitution = Constants.getFloat("bananaTentaclesRestitution");
-        fd.density = 1;
-        Body body = mWorld.createBody(bd);
-        body.createFixture(fd);
-        return body;
+        mSingleSlowDownObstacle = new SlowDownObstacle(mWorld);
     }
 
     private void createSlowDownRegion() {

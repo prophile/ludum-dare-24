@@ -9,14 +9,16 @@ import java.util.TimerTask;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Player extends Entity {
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
@@ -24,9 +26,11 @@ public class Player extends Entity {
     private int mLastJumpTicks;
     private final Sound mJumpSound, mHurtSound;
 
-    public Player(Sprite sprite, World world) {
+    public Player(World world) {
+        Texture mTexture = new Texture(Gdx.files.internal("assets/AssetMonkey.png"));
+        mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        mSprite = new Sprite(mTexture, 200, 200);
         configureAttributes();
-        mSprite = sprite;
         createPhysicsBody(world);
         mJumpSound = Gdx.audio.newSound(Gdx.files.internal("assets/Jump.wav"));
         mHurtSound = Gdx.audio.newSound(Gdx.files
