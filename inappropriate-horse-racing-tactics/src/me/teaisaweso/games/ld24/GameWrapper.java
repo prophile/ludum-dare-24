@@ -263,7 +263,7 @@ public class GameWrapper implements ApplicationListener {
             crosshairPosition.nor();
             crosshairPosition.mul(PHYSICS_RATIO * 3);
 
-            bd.linearVelocity.set(crosshairPosition.add(mPlayer.mBody.getLinearVelocity()));
+            bd.linearVelocity.set(crosshairPosition.add(mPlayer.mBody.getLinearVelocity().x, 0));
             bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
                     / PHYSICS_RATIO,
                     (playerSprite.getY() + playerSprite.getHeight() / 2)
