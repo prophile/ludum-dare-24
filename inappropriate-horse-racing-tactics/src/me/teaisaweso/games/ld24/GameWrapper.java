@@ -310,6 +310,7 @@ public class GameWrapper implements ApplicationListener {
 
             mBullet.mBody.createFixture(fd);
             mEvolutionShootsound.play();
+            mGunArm.fire();
         }
 
         mCrosshair.draw(sb);
