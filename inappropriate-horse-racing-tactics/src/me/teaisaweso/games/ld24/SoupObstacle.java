@@ -61,7 +61,6 @@ public class SoupObstacle extends PhysicalObstacle {
     @Override
     public void hit() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
