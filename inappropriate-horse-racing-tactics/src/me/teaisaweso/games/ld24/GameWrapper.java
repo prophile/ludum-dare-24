@@ -223,20 +223,11 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createTreeStumpObstacle() {
-        float minSpacing = Constants.getFloat("treeStumpMinSpacing");
-        float maxSpacing = Constants.getFloat("treeStumpMaxSpacing");
-        float spacingRange = maxSpacing - minSpacing;
-        Vector2 position = new Vector2(getCameraOrigin().x + minSpacing
-                + mRng.nextFloat() * spacingRange, 50);
-        mTreeStumpObstacle1 = new TreeStumpObstacle(new Vector2(position),
-                mWorld, 1);
+
+        mTreeStumpObstacle1 = TreeStumpObstacle.createStumpObstacle(mWorld, 1);
 
         if (sRng.nextFloat() < Constants.getFloat("doubleTreeProbability")) {
-            mTreeStumpObstacle2 = new TreeStumpObstacle(
-                    new Vector2(position
-                            .add(Constants
-                                    .getFloat("treeStumpSecondarySpacing"), 30)),
-                    mWorld, 1.5f);
+            mTreeStumpObstacle2 = mTreeStumpObstacle1.createNearbyStump(mWorld);
         }
     }
 
