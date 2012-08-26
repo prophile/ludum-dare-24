@@ -195,13 +195,13 @@ public class GameWrapper implements ApplicationListener {
         Texture crosshair = new Texture(
                 Gdx.files.internal("assets/crosshair.png"));
         mCrosshair = new Sprite(crosshair, 35, 35);
-        
+
     }
 
     private void createDarwin() {
         Texture t;
         Sprite s;
-        t = new Texture(Gdx.files.internal("assets/DarwinDraft.png"));
+        t = new Texture(Gdx.files.internal("assets/Asset_Darwin1.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         s = new Sprite(t, 200, 400);
 
@@ -212,7 +212,8 @@ public class GameWrapper implements ApplicationListener {
         createSlowDownRegion();
         createSlowDownObstacle();
         createTreeStumpObstacle();
-        mSingleRockObstacle = new RockObstacle(new Vector2(2000, 50), mWorld);
+        mSingleRockObstacle = new RockObstacle(new Vector2(
+                Constants.getFloat("rockFirstPosition"), 50.0f), mWorld);
     }
 
     private void createPhysicsSimulation() {
@@ -234,17 +235,19 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private Body createSlowDownObstaclePhysicsBody() {
+        float minSpacing = Constants.getFloat("bananaMinSpacing");
+        float maxSpacing = Constants.getFloat("bananaMaxSpacing");
+        float spacingRange = maxSpacing - minSpacing;
         BodyDef bd = new BodyDef();
-        bd.position.set(
-                (getCameraOrigin().x + 600 + mRng.nextFloat() * 1200) / 16,
-                400 / 16);
+        bd.position.set((getCameraOrigin().x + minSpacing + mRng.nextFloat()
+                * spacingRange) / 16, Constants.getFloat("bananaHeight") / 16);
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
         cs.setRadius(1);
         fd.shape = cs;
         fd.isSensor = false;
-        fd.restitution = 0.4f;
+        fd.restitution = Constants.getFloat("bananaTentaclesRestitution");
         fd.density = 1;
         Body body = mWorld.createBody(bd);
         body.createFixture(fd);
@@ -256,15 +259,20 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createTreeStumpObstacle() {
-        Vector2 position = new Vector2(getCameraOrigin().x + 800
-                + mRng.nextFloat() * 100, 50);
+        float minSpacing = Constants.getFloat("treeStumpMinSpacing");
+        float maxSpacing = Constants.getFloat("treeStumpMaxSpacing");
+        float spacingRange = maxSpacing - minSpacing;
+        Vector2 position = new Vector2(getCameraOrigin().x + minSpacing
+                + mRng.nextFloat() * spacingRange, 50);
         mTreeStumpObstacle1 = new TreeStumpObstacle(new Vector2(position),
                 mWorld, 1);
 
-        if (sRng.nextFloat() < Constants.sInstance.mConstants
-                .get("doubleTreeProbability")) {
-            mTreeStumpObstacle2 = new TreeStumpObstacle(new Vector2(
-                    position.add(200, 30)), mWorld, 1.5f);
+        if (sRng.nextFloat() < Constants.getFloat("doubleTreeProbability")) {
+            mTreeStumpObstacle2 = new TreeStumpObstacle(
+                    new Vector2(position
+                            .add(Constants
+                                    .getFloat("treeStumpSecondarySpacing"), 30)),
+                    mWorld, 1.5f);
         }
     }
 
@@ -281,8 +289,8 @@ public class GameWrapper implements ApplicationListener {
         Vector2 crosshairPosition = computeCrosshairPosition(mouse,
                 playerSprite);
 
-        mCrosshair
-                .setPosition(crosshairPosition.x - 35/2, crosshairPosition.y - 35/2);
+        mCrosshair.setPosition(crosshairPosition.x - 35 / 2,
+                crosshairPosition.y - 35 / 2);
 
         if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
             System.out.println("touch");
@@ -363,14 +371,14 @@ public class GameWrapper implements ApplicationListener {
 
         if (a.getBody() == mPlayer.mBody) {
             if (b.getBody() == mFloor
-                    || (mTreeStumpObstacle1 != null
-                            && b.getBody() == mTreeStumpObstacle1.mBody && mPlayer
-                            .getPosition().y > mTreeStumpObstacle1
-                            .getPosition().y + 122)
-                    || (mTreeStumpObstacle2 != null
-                            && b.getBody() == mTreeStumpObstacle2.mBody && mPlayer
-                            .getPosition().y > mTreeStumpObstacle2
-                            .getPosition().y + 122 * 1.5)) {
+                    || mTreeStumpObstacle1 != null
+                    && b.getBody() == mTreeStumpObstacle1.mBody
+                    && mPlayer.getPosition().y > mTreeStumpObstacle1
+                            .getPosition().y + 122
+                    || mTreeStumpObstacle2 != null
+                    && b.getBody() == mTreeStumpObstacle2.mBody
+                    && mPlayer.getPosition().y > mTreeStumpObstacle2
+                            .getPosition().y + 122 * 1.5) {
                 mIsOnFloor = true;
             }
 
@@ -576,10 +584,12 @@ public class GameWrapper implements ApplicationListener {
 
         mBatch.end();
 
-        Matrix4 m = new Matrix4(mCamera.combined);
-        m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
-        m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
-        mDebugger.render(mWorld, m);
+        if (Constants.getBoolean("showHitboxes")) {
+            Matrix4 m = new Matrix4(mCamera.combined);
+            m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
+            m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
+            mDebugger.render(mWorld, m);
+        }
     }
 
     @Override
@@ -680,8 +690,10 @@ public class GameWrapper implements ApplicationListener {
                             - getCameraOrigin().x < -600) {
                 mSingleRockObstacle.mBody.setActive(false);
                 mWorld.destroyBody(mSingleRockObstacle.mBody);
-                mSingleRockObstacle = new RockObstacle(new Vector2(
-                        getCameraOrigin().x + 1600, 50), mWorld);
+                mSingleRockObstacle = new RockObstacle(
+                        new Vector2(getCameraOrigin().x
+                                + Constants.getFloat("rockSpacing"), 50),
+                        mWorld);
             }
         }
         if (mSingleSlowDownObstacle != null) {

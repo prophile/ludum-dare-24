@@ -23,9 +23,8 @@ public class Enemy extends Entity {
         mSprite = sprite;
         mWidth = 200;
         mHeight = 400;
-        mAttributes.mMaxSpeed = Constants.sInstance.mConstants
-                .get("darwinMaxSpeed");
-        mAttributes.mAccel = Constants.sInstance.mConstants.get("darwinAccel");
+        mAttributes.mMaxSpeed = Constants.getFloat("darwinMaxSpeed");
+        mAttributes.mAccel = Constants.getFloat("darwinAccel");
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
@@ -82,26 +81,23 @@ public class Enemy extends Entity {
         updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
                 mBody.getPosition());
-        if (this.getPosition().x - cameraX < -600) {
+        if (getPosition().x - cameraX < -600) {
             mBody.setLinearVelocity(new Vector2(getEffectiveMaxSpeed()
-                    + Constants.sInstance.mConstants.get("darwinBoostAmount"),
-                    0));
+                    + Constants.getFloat("darwinBoostAmount"), 0));
         } else {
             if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
                 mBody.setLinearVelocity(
                         mBody.getLinearVelocity().x
-                                * Constants.sInstance.mConstants
-                                        .get("darwinBoostFalloff"),
+                                * Constants.getFloat("darwinBoostFalloff"),
                         mBody.getLinearVelocity().y);
             }
         }
 
-        if (playerX - this.getPosition().x < Constants.sInstance.mConstants
-                .get("darwinPlayerCushionSize")) {
+        if (playerX - getPosition().x < Constants
+                .getFloat("darwinPlayerCushionSize")) {
             System.out.println("slowing");
             mBody.setLinearVelocity(mBody.getLinearVelocity().mul(
-                    Constants.sInstance.mConstants
-                            .get("darwinPlayerCushionSlowDown")));
+                    Constants.getFloat("darwinPlayerCushionSlowDown")));
         }
 
     }

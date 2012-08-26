@@ -75,12 +75,25 @@ public class SlowDownObstacle extends PhysicalObstacle {
         if (mStage == EvolutionStage.NORMAL) {
             System.out.println("evolving");
             Vector2 position = getPosition();
-            if ((GameWrapper.instance.getRNG().nextInt() & 1) == 0) {
+            if (GameWrapper.instance.getRNG().nextFloat() < Constants
+                    .getFloat("bananaFlyingChance")) {
                 mStage = EvolutionStage.FLYING;
-                mBody.applyLinearImpulse(new Vector2(120, 0), position);
+                mBody.applyLinearImpulse(
+                        new Vector2(
+                                Constants
+                                        .getFloat("bananaFlyingInitialImpulseX"),
+                                Constants
+                                        .getFloat("bananaFlyingInitialImpulseY")),
+                        position);
             } else {
                 mStage = EvolutionStage.TENTACLES;
-                mBody.applyLinearImpulse(new Vector2(120, 220), position);
+                mBody.applyLinearImpulse(
+                        new Vector2(
+                                Constants
+                                        .getFloat("bananaTentaclesInitialImpulseX"),
+                                Constants
+                                        .getFloat("bananaTentaclesInitialImpulseY")),
+                        position);
                 mSprite.setScale(1.8f);
                 mSprite.setOrigin(0.0f, 90.0f);
             }
@@ -92,28 +105,32 @@ public class SlowDownObstacle extends PhysicalObstacle {
     public void update() {
         if (mStage != EvolutionStage.NORMAL) {
             ++mHitTicks;
-            if (mHitTicks > 60 && mStage == EvolutionStage.FLYING) {
+            if (mHitTicks > Constants.getInt("bananaFlyingHoldTime")
+                    && mStage == EvolutionStage.FLYING) {
                 Vector2 position = getPosition();
                 Enemy e = GameWrapper.instance.getEnemy();
                 Vector2 target = e.getPosition();
                 target.add(new Vector2(30, 150));
                 target.sub(position);
-                target.mul(1.2f);
+                target.mul(Constants.getFloat("bananaFlyingHomingForce"));
                 mBody.applyForceToCenter(target);
             } else if (mStage == EvolutionStage.TENTACLES) {
-                mBody.applyForceToCenter(new Vector2(0.0f, -500.0f));
+                mBody.applyForceToCenter(new Vector2(0.0f, Constants
+                        .getFloat("bananaTentaclesGravity")));
             }
-            if (mHitTicks < 18) {
+            if (mHitTicks < Constants.getInt("bananaPoofTime")) {
                 mSprite.setTexture(sPoofTexture);
             } else {
                 if (mStage == EvolutionStage.FLYING) {
-                    if (mHitTicks % 12 < 6) {
+                    int flapTime = Constants.getInt("bananaFlyingWingFlapTime");
+                    if (mHitTicks % (2 * flapTime) < flapTime) {
                         mSprite.setTexture(sFlapTextureHigh);
                     } else {
                         mSprite.setTexture(sFlapTextureLow);
                     }
                 } else {
-                    if (mHitTicks % 12 < 6) {
+                    int flapTime = Constants.getInt("bananaTentaclesFlailTime");
+                    if (mHitTicks % (2 * flapTime) < flapTime) {
                         mSprite.setTexture(sTentacleTextureHigh);
                     } else {
                         mSprite.setTexture(sTentacleTextureLow);
