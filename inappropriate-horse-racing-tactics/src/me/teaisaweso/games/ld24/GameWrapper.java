@@ -58,7 +58,7 @@ public class GameWrapper implements ApplicationListener {
 
     private int mBulletTicks;
 
-    public static Vector2 mCameraOrigin = new Vector2(0, 0);
+    private static Vector2 mCameraOrigin = new Vector2(0, 0);
 
     public static boolean sIsGameOver;
 
@@ -109,7 +109,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createCamera() {
-        mCameraOrigin = new Vector2(0, 0);
+        setCameraOrigin(new Vector2(0, 0));
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         mCamera = new OrthographicCamera(w, h);
@@ -201,8 +201,8 @@ public class GameWrapper implements ApplicationListener {
         clearScreen();
 
         mBatch.setProjectionMatrix(mCamera.combined);
-        mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,
-                -mCameraOrigin.y, 0));
+        mBatch.setTransformMatrix(new Matrix4().translate(-getCameraOrigin().x,
+                -getCameraOrigin().y, 0));
 
         mBackgroundManager.drawSky();
         mBatch.begin();
@@ -214,7 +214,7 @@ public class GameWrapper implements ApplicationListener {
         drawCrosshair(mBatch);
         mBatch.end();
         Matrix4 m = new Matrix4(mCamera.combined);
-        m.translate(-mCameraOrigin.x, -mCameraOrigin.y, 0);
+        m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
         m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
         mDebugger.render(mWorld, m);
     }
@@ -287,7 +287,7 @@ public class GameWrapper implements ApplicationListener {
         mIsOnFloor = false;
         simulatePhysicsStep();
         updateEntities();
-        mBackgroundManager.update(mCameraOrigin.x);
+        mBackgroundManager.update(getCameraOrigin().x);
 
         // for (Contact c : mWorld.getContactList()) {
         // handleCollision(c.getFixtureA(), c.getFixtureB(), c);
@@ -333,11 +333,11 @@ public class GameWrapper implements ApplicationListener {
         }
 
         if (mSingleRockObstacle.mDead
-                || mSingleRockObstacle.getPosition().x - mCameraOrigin.x < -600) {
+                || mSingleRockObstacle.getPosition().x - getCameraOrigin().x < -600) {
             mSingleRockObstacle.mBody.setActive(false);
             mWorld.destroyBody(mSingleRockObstacle.mBody);
             mSingleRockObstacle = new RockObstacle(new Vector2(
-                    mCameraOrigin.x + 1600, 50), mWorld);
+                    getCameraOrigin().x + 1600, 50), mWorld);
         }
     }
 
@@ -348,7 +348,7 @@ public class GameWrapper implements ApplicationListener {
 
     private void createTreeStumpObstacle() {
         mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(
-                mCameraOrigin.x + 800 + sRng.nextFloat() * 100, 50), mWorld);
+                getCameraOrigin().x + 800 + sRng.nextFloat() * 100, 50), mWorld);
     }
 
     private void removeTreeStumpObstacle() {
@@ -358,7 +358,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private boolean treeStumpObstacleHasLeftScreen() {
-        return mSingleTreeStumpObstacle.getPosition().x - mCameraOrigin.x < -600;
+        return mSingleTreeStumpObstacle.getPosition().x - getCameraOrigin().x < -600;
     }
 
     private void updateBullet() {
@@ -440,11 +440,11 @@ public class GameWrapper implements ApplicationListener {
         Vector2 pos = new Vector2(px, py);
 
         // Work out where the put the crosshair,
-        pos.sub(mCameraOrigin);
+        pos.sub(getCameraOrigin());
         pos.sub(mousePosition);
         pos.mul(0.7f);
         pos.add(mousePosition);
-        pos.add(mCameraOrigin);
+        pos.add(getCameraOrigin());
         return pos;
     }
 
@@ -474,5 +474,13 @@ public class GameWrapper implements ApplicationListener {
     @Override
     public void dispose() {
         mBatch.dispose();
+    }
+
+    public static Vector2 getCameraOrigin() {
+        return mCameraOrigin;
+    }
+
+    public static void setCameraOrigin(Vector2 mCameraOrigin) {
+        GameWrapper.mCameraOrigin = mCameraOrigin;
     }
 }
