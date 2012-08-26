@@ -45,7 +45,7 @@ public class SoupObstacle extends PhysicalObstacle {
                 .internal("assets/Asset_Soup_tentacle2.png"));
     }
 
-    public SoupObstacle(Vector2 v, World w) {
+    public SoupObstacle(float x, World w) {
         super(null);
         loadTexturesOnDemand();
         mWidth = 180;
@@ -58,13 +58,12 @@ public class SoupObstacle extends PhysicalObstacle {
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(mWidth / GameWrapper.PHYSICS_RATIO, mHeight
-                / GameWrapper.PHYSICS_RATIO);
+        ps.setAsBox(70 / GameWrapper.PHYSICS_RATIO, 50 / GameWrapper.PHYSICS_RATIO);
         fd.shape = ps;
         fd.density = 1;
+        fd.isSensor = true;
         bd.fixedRotation = true;
-        bd.position.set(new Vector2(v.x / GameWrapper.PHYSICS_RATIO,
-                0 / GameWrapper.PHYSICS_RATIO));
+        bd.position.set(new Vector2(x / GameWrapper.PHYSICS_RATIO, 0/GameWrapper.PHYSICS_RATIO));
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
         mTicks = 0;
