@@ -108,7 +108,6 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void clearGameOver() {
-        fetchScores();
         mIsGameOver = false;
     }
 
@@ -510,6 +509,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void setGameOver() {
+        fetchScores();
         mIsGameOver = true;
     }
 
