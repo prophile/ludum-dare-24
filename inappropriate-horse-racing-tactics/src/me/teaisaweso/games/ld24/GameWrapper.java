@@ -316,8 +316,8 @@ public class GameWrapper implements ApplicationListener {
         Entity collider_a = (Entity)a.getBody().getUserData();
         Entity collider_b = (Entity)b.getBody().getUserData();
         
-        if (mBullet != null && a.getBody() == mBullet.mBody
-                && b.getBody() != mPlayer.mBody) {
+        if (collider_a instanceof BulletEntity &&
+                !(collider_b instanceof Player)) {
             boolean suppressBulletRemoval = false;
 
             // If off screen, ignore collision.
@@ -325,14 +325,12 @@ public class GameWrapper implements ApplicationListener {
             pos.mul(PHYSICS_RATIO);
             if (pos.x > mCameraOrigin.x + 420 || pos.y > mCameraOrigin.y + 320) {
                 ;
-            } else if (b.getBody() == mSingleSlowDownObstacle.mBody) {
-                mSingleSlowDownObstacle.hit();
+            } else if (collider_b instanceof PhysicalObstacle) {
+                ((PhysicalObstacle)collider_b).hit();
             } else if (b.getBody() == mEnemy.mBody) {
                 Vector2 velocity = mBullet.mBody.getLinearVelocity();
                 mBullet.mBody.setLinearVelocity(-velocity.x, velocity.y);
                 suppressBulletRemoval = true;
-            } else if (b.getBody() == mSingleSoupObstacle.mBody) {
-                mSingleSoupObstacle.hit();
             }
 
             if (!suppressBulletRemoval) {
