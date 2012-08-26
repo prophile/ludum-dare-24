@@ -128,7 +128,7 @@ public class GameWrapper implements ApplicationListener {
         // Work out where the put the crosshair,
         pos.sub(getCameraOrigin());
         pos.sub(mousePosition);
-        
+
         pos.mul(0.0f);
         pos.add(mousePosition);
         pos.add(getCameraOrigin());
@@ -141,7 +141,7 @@ public class GameWrapper implements ApplicationListener {
         assert instance == null || instance == this;
         instance = this;
         mTicks = 0;
-        
+
         loadGameOverAssets();
 
         Texture t = new Texture(Gdx.files.internal("assets/splash.png"));
