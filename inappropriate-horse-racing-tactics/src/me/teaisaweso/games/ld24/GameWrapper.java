@@ -84,6 +84,8 @@ public class GameWrapper implements ApplicationListener {
 
     private SlowDownRegion mSlowDownRegion;
 
+    private SoupObstacle mSingleSoupObstacle;
+
     private Texture mTexture;
     private int mTicks;
     private World mWorld;
@@ -201,6 +203,7 @@ public class GameWrapper implements ApplicationListener {
         createSlowDownRegion();
         createSlowDownObstacle();
         createTreeStumpObstacle();
+        createSoupObstacle();
         mSingleRockObstacle = new RockObstacle(new Vector2(2000, 50), mWorld);
     }
 
@@ -247,6 +250,11 @@ public class GameWrapper implements ApplicationListener {
     private void createTreeStumpObstacle() {
         mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(
                 getCameraOrigin().x + 800 + mRng.nextFloat() * 100, 50), mWorld);
+    }
+
+    private void createSoupObstacle() {
+        mSingleSoupObstacle = new SoupObstacle(new Vector2(getCameraOrigin().x
+                + 800 + mRng.nextFloat() * 100, 50), mWorld);
     }
 
     @Override

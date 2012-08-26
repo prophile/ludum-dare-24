@@ -4,7 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class SoupObstacle extends PhysicalObstacle {
 
@@ -37,8 +43,8 @@ public class SoupObstacle extends PhysicalObstacle {
                 .internal("assets/Asset_Soup_tentacle2.png"));
     }
 
-    public SoupObstacle(Body b) {
-        super(b);
+    public SoupObstacle(Vector2 v, World w) {
+        super(null);
         loadTexturesOnDemand();
         mWidth = 180;
         mHeight = 115;
@@ -47,6 +53,17 @@ public class SoupObstacle extends PhysicalObstacle {
         mSprite.setScale(1.0f);
         mEvolutionSound = Gdx.audio.newSound(Gdx.files
                 .internal("assets/Evolve.wav"));
+
+        BodyDef bd = new BodyDef();
+        bd.type = BodyType.StaticBody;
+        FixtureDef fd = new FixtureDef();
+        PolygonShape ps = new PolygonShape();
+        ps.setAsBox(mWidth, mHeight);
+        fd.shape = ps;
+        bd.fixedRotation = true;
+        bd.position.set(v.x, v.y);
+        mBody = w.createBody(bd);
+        mBody.createFixture(fd);
     }
 
     @Override
