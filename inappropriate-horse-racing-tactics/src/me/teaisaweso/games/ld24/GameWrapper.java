@@ -46,16 +46,18 @@ public class GameWrapper implements ApplicationListener {
     private Vector2 mCameraOrigin = new Vector2(0, 0);
 
     private Sprite mCrosshair;
-    private Sound mEvolutionShootsound;
+    private Sound mDarwinHurtSound;
 
     private Box2DDebugRenderer mDebugger;
 
     private Enemy mEnemy;
+    private Sound mEvolutionShootsound;
     private Body mFloor;
     private SpriteBatch mGameOverBatch;
     private Sprite mGameOverSprite;
     private boolean mIsGameOver;
-    public boolean mIsOnFloor;
+
+    private boolean mIsOnFloor;
 
     private Player mPlayer;
 
@@ -72,10 +74,8 @@ public class GameWrapper implements ApplicationListener {
     private SlowDownRegion mSlowDownRegion;
 
     private Texture mTexture;
-
-    private World mWorld;
     private int mTicks;
-    private Sound mDarwinHurtSound;
+    private World mWorld;
 
     public void addFloor() {
         BodyDef bd = new BodyDef();
@@ -344,6 +344,10 @@ public class GameWrapper implements ApplicationListener {
 
     public boolean isGameOver() {
         return mIsGameOver;
+    }
+
+    public boolean isOnFloor() {
+        return mIsOnFloor;
     }
 
     private void loadGameOverAssets() {

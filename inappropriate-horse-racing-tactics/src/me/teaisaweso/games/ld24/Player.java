@@ -93,7 +93,7 @@ public class Player extends Entity {
 
     @Override
     public void update() {
-        if (!GameWrapper.instance.mIsOnFloor) {
+        if (!GameWrapper.instance.isOnFloor()) {
             mBody.applyForceToCenter(0.0f, -98f * mBody.getMass());
         }
         mLastJumpTicks++;
