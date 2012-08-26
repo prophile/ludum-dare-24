@@ -469,6 +469,9 @@ public class GameWrapper implements ApplicationListener {
         if (mSingleTreeStumpObstacle != null) {
             mSingleTreeStumpObstacle.draw(mBatch);
         }
+        if (mSingleSlowDownObstacle != null) {
+            mSingleSlowDownObstacle.draw(mBatch);
+        }
         drawCrosshair(mBatch);
 
         // Reset transform to untransformed, draw distance/score text
@@ -482,7 +485,7 @@ public class GameWrapper implements ApplicationListener {
         Matrix4 m = new Matrix4(mCamera.combined);
         m.translate(-getCameraOrigin().x, -getCameraOrigin().y, 0);
         m.scale(PHYSICS_RATIO, PHYSICS_RATIO, 1);
-        mDebugger.render(mWorld, m);
+        // mDebugger.render(mWorld, m);
     }
 
     @Override
