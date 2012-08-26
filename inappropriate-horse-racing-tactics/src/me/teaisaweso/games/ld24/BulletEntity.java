@@ -50,8 +50,8 @@ public class BulletEntity extends Entity {
 
     @Override
     public void draw(SpriteBatch sb) {
-        super.draw(sb);
         mParticleEffect.draw(sb);
+        super.draw(sb);
     }
 
     @Override
