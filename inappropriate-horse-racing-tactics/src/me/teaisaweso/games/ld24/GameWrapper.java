@@ -142,6 +142,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createCamera() {
+        mCameraOrigin = new Vector2(0, 0);
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         mCamera = new OrthographicCamera(w, h);
@@ -268,8 +269,9 @@ public class GameWrapper implements ApplicationListener {
 
         if (a.getBody() == mPlayer.mBody) {
             if (b.getBody() == mFloor
-                    || (b.getBody() == mSingleTreeStumpObstacle.mBody && mPlayer
-                            .getPosition().y > mSingleTreeStumpObstacle.getPosition().y + 122)) {
+                    || b.getBody() == mSingleTreeStumpObstacle.mBody
+                    && mPlayer.getPosition().y > mSingleTreeStumpObstacle
+                            .getPosition().y + 122) {
                 mIsOnFloor = true;
             }
 
