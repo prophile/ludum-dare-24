@@ -29,30 +29,30 @@ import com.badlogic.gdx.physics.box2d.World;
 public class GameWrapper implements ApplicationListener {
     public static GameWrapper instance = null;
 
-    private static Vector2 mCameraOrigin = new Vector2(0, 0);
+    private Vector2 mCameraOrigin = new Vector2(0, 0);
     public static final float PHYSICS_RATIO = 16;
 
-    private static boolean sIsGameOver;
-    public static final Random sRng = new Random();
+    private boolean mIsGameOver;
+    public final Random mRng = new Random();
 
-    public static void clearGameOver() {
-        sIsGameOver = false;
+    public void clearGameOver() {
+        mIsGameOver = false;
     }
 
-    public static Vector2 getCameraOrigin() {
+    public Vector2 getCameraOrigin() {
         return mCameraOrigin;
     }
 
-    public static boolean isGameOver() {
-        return sIsGameOver;
+    public boolean isGameOver() {
+        return mIsGameOver;
     }
 
-    public static void setCameraOrigin(Vector2 mCameraOrigin) {
-        GameWrapper.mCameraOrigin = mCameraOrigin;
+    public void setCameraOrigin(Vector2 newCameraOrigin) {
+        mCameraOrigin = newCameraOrigin;
     }
 
-    public static void setGameOver() {
-        sIsGameOver = true;
+    public void setGameOver() {
+        mIsGameOver = true;
     }
 
     private BackgroundManager mBackgroundManager;
@@ -222,7 +222,7 @@ public class GameWrapper implements ApplicationListener {
 
     private void createTreeStumpObstacle() {
         mSingleTreeStumpObstacle = new TreeStumpObstacle(new Vector2(
-                getCameraOrigin().x + 800 + sRng.nextFloat() * 100, 50), mWorld);
+                getCameraOrigin().x + 800 + mRng.nextFloat() * 100, 50), mWorld);
     }
 
     @Override
