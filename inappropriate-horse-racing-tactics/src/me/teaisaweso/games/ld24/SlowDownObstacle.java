@@ -72,18 +72,20 @@ public class SlowDownObstacle extends PhysicalObstacle {
 
     @Override
     public void hit() {
-        System.out.println("evolving");
-        Vector2 position = getPosition();
-        if ((GameWrapper.instance.getRNG().nextInt() & 1) == 0) {
-            mStage = EvolutionStage.FLYING;
-            mBody.applyLinearImpulse(new Vector2(120, 0), position);
-        } else {
-            mStage = EvolutionStage.TENTACLES;
-            mBody.applyLinearImpulse(new Vector2(120, 220), position);
-            mSprite.setScale(1.8f);
-            mSprite.setOrigin(0.0f, 90.0f);
+        if (mStage == EvolutionStage.NORMAL) {
+            System.out.println("evolving");
+            Vector2 position = getPosition();
+            if ((GameWrapper.instance.getRNG().nextInt() & 1) == 0) {
+                mStage = EvolutionStage.FLYING;
+                mBody.applyLinearImpulse(new Vector2(120, 0), position);
+            } else {
+                mStage = EvolutionStage.TENTACLES;
+                mBody.applyLinearImpulse(new Vector2(120, 220), position);
+                mSprite.setScale(1.8f);
+                mSprite.setOrigin(0.0f, 90.0f);
+            }
+            mEvolutionSound.play();
         }
-        mEvolutionSound.play();
     }
 
     @Override
