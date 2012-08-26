@@ -617,9 +617,9 @@ public class GameWrapper implements ApplicationListener {
         @Override
         public int compareTo(ScoreEntry o) {
             if (o.mScore < mScore)
-                return 1;
-            else if (o.mScore > mScore)
                 return -1;
+            else if (o.mScore > mScore)
+                return 1;
             else
                 return 0;
         }
