@@ -1,11 +1,14 @@
 package me.teaisaweso.games.ld24;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.Integer;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.TreeSet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -104,6 +107,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void clearGameOver() {
+        fetchScores();
         mIsGameOver = false;
     }
 
@@ -604,5 +608,49 @@ public class GameWrapper implements ApplicationListener {
 
         String mName;
         int mScore;
+    }
+
+    protected void fetchScores() {
+        try {
+            // Open scores url,
+            URL u = new URL(
+                    "http://immense-savannah-9950.herokuapp.com/csv_scores");
+            u.getContent();
+
+            // Setup read from it
+            InputStream in = u.openStream();
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(in));
+            String line = new String();
+
+            // Read from it until we pass the Body tag,
+            while (!line.contains("<body>"))
+                line = reader.readLine();
+
+            // Now a blank line,
+            line = reader.readLine();
+
+            TreeSet<ScoreEntry> tmp = new TreeSet<ScoreEntry>();
+            // And now some pairs of scores, until another blank line
+            while (true) {
+                line = reader.readLine();
+                if (!line.contains(","))
+                    break;
+
+                String[] pair = line.split(",");
+                assert pair.length == 2;
+                tmp
+                        .add(new ScoreEntry(pair[0], new Integer(pair[1])
+                                .intValue()));
+            }
+
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 }
