@@ -29,6 +29,35 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWrapper implements ApplicationListener {
+    private final class WorldContactListener implements ContactListener {
+        @Override
+        public void preSolve(Contact contact, Manifold oldManifold) {
+            handleCollision(contact.getFixtureA(), contact.getFixtureB(),
+                    contact);
+            handleCollision(contact.getFixtureB(), contact.getFixtureA(),
+                    contact);
+        }
+
+        @Override
+        public void postSolve(Contact contact, ContactImpulse impulse) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void endContact(Contact contact) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void beginContact(Contact contact) {
+            handleCollision(contact.getFixtureA(), contact.getFixtureB(),
+                    contact);
+            handleCollision(contact.getFixtureB(), contact.getFixtureA(),
+                    contact);
+        }
+    }
 
     public static final float PHYSICS_RATIO = 16;
 
@@ -49,7 +78,7 @@ public class GameWrapper implements ApplicationListener {
 
     private Sprite mGameOverSprite;
 
-    private SlowDownObstacle mSdO;
+    private SlowDownObstacle mSingleSlowDownObstacle;
 
     private Body mBullet = null;
 
@@ -59,7 +88,7 @@ public class GameWrapper implements ApplicationListener {
 
     public static Vector2 mCameraOrigin = new Vector2(0, 0);
 
-    public static boolean sGameOver;
+    public static boolean sIsGameOver;
 
     public void addFloor() {
         BodyDef bd = new BodyDef();
@@ -80,37 +109,7 @@ public class GameWrapper implements ApplicationListener {
         createCamera();
         mBullet = null;
         mBackgroundManager = new BackgroundManager();
-        mWorld = new World(new Vector2(0, -30), true);
-        mWorld.setContactListener(new ContactListener() {
-
-            @Override
-            public void preSolve(Contact contact, Manifold oldManifold) {
-                handleCollision(contact.getFixtureA(), contact.getFixtureB(),
-                        contact);
-                handleCollision(contact.getFixtureB(), contact.getFixtureA(),
-                        contact);
-            }
-
-            @Override
-            public void postSolve(Contact contact, ContactImpulse impulse) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void endContact(Contact contact) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void beginContact(Contact contact) {
-                handleCollision(contact.getFixtureA(), contact.getFixtureB(),
-                        contact);
-                handleCollision(contact.getFixtureB(), contact.getFixtureA(),
-                        contact);
-            }
-        });
+        createPhysicsSimulation();
 
         mBatch = new SpriteBatch();
 
@@ -123,6 +122,11 @@ public class GameWrapper implements ApplicationListener {
         createObstacles();
 
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
+    }
+
+    private void createPhysicsSimulation() {
+        mWorld = new World(new Vector2(0, -30), true);
+        mWorld.setContactListener(new WorldContactListener());
     }
 
     private void createCrosshair() {
@@ -169,7 +173,7 @@ public class GameWrapper implements ApplicationListener {
         fd.density = 1;
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
-        mSdO = new SlowDownObstacle(b);
+        mSingleSlowDownObstacle = new SlowDownObstacle(b);
     }
 
     private void loadGameOverAssets() {
@@ -182,7 +186,7 @@ public class GameWrapper implements ApplicationListener {
 
     @Override
     public void render() {
-        if (!sGameOver) {
+        if (!sIsGameOver) {
             renderGameWorld();
         } else {
             renderGameOverScreen();
@@ -195,7 +199,7 @@ public class GameWrapper implements ApplicationListener {
         mGameOverSprite.draw(mGameOverBatch);
         mGameOverBatch.end();
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
-            sGameOver = false;
+            sIsGameOver = false;
             create();
         } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             System.exit(0);
@@ -205,8 +209,7 @@ public class GameWrapper implements ApplicationListener {
     private void renderGameWorld() {
         update();
 
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        clearScreen();
 
         mBatch.setProjectionMatrix(mCamera.combined);
         mBatch.setTransformMatrix(new Matrix4().translate(-mCameraOrigin.x,
@@ -225,11 +228,16 @@ public class GameWrapper implements ApplicationListener {
         mDebugger.render(mWorld, m);
     }
 
+    private void clearScreen() {
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    }
+
     private void handleCollision(Fixture a, Fixture b, Contact c) {
         if (a.getBody() == mBullet && b.getBody() != mPlayer.mBody) {
             mRemoveBodies.add(mBullet);
-            if (b.getBody() == mSdO.mBody) {
-                mSdO.hit();
+            if (b.getBody() == mSingleSlowDownObstacle.mBody) {
+                mSingleSlowDownObstacle.hit();
             }
 
             mBullet = null;
@@ -248,32 +256,27 @@ public class GameWrapper implements ApplicationListener {
                 mEnemy.catchPlayer();
             }
 
-            if (mSdO != null && b.getBody() == mSdO.mBody) {
-                mSdO.collide(mPlayer);
+            if (mSingleSlowDownObstacle != null
+                    && b.getBody() == mSingleSlowDownObstacle.mBody) {
+                mSingleSlowDownObstacle.collide(mPlayer);
                 c.setEnabled(false);
             }
 
         }
 
         if (a.getBody() == mEnemy.mBody) {
-            if (mSdO != null && b.getBody() == mSdO.mBody) {
-                mSdO.collide(mEnemy);
-                mRemoveBodies.add(mSdO.mBody);
+            if (mSingleSlowDownObstacle != null
+                    && b.getBody() == mSingleSlowDownObstacle.mBody) {
+                mSingleSlowDownObstacle.collide(mEnemy);
+                mRemoveBodies.add(mSingleSlowDownObstacle.mBody);
             }
         }
     }
 
     private void update() {
         mIsOnFloor = false;
-        mWorld.step((float) (1.0 / 60.0), 3, 3);
-        mBulletTicks += 1;
-        if (mBulletTicks > 100 && mBullet != null) {
-            mRemoveBodies.add(mBullet);
-            mBullet = null;
-        }
-
-        mPlayer.update();
-        mEnemy.update();
+        simulatePhysicsStep();
+        updateEntities();
         mBackgroundManager.update(mCameraOrigin.x);
 
         // for (Contact c : mWorld.getContactList()) {
@@ -281,15 +284,43 @@ public class GameWrapper implements ApplicationListener {
         // handleCollision(c.getFixtureB(), c.getFixtureA(), c);
         // }
 
-        for (Body b : mRemoveBodies) {
-            b.setTransform(new Vector2(-9000, -9000), 0);
-        }
+        removeCondemnedBodies();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && mIsOnFloor) {
+        if (shouldJump()) {
             System.out.println("jumping");
             mPlayer.jump();
         }
+    }
 
+    private void simulatePhysicsStep() {
+        mWorld.step((float) (1.0 / 60.0), 3, 3);
+    }
+
+    private void updateEntities() {
+        updateBullet();
+
+        mPlayer.update();
+        mEnemy.update();
+    }
+
+    private void updateBullet() {
+        mBulletTicks += 1;
+        if (mBulletTicks > 100 && mBullet != null) {
+            mRemoveBodies.add(mBullet);
+            mBullet = null;
+        }
+    }
+
+    private boolean shouldJump() {
+        boolean shouldJump = Gdx.input.isKeyPressed(Input.Keys.SPACE)
+                && mIsOnFloor;
+        return shouldJump;
+    }
+
+    private void removeCondemnedBodies() {
+        for (Body b : mRemoveBodies) {
+            b.setTransform(new Vector2(-9000, -9000), 0);
+        }
     }
 
     public void drawCrosshair(SpriteBatch sb) {

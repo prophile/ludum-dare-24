@@ -63,7 +63,7 @@ public class Enemy extends Entity {
     }
 
     public void catchPlayer() {
-        GameWrapper.sGameOver = true;
+        GameWrapper.sIsGameOver = true;
     }
 
     public float getEffectiveMaxSpeed() {
@@ -99,7 +99,7 @@ public class Enemy extends Entity {
 
         mStatusModifiers.removeAll(endedModifiers);
     }
-    
+
     public void addStatusModifier(StatusModifier sm) {
         mStatusModifiers.add(sm);
     }
