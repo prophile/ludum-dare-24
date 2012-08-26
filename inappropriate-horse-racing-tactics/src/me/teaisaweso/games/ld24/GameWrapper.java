@@ -52,6 +52,7 @@ public class GameWrapper implements ApplicationListener {
 
     private BitmapFont mTextFont;
     private int mScore;
+    private TreeSet<ScoreEntry> mPublicTopScores;
 
     private Sprite mCrosshair;
     private Sound mDarwinHurtSound;
@@ -154,6 +155,8 @@ public class GameWrapper implements ApplicationListener {
         mTextFont.getRegion().getTexture().setFilter(TextureFilter.Linear,
                 TextureFilter.Linear);
         mScore = 0;
+        // Blank list of top scores, in case intertubes fail.
+        mPublicTopScores = new TreeSet<ScoreEntry>();
 
         createCrosshair();
 
@@ -611,6 +614,8 @@ public class GameWrapper implements ApplicationListener {
     }
 
     protected void fetchScores() {
+        mPublicTopScores.clear();
+
         try {
             // Open scores url,
             URL u = new URL(
@@ -630,7 +635,6 @@ public class GameWrapper implements ApplicationListener {
             // Now a blank line,
             line = reader.readLine();
 
-            TreeSet<ScoreEntry> tmp = new TreeSet<ScoreEntry>();
             // And now some pairs of scores, until another blank line
             while (true) {
                 line = reader.readLine();
@@ -639,7 +643,7 @@ public class GameWrapper implements ApplicationListener {
 
                 String[] pair = line.split(",");
                 assert pair.length == 2;
-                tmp
+                mPublicTopScores
                         .add(new ScoreEntry(pair[0], new Integer(pair[1])
                                 .intValue()));
             }
