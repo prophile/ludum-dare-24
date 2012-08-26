@@ -43,6 +43,7 @@ public class GameWrapper implements ApplicationListener {
     private Enemy mEnemy;
     private BackgroundManager mBackgroundManager;
     private Body mFloor;
+    private TreeStumpObstacle mTso;
     private SlowDownRegion mSlowDown;
 
     private boolean mIsOnFloor;
@@ -157,7 +158,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createObstacles() {
-        mSlowDown = new SlowDownRegion(mWorld, 3000, 0, 100, 20000);
+        mSlowDown = new SlowDownRegion(mWorld, 300000000, 0, 100, 20000);
         BodyDef bd = new BodyDef();
         bd.position.set(1000 / 16, 400 / 16);
         bd.type = BodyType.DynamicBody;
@@ -170,6 +171,8 @@ public class GameWrapper implements ApplicationListener {
         Body b = mWorld.createBody(bd);
         b.createFixture(fd);
         mSdO = new SlowDownObstacle(b);
+        
+        mTso = new TreeStumpObstacle(new Vector2(1000,50), mWorld);
     }
 
     private void loadGameOverAssets() {
@@ -217,6 +220,7 @@ public class GameWrapper implements ApplicationListener {
         mBackgroundManager.draw(mBatch);
         mPlayer.draw(mBatch);
         mEnemy.draw(mBatch);
+        mTso.draw(mBatch);
         drawCrosshair(mBatch);
         mBatch.end();
         Matrix4 m = new Matrix4(mCamera.combined);
@@ -260,6 +264,10 @@ public class GameWrapper implements ApplicationListener {
                 mSdO.collide(mEnemy);
                 mRemoveBodies.add(mSdO.mBody);
             }
+            
+            if (mTso != null && b.getBody() == mTso.mBody) {
+                c.setEnabled(false);
+            }
         }
     }
 
@@ -274,6 +282,15 @@ public class GameWrapper implements ApplicationListener {
 
         mPlayer.update();
         mEnemy.update();
+        mTso.update();
+        
+        if (mTso.getPosition().x - mCameraOrigin.x < -600) {
+            mTso.mBody.setActive(false);
+            mWorld.destroyBody(mTso.mBody);
+            mTso = null;
+            mTso = new TreeStumpObstacle(new Vector2(mCameraOrigin.x+800, 50), mWorld);
+        }
+        
         mBackgroundManager.update(mCameraOrigin.x);
 
         // for (Contact c : mWorld.getContactList()) {

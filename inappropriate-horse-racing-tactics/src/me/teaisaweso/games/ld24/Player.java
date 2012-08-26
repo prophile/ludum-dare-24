@@ -101,7 +101,7 @@ public class Player extends Entity {
     }
 
     public void jump() {
-        mBody.applyLinearImpulse(0, 500, mBody.getPosition().x,
+        mBody.applyLinearImpulse(0, 2000, mBody.getPosition().x,
                 mBody.getPosition().y);
     }
 
