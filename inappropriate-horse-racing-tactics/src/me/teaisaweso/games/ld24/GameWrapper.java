@@ -569,11 +569,6 @@ public class GameWrapper implements ApplicationListener {
         updateEntities();
         mBackgroundManager.update(getCameraOrigin().x);
 
-        // for (Contact c : mWorld.getContactList()) {
-        // handleCollision(c.getFixtureA(), c.getFixtureB(), c);
-        // handleCollision(c.getFixtureB(), c.getFixtureA(), c);
-        // }
-
         removeCondemnedBodies();
 
         if (shouldJump()) {
