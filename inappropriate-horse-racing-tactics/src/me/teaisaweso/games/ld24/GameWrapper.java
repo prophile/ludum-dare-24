@@ -582,10 +582,10 @@ public class GameWrapper implements ApplicationListener {
             mEntities.remove(c);
         }
 
-        updateObstacles();
+        respawnObstacles();
     }
 
-    private void updateObstacles() {
+    private void respawnObstacles() {
         if (mTreeStumpObstacle1 != null) {
             if (treeStumpObstacleHasLeftScreen()) {
                 respawnTreeStumpObstacle();
