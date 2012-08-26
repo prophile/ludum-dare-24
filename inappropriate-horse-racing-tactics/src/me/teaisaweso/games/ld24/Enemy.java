@@ -83,17 +83,18 @@ public class Enemy extends Entity {
                 mBody.getPosition());
         if (this.getPosition().x - cameraX < -600) {
             System.out.println("boosting");
-            mBody.setLinearVelocity(new Vector2(getEffectiveMaxSpeed()+10000, 0));
+            mBody.setLinearVelocity(new Vector2(getEffectiveMaxSpeed()+5000, 0));
         } else {
             if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
-                mBody.setLinearVelocity(mBody.getLinearVelocity().x*0.99f,
+                mBody.setLinearVelocity(mBody.getLinearVelocity().x*0.95f,
                         mBody.getLinearVelocity().y);
             }
         }
         
         
         if (playerX - this.getPosition().x < 240) {
-            mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.99f));
+            System.out.println("slowing");
+            mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.95f));
         }
         
         
