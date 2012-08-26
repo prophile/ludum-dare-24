@@ -301,13 +301,17 @@ public class GameWrapper implements ApplicationListener {
             float py = playerSprite.getY() + playerSprite.getHeight() / 2;
             crosshairPosition.sub(new Vector2(px, py));
             crosshairPosition.nor();
+            Vector2 targetVector = new Vector2(crosshairPosition);
             crosshairPosition.mul(PHYSICS_RATIO * 6);
 
             bd.linearVelocity.set(crosshairPosition.add(
                     mPlayer.mBody.getLinearVelocity().x, 0));
-            bd.position.set((playerSprite.getX() + playerSprite.getWidth() / 2)
-                    / PHYSICS_RATIO,
-                    (playerSprite.getY() + playerSprite.getHeight() / 2)
+            bd.position
+                    .set((playerSprite.getX() + playerSprite.getWidth() / 2 + targetVector.x
+                            * Constants.getFloat("bulletFireOffset"))
+                            / PHYSICS_RATIO, (playerSprite.getY()
+                            + playerSprite.getHeight() / 2 + targetVector.y
+                            * Constants.getFloat("bulletFireOffset"))
                             / PHYSICS_RATIO);
             FixtureDef fd = new FixtureDef();
             CircleShape cs = new CircleShape();
