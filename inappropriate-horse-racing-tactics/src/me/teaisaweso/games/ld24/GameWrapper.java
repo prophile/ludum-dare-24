@@ -280,9 +280,9 @@ public class GameWrapper implements ApplicationListener {
         // handleCollision(c.getFixtureA(), c.getFixtureB(), c);
         // handleCollision(c.getFixtureB(), c.getFixtureA(), c);
         // }
-        
+
         for (Body b : mRemoveBodies) {
-            b.setTransform(new Vector2(-9000,-9000), 0);
+            b.setTransform(new Vector2(-9000, -9000), 0);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && mIsOnFloor) {
