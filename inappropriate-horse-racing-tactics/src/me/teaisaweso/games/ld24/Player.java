@@ -52,8 +52,8 @@ public class Player extends Entity {
     }
 
     private void configureAttributes() {
-        mAttributes.mMaxSpeed = 33;
-        mAttributes.mAccel = 200;
+        mAttributes.mMaxSpeed = Constants.sInstance.mConstants.get("playerMaxSpeed");
+        mAttributes.mAccel = Constants.sInstance.mConstants.get("playerAccel");
         mWidth = 200;
         mHeight = 200;
     }
@@ -95,7 +95,7 @@ public class Player extends Entity {
     @Override
     public void update() {
         if (!GameWrapper.instance.isOnFloor()) {
-            mBody.applyForceToCenter(0.0f, -400f * mBody.getMass());
+            mBody.applyForceToCenter(0.0f, Constants.sInstance.mConstants.get("gravity") * mBody.getMass());
         }
         mLastJumpTicks++;
         updateAndRemoveModifiers();
@@ -122,7 +122,7 @@ public class Player extends Entity {
 
     public void jump() {
         if (mLastJumpTicks > 10) {
-            mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, 160));
+            mBody.setLinearVelocity(mBody.getLinearVelocity().add(0, Constants.sInstance.mConstants.get("jumpVelocity")));
             mLastJumpTicks = 0;
             mJumpSound.play();
         }

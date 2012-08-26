@@ -1,0 +1,13 @@
+playerMaxSpeed,33
+playerAccel,200
+darwinMaxSpeed,30
+darwinAccel,190
+darwinBoostAmount,5000
+darwinBoostFalloff,0.95
+darwinPlayerCushionSize,240,this one strictly needs to be greater than 200
+darwinPlayerCushionSlowDown,0.95
+gravity,-400
+jumpVelocity,160
+slowdownDuration,120,keep this one an int
+slowdownAmount,0.4
+doubleTreeProbability,0.5

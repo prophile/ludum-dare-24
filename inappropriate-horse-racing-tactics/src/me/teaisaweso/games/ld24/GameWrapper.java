@@ -187,7 +187,8 @@ public class GameWrapper implements ApplicationListener {
     private void createCrosshair() {
         Texture crosshair = new Texture(
                 Gdx.files.internal("assets/crosshair.png"));
-        mCrosshair = new Sprite(crosshair, 10, 10);
+        mCrosshair = new Sprite(crosshair, 35, 35);
+        
     }
 
     private void createDarwin() {
@@ -248,13 +249,15 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createTreeStumpObstacle() {
-        Vector2 position = new Vector2(
-                getCameraOrigin().x + 800 + mRng.nextFloat() * 100, 50);
+        Vector2 position = new Vector2(getCameraOrigin().x + 800
+                + mRng.nextFloat() * 100, 50);
         mTreeStumpObstacle1 = new TreeStumpObstacle(new Vector2(position),
                 mWorld, 1);
 
-        if (sRng.nextFloat() < 0.5) {
-            mTreeStumpObstacle2 = new TreeStumpObstacle(new Vector2(position.add(200, 30)), mWorld, 1.5f);
+        if (sRng.nextFloat() < Constants.sInstance.mConstants
+                .get("doubleTreeProbability")) {
+            mTreeStumpObstacle2 = new TreeStumpObstacle(new Vector2(
+                    position.add(200, 30)), mWorld, 1.5f);
         }
     }
 
@@ -272,7 +275,7 @@ public class GameWrapper implements ApplicationListener {
                 playerSprite);
 
         mCrosshair
-                .setPosition(crosshairPosition.x - 5, crosshairPosition.y - 5);
+                .setPosition(crosshairPosition.x - 35/2, crosshairPosition.y - 35/2);
 
         if (Gdx.input.isButtonPressed(Buttons.LEFT) && mBullet == null) {
             System.out.println("touch");
@@ -346,11 +349,13 @@ public class GameWrapper implements ApplicationListener {
         if (a.getBody() == mPlayer.mBody) {
             if (b.getBody() == mFloor
                     || (mTreeStumpObstacle1 != null
-                    && b.getBody() == mTreeStumpObstacle1.mBody
-                    && mPlayer.getPosition().y > mTreeStumpObstacle1
+                            && b.getBody() == mTreeStumpObstacle1.mBody && mPlayer
+                            .getPosition().y > mTreeStumpObstacle1
                             .getPosition().y + 122)
-                            || (mTreeStumpObstacle2 != null && b.getBody() == mTreeStumpObstacle2.mBody &&
-                            mPlayer.getPosition().y > mTreeStumpObstacle2.getPosition().y + 122 * 1.5)) {
+                    || (mTreeStumpObstacle2 != null
+                            && b.getBody() == mTreeStumpObstacle2.mBody && mPlayer
+                            .getPosition().y > mTreeStumpObstacle2
+                            .getPosition().y + 122 * 1.5)) {
                 mIsOnFloor = true;
             }
 
@@ -387,10 +392,11 @@ public class GameWrapper implements ApplicationListener {
                     && b.getBody() == mTreeStumpObstacle1.mBody) {
                 c.setEnabled(false);
             }
-            
-            if (mTreeStumpObstacle2 != null && b.getBody() == mTreeStumpObstacle2.mBody) {
+
+            if (mTreeStumpObstacle2 != null
+                    && b.getBody() == mTreeStumpObstacle2.mBody) {
                 c.setEnabled(false);
-                
+
             }
 
             if (mSingleRockObstacle != null
@@ -441,7 +447,7 @@ public class GameWrapper implements ApplicationListener {
         mTreeStumpObstacle1.mBody.setActive(false);
         mWorld.destroyBody(mTreeStumpObstacle1.mBody);
         mTreeStumpObstacle1 = null;
-        
+
         if (mTreeStumpObstacle2 != null) {
             mTreeStumpObstacle2.mBody.setActive(false);
             mWorld.destroyBody(mTreeStumpObstacle2.mBody);
@@ -481,7 +487,7 @@ public class GameWrapper implements ApplicationListener {
         }
 
         Color oldColor = mTextFont.getColor();
-        
+
         mTextFont.setColor(1.0f, 1.0f, 0.0f, 0.5f);
         mTextFont.drawMultiLine(mGameOverBatch, text, 390.0f, 290.0f);
         mTextFont.setColor(oldColor);
@@ -534,11 +540,11 @@ public class GameWrapper implements ApplicationListener {
         if (mTreeStumpObstacle1 != null) {
             mTreeStumpObstacle1.draw(mBatch);
         }
-        
+
         if (mTreeStumpObstacle2 != null) {
             mTreeStumpObstacle2.draw(mBatch);
         }
-        
+
         if (mSingleSlowDownObstacle != null) {
             mSingleSlowDownObstacle.draw(mBatch);
         }
@@ -638,11 +644,11 @@ public class GameWrapper implements ApplicationListener {
     private void updateObstacles() {
         if (mTreeStumpObstacle1 != null) {
             mTreeStumpObstacle1.update();
-            
+
             if (mTreeStumpObstacle2 != null) {
                 mTreeStumpObstacle2.update();
             }
-             
+
             if (treeStumpObstacleHasLeftScreen()) {
                 respawnTreeStumpObstacle();
             }
@@ -671,9 +677,10 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void updatePlayerForAirControl() {
-        /*mPlayer.mBody.setLinearVelocity(
-                mPlayer.mBody.getLinearVelocity().x * 0.997f,
-                mPlayer.mBody.getLinearVelocity().y);*/
+        /*
+         * mPlayer.mBody.setLinearVelocity( mPlayer.mBody.getLinearVelocity().x
+         * * 0.997f, mPlayer.mBody.getLinearVelocity().y);
+         */
     }
 
     protected class ScoreDownloader implements Runnable {

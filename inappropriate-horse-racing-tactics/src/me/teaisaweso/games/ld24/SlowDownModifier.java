@@ -2,13 +2,13 @@ package me.teaisaweso.games.ld24;
 
 public class SlowDownModifier extends StatusModifier {
 
-    private static final int TOTAL_TICKS = 120;
+    private static final int TOTAL_TICKS = Constants.sInstance.mConstants.get("slowdownDuration").intValue();
 
     private int mTicksRemaining = TOTAL_TICKS;
 
     @Override
     public float adjustSpeed(float speed) {
-        return speed * 0.4f;
+        return speed * Constants.sInstance.mConstants.get("slowdownAmount");
     }
 
     @Override
