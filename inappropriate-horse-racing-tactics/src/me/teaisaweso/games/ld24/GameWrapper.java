@@ -53,7 +53,7 @@ public class GameWrapper implements ApplicationListener {
 
     private Body mBullet = null;
 
-    private HashSet<Body> mRemoveBodies = new HashSet<Body>();
+    private final HashSet<Body> mRemoveBodies = new HashSet<Body>();
 
     private int mBulletTicks;
 
