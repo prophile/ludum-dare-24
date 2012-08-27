@@ -72,6 +72,7 @@ public class GameWrapper implements ApplicationListener {
     private SpriteBatch mGameOverBatch;
     private Sprite mGameOverSprite;
     private boolean mIsGameOver;
+    public boolean mDying;
 
     private boolean mIsOnFloor;
 
@@ -170,6 +171,7 @@ public class GameWrapper implements ApplicationListener {
         mTextFont.getRegion().getTexture()
                 .setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mScore = 0;
+        mDying = false;
         // Blank list of top scores, in case intertubes fail.
         mPublicTopScores = new ScoreDownloader();
 
@@ -385,6 +387,11 @@ public class GameWrapper implements ApplicationListener {
     }
 
     void handleCollision(Fixture a, Fixture b, Contact c) {
+        if (mDying) {
+            c.setEnabled(false);
+            return;
+        }
+        
         Entity collider_a = (Entity) a.getBody().getUserData();
         Entity collider_b = (Entity) b.getBody().getUserData();
         if (collider_a instanceof BananaObstacle && collider_b instanceof BananaObstacle) {
@@ -425,7 +432,7 @@ public class GameWrapper implements ApplicationListener {
             }
 
             if (collider_b instanceof Enemy) {
-                ((Enemy) collider_b).catchPlayer();
+                ((Enemy) collider_b).catchPlayer((Player)collider_a);
             }
 
             if (collider_b instanceof PhysicalObstacle) {

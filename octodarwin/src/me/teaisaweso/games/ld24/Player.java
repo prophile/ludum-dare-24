@@ -26,7 +26,9 @@ public class Player extends Entity {
     private int mLastJumpTicks;
     private final Sound mJumpSound, mHurtSound;
     private int mTicks = 0;
+    private int mDeathTick = 0;
     private boolean mGotHurt = false;
+    private boolean mDying = false;
 
     private static Texture sFlapTexture1, sFlapTexture2, sJumpTexture,
             sAirTexture, sHurtTexture;
@@ -131,6 +133,11 @@ public class Player extends Entity {
     @Override
     public boolean update() {
         ++mTicks;
+        if (mDeathTick != 0 && mTicks > mDeathTick + 80) {
+            GameWrapper.instance.setGameOver();
+            return false;
+        }
+        
         if (!GameWrapper.instance.isOnFloor()) {
             mBody.applyForceToCenter(0.0f, Constants.getFloat("gravity")
                     * mBody.getMass());
@@ -139,7 +146,9 @@ public class Player extends Entity {
         updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
                 mBody.getPosition());
-        if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
+        if (mDying) {
+            mBody.setLinearVelocity(getEffectiveMaxSpeed(), mBody.getLinearVelocity().y);
+        } else if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
             mBody.setLinearVelocity(getEffectiveMaxSpeed(),
                     mBody.getLinearVelocity().y);
         }
@@ -210,6 +219,18 @@ public class Player extends Entity {
     @Override
     public int drawOrder() {
         return 100;
+    }
+    
+    public void caught() {
+        mAttributes.mAccel = 0.0f;
+        mAttributes.mMaxSpeed = 0.0f;
+        mDying = true;
+        GameWrapper.instance.mDying = true;
+        
+        mBody.applyLinearImpulse(new Vector2(0.0f, 5000.0f),
+                mBody.getPosition());
+        
+        mDeathTick = mTicks;
     }
 
 }
