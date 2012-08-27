@@ -32,7 +32,7 @@ bananaTentaclesFlailTime,6
 bananaTentaclesRestitution,0.4
 treeStumpMinSpacing,800
 treeStumpMaxSpacing,900
-showHitboxes,1
+showHitboxes,0
 bananaMinSpacing,600
 bananaMaxSpacing,1800
 bananaHeight,400

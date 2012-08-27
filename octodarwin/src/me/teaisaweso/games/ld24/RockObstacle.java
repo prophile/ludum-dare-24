@@ -2,6 +2,7 @@ package me.teaisaweso.games.ld24;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -27,7 +28,9 @@ public class RockObstacle extends PhysicalObstacle {
     }
 
     private Texture loadRockTexture() {
-        return new Texture(Gdx.files.internal("assets/AssetRockDraft.png"));
+        Texture t = new Texture(Gdx.files.internal("assets/AssetRockDraft.png"));
+        t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        return t;
     }
 
     private void createPhysicsBody(Vector2 worldPosition, World w) {
