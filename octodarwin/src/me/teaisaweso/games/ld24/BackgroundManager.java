@@ -12,10 +12,10 @@ public class BackgroundManager {
     private static final TextureFilter BACKGROUND_TEXTURE_FILTER = TextureFilter.Linear;
     private final Sprite[] mBackgroundSprites = new Sprite[8];
     private final static float[] sShifts = {
-        Constants.getFloat("backBGLayerScrollSpeed"),
-        Constants.getFloat("backBGLayerScrollSpeed"),
-        Constants.getFloat("backBGLayerScrollSpeed"),
-        Constants.getFloat("backBGLayerScrollSpeed"),
+            Constants.getFloat("backBGLayerScrollSpeed"),
+            Constants.getFloat("backBGLayerScrollSpeed"),
+            Constants.getFloat("hedgeBGLayerScrollSpeed"),
+            Constants.getFloat("hedgeBGLayerScrollSpeed"),
             Constants.getFloat("middleBGLayerScrollSpeed"),
             Constants.getFloat("middleBGLayerScrollSpeed"),
             Constants.getFloat("frontBGLayerScrollSpeed"),
@@ -29,11 +29,13 @@ public class BackgroundManager {
 
     private static void loadTextures() {
         // stuff
-        sHedgeLayer = new Texture(Gdx.files.internal("assets/Asset_background_hedge_FINAL.png"));
+        sHedgeLayer = new Texture(
+                Gdx.files.internal("assets/Asset_background_hedge_FINAL.png"));
         sBackLayer = new Texture(Gdx.files.internal("assets/bg-back.png"));
         sMidLayer = new Texture(Gdx.files.internal("assets/bg-mid.png"));
         sFrontLayer = new Texture(Gdx.files.internal("assets/bg-front.png"));
-        sHedgeLayer.setFilter(BACKGROUND_TEXTURE_FILTER, BACKGROUND_TEXTURE_FILTER);
+        sHedgeLayer.setFilter(BACKGROUND_TEXTURE_FILTER,
+                BACKGROUND_TEXTURE_FILTER);
         sBackLayer.setFilter(BACKGROUND_TEXTURE_FILTER,
                 BACKGROUND_TEXTURE_FILTER);
         sMidLayer.setFilter(BACKGROUND_TEXTURE_FILTER,
@@ -56,7 +58,7 @@ public class BackgroundManager {
     }
 
     private void createBackgroundSprites() {
-        
+
         mBackgroundSprites[0] = new Sprite(sBackLayer, 800, 600);
         mBackgroundSprites[0].setPosition(-400, 0);
         mBackgroundSprites[1] = new Sprite(sBackLayer, 800, 600);
@@ -100,6 +102,5 @@ public class BackgroundManager {
             backgroundSprite.draw(sb);
         }
     }
-    
-    
+
 }
