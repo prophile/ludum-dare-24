@@ -60,7 +60,7 @@ public class Enemy extends Entity {
         bd.fixedRotation = true;
         bd.type = BodyType.DynamicBody;
         bd.fixedRotation = true;
-        bd.position.set(-13, 3 - 400 * (1 - sizeFactor));
+        bd.position.set(-20, 3 - 400 * (1 - sizeFactor));
         Body b = world.createBody(bd);
         b.createFixture(fd);
         mBody = b;
