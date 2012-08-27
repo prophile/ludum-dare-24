@@ -27,7 +27,7 @@ public class Player extends Entity {
     private final Sound mJumpSound, mHurtSound;
     private int mTicks = 0;
 
-    private static Texture sFlapTexture1, sFlapTexture2;
+    private static Texture sFlapTexture1, sFlapTexture2, sJumpTexture;
     private static boolean sTexturesLoaded = false;
 
     private static void loadTextures() {
@@ -35,8 +35,11 @@ public class Player extends Entity {
                 Gdx.files.internal("assets/Asset_Monkey_Flapping1.png"));
         sFlapTexture2 = new Texture(
                 Gdx.files.internal("assets/Asset_Monkey_Flapping2.png"));
+        sJumpTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_jump.png"));
         sFlapTexture1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         sFlapTexture2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        sJumpTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
     }
 
     private static void loadTexturesOnDemand() {
@@ -133,10 +136,14 @@ public class Player extends Entity {
                     mBody.getLinearVelocity().y);
         }
         int flapTime = Constants.getInt("playerAnimationFlapTime");
-        if (mTicks % (flapTime * 2) < flapTime) {
-            mSprite.setTexture(sFlapTexture1);
+        if (mLastJumpTicks < Constants.getInt("playerAnimationJumpTime")) {
+            mSprite.setTexture(sJumpTexture);
         } else {
-            mSprite.setTexture(sFlapTexture2);
+            if (mTicks % (flapTime * 2) < flapTime) {
+                mSprite.setTexture(sFlapTexture1);
+            } else {
+                mSprite.setTexture(sFlapTexture2);
+            }
         }
         return false;
     }
