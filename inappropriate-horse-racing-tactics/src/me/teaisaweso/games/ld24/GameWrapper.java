@@ -437,7 +437,7 @@ public class GameWrapper implements ApplicationListener {
         mSplashScreenSprite.draw(mBatch);
         mBatch.end();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             mSplashScreen = false;
         }
     }
@@ -459,7 +459,7 @@ public class GameWrapper implements ApplicationListener {
 
         mGameOverBatch.end();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             clearGameOver();
             String username = System.getProperty("user.name");
             try {
