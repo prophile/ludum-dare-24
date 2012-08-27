@@ -13,6 +13,7 @@ slowdownAmount,0.9
 doubleTreeProbability,0.5
 frontBGLayerScrollSpeed,0.0
 middleBGLayerScrollSpeed,0.8
+hedgeBGLayerScrollSpeed,1.8
 backBGLayerScrollSpeed,2.0
 bulletSpriteSize,40
 bulletSpriteRotateSpeed,10
