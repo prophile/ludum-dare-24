@@ -164,4 +164,9 @@ public class Enemy extends Entity {
         return super.getPosition().add(0, 30);
     }
 
+    public void setSplashScreen() {
+        mSprite.setScale(0.7f);
+        mSprite2.setScale(0.7f);
+    }
+
 }

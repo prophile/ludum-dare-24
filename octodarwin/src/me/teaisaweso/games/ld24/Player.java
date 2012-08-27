@@ -238,4 +238,8 @@ public class Player extends Entity {
         mSprite.setColor(0.7f, 0.3f, 0.3f, 1.0f);
         mSprite.setTexture(sHurtTexture);
     }
+
+    public void setSplashScreen() {
+        mSprite.setScale(1.3f);
+    }
 }

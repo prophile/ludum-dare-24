@@ -513,9 +513,10 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void renderSplashScreen() {
-        mPlayer.mBody.setTransform(150 / 16, 475 / 16, 0);
-        
-        mEnemy.mBody.setTransform(600 / 16, 310 / 16, 0);
+        mPlayer.mBody.setTransform(600 / 16, 325 / 16, 0);
+        mEnemy.mBody.setTransform(210 / 16, 520 / 16, 0);
+        mEnemy.setSplashScreen();
+        mPlayer.setSplashScreen();
         mIsOnFloor = true;
         mPlayer.update();
         mEnemy.update();
@@ -534,6 +535,8 @@ public class GameWrapper implements ApplicationListener {
             mEntities.remove(mGunArm);
             createPlayer();
             createDarwin();
+            mPlayer.update();
+            mEnemy.update();
         }
     }
 
