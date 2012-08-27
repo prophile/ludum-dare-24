@@ -356,7 +356,8 @@ public class GameWrapper implements ApplicationListener {
         if (mLastFireCountdown > 0) {
             --mLastFireCountdown;
         }
-        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mLastFireCountdown == 0 && mCanShoot) {
+        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mLastFireCountdown == 0
+                && mCanShoot) {
             BodyDef bd = new BodyDef();
             bd.type = BodyType.KinematicBody;
             float px = playerSprite.getX() + playerSprite.getWidth() / 2;
@@ -544,7 +545,7 @@ public class GameWrapper implements ApplicationListener {
             mSplashScreen = false;
             mWorld.destroyBody(mPlayer.mBody);
             mWorld.destroyBody(mEnemy.mBody);
-            
+
             mEntities.remove(mPlayer);
             mEntities.remove(mEnemy);
             mEntities.remove(mGunArm);
@@ -562,7 +563,7 @@ public class GameWrapper implements ApplicationListener {
         Color oldColor = mTextFont.getColor();
         mTextFont.setScale(1.0f);
         mTextFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        
+
         String text = new String();
         int i = 1;
         for (ScoreEntry e : mPublicTopScores.mScoreList) {
@@ -574,7 +575,7 @@ public class GameWrapper implements ApplicationListener {
             i += 1;
             text += "\n";
         }
-        
+
         mTextFont.drawMultiLine(mGameOverBatch, text, 40.0f, 400.0f);
 
         text = "";
@@ -666,20 +667,28 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void setGameOver() {
-        String username = System.getProperty("user.name");
-        try {
-            System.out.println("sending scores");
-            URL u = new URL(
-                    "http://immense-savannah-9950.herokuapp.com/score/"
-                            + username + "/" + (mScore ^ 0x5f3759df));
-            u.getContent();
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
+        System.out.println("sending scores");
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    String username = System.getProperty("user.name");
+                    URL u = new URL(
+                            "http://immense-savannah-9950.herokuapp.com/score/"
+                                    + username + "/" + (mScore ^ 0x5f3759df));
+                    u.getContent();
+                } catch (MalformedURLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
         mPublicTopScores.downloadScoresAgain(mScore);
         mIsGameOver = true;
     }
