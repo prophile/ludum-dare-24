@@ -118,12 +118,11 @@ public class HorseObstacle extends PhysicalObstacle {
     public void hit() {
         if (mStage == EvolutionStage.NORMAL) {
             mStage = EvolutionStage.TENTACLES;
+            mBody.setLinearVelocity(Constants.getFloat("horseRecoil"), 0.0f);
             //mSprite.setScale(1.8f);
             //mSprite.setOrigin(0.0f, 90.0f);
             mEvolutionSound.play();
         }
-        
-        mBody.setLinearVelocity(Constants.getFloat("horseRecoil"), 0.0f);
         
     }
 
