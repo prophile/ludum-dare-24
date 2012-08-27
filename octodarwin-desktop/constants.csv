@@ -47,12 +47,12 @@ obstacleMinSpacing,300
 obstacleMaxSpacing,700
 spawnSoup,100
 spawnBanana,100
-spawnStump,200
-spawnDoubleStump,200
+spawnStump,400
+spawnDoubleStump,500
 spawnRock,200
 spawnGap,100
 scoreMultiplier,10
-spawnHorse,50
+spawnHorse,10
 darwinDebug,0
 horseGallopAnimationTime,6
 horsePoofTime,12
