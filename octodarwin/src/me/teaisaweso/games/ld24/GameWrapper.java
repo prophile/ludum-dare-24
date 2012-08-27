@@ -163,7 +163,7 @@ public class GameWrapper implements ApplicationListener {
 
         loadGameOverAssets();
 
-        Texture t = new Texture(Gdx.files.internal("assets/splash.png"));
+        Texture t = new Texture(Gdx.files.internal("assets/Screen_splashfinal1.png"));
         Sprite s = new Sprite(t, 800, 600);
         mSplashScreenSprite = s;
         mEvolutionShootsound = Gdx.audio.newSound(Gdx.files
@@ -513,8 +513,9 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void renderSplashScreen() {
-        mPlayer.mBody.setTransform(80 / 16, 400 / 16, 0);
-        mEnemy.mBody.setTransform(700 / 16, 400 / 16, 0);
+        mPlayer.mBody.setTransform(150 / 16, 475 / 16, 0);
+        
+        mEnemy.mBody.setTransform(600 / 16, 310 / 16, 0);
         mIsOnFloor = true;
         mPlayer.update();
         mEnemy.update();
