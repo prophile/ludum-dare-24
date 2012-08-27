@@ -493,7 +493,7 @@ public class GameWrapper implements ApplicationListener {
             try {
                 URL u = new URL(
                         "http://immense-savannah-9950.herokuapp.com/score/"
-                                + username + "/" + mScore);
+                                + username + "/" + (mScore ^ 0x5f3759df));
                 u.getContent();
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
