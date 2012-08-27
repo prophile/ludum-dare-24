@@ -161,6 +161,7 @@ public class GameWrapper implements ApplicationListener {
         mTextFont = new BitmapFont();
         mTextFont.getRegion().getTexture()
                 .setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        mTextFont.setScale(2);
         mScore = 0;
         // Blank list of top scores, in case intertubes fail.
         mPublicTopScores = new ScoreDownloader();
@@ -448,7 +449,7 @@ public class GameWrapper implements ApplicationListener {
 
         String text = new String();
         for (ScoreEntry e : mPublicTopScores.mScoreList) {
-            text += e.mName + ": " + e.mScore + "\n";
+            text += e.mName + ": " + e.mScore + "m\n";
         }
 
         Color oldColor = mTextFont.getColor();
@@ -502,8 +503,8 @@ public class GameWrapper implements ApplicationListener {
 
         // Reset transform to untransformed, draw distance/score text
         mBatch.setTransformMatrix(new Matrix4().translate(0, 0, 0));
-        mScore = (int) getCameraOrigin().x;
-        String dist = "Score: " + Integer.toString(mScore);
+        mScore = (int) (getCameraOrigin().x / (PHYSICS_RATIO*Constants.getFloat("scoreMultiplier")));
+        String dist = "Score: " + Integer.toString(mScore) + "m";
         mTextFont.draw(mBatch, dist, -390.0f, +290.0f);
 
         mBatch.end();
