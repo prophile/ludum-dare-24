@@ -199,9 +199,51 @@ public class GameWrapper implements ApplicationListener {
         return minSpacing + spacingRange * sRng.nextFloat();
     }
 
+    private ObstacleType getRandomObstacleType() {
+        LotteryChooser<ObstacleType> types = new LotteryChooser<ObstacleType>(
+                sRng);
+        types.addEntry(ObstacleType.SOUP, Constants.getFloat("spawnSoup"));
+        types.addEntry(ObstacleType.BANANA, Constants.getFloat("spawnBanana"));
+        types.addEntry(ObstacleType.STUMP, Constants.getFloat("spawnStump"));
+        types.addEntry(ObstacleType.DOUBLE_STUMP,
+                Constants.getFloat("spawnDoubleStump"));
+        types.addEntry(ObstacleType.ROCK, Constants.getFloat("spawnRock"));
+        types.addEntry(ObstacleType.GAP, Constants.getFloat("spawnGap"));
+        return types.pick();
+    }
+
+    private void createObstacleObjectOfType(ObstacleType type, float x) {
+        PhysicalObstacle obstacle;
+        switch (type) {
+        case ROCK:
+            obstacle = new RockObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            break;
+        case BANANA:
+            obstacle = new BananaObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            break;
+        case SOUP:
+            obstacle = new SoupObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            break;
+        case STUMP:
+            obstacle = new TreeStumpObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            break;
+        case DOUBLE_STUMP:
+            obstacle = new TreeStumpObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            obstacle = ((TreeStumpObstacle) obstacle).createNearbyStump(mWorld);
+            mEntities.add(obstacle);
+            break;
+        default:
+            break;
+        }
+    }
+
     private void createObstacle(float x) {
-        RockObstacle obstacle = new RockObstacle(x, mWorld);
-        mEntities.add(obstacle);
+        createObstacleObjectOfType(getRandomObstacleType(), x);
     }
 
     private void createCrosshair() {
@@ -546,7 +588,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void handleRespawn() {
-        while (getCameraOrigin().x > mNextSpawnPosition - 400) {
+        while (getCameraOrigin().x > mNextSpawnPosition - 900) {
             createObstacle(mNextSpawnPosition);
             mNextSpawnPosition += getRandomObstacleSpacing();
         }

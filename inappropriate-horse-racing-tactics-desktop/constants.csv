@@ -43,3 +43,10 @@ bulletFireOffset,150
 reloadTime,30
 obstacleMinSpacing,300
 obstacleMaxSpacing,1000
+spawnSoup,100
+spawnBanana,100
+spawnStump,100
+spawnDoubleStump,100
+spawnRock,100
+spawnGap,100
+

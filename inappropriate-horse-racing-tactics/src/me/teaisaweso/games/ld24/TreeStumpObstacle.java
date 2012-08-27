@@ -6,24 +6,18 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class TreeStumpObstacle extends PhysicalObstacle {
 
     private final Sprite mSprite;
 
-    public static TreeStumpObstacle createStumpObstacle(World w, float scale) {
-        float minSpacing = Constants.getFloat("treeStumpMinSpacing");
-        float maxSpacing = Constants.getFloat("treeStumpMaxSpacing");
-        float spacingRange = maxSpacing - minSpacing;
-        Vector2 position = new Vector2(GameWrapper.instance.getCameraOrigin().x
-                + minSpacing + GameWrapper.instance.mRng.nextFloat()
-                * spacingRange, 50);
-        return new TreeStumpObstacle(position, w, scale);
+    public TreeStumpObstacle(float x, World w) {
+        this(new Vector2(x, 50), w, 1.0f);
     }
 
     public TreeStumpObstacle(Vector2 worldPosition, World w, float scale) {
