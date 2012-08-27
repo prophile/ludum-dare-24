@@ -18,6 +18,7 @@ public class GunArmEntity extends Entity {
     private boolean mFired = false;
 
     public GunArmEntity(Player p) {
+        float scale = Constants.getFloat("playerSize");
         mPlayer = p;
         Texture t = new Texture(Gdx.files.internal("assets/gun.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -25,11 +26,13 @@ public class GunArmEntity extends Entity {
         mHeight = 109;
         mSprite = new Sprite(t, (int) mWidth, (int) mHeight);
         mSprite.setOrigin(0, mHeight / 2);
+        mSprite.setScale(scale);
 
         t = new Texture(Gdx.files.internal("assets/gunfire.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mFireSprite = new Sprite(t, (int) mWidth, (int) mHeight);
         mFireSprite.setOrigin(0, mHeight / 2);
+        mFireSprite.setScale(scale);
     }
 
     public void passMousePosition(Vector2 pos) {

@@ -37,7 +37,7 @@ bananaMinSpacing,600
 bananaMaxSpacing,1800
 bananaHeight,400
 rockFirstPosition,2000
-bulletFireOffset,150
+bulletFireOffset,50
 reloadTime,30
 spikeSlowdownAmount,2
 psikeSlowdownDuration,120
@@ -63,3 +63,5 @@ playerAnimationFlapTime,6
 playerAnimationJumpTime,12
 horseHeight,150
 enemySize,1.0
+playerSize,0.5
+
