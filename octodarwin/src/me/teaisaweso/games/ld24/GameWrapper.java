@@ -525,14 +525,17 @@ public class GameWrapper implements ApplicationListener {
 
     private void renderSplashScreen() {
         mPlayer.mBody.setTransform(600 / 16, 325 / 16, 0);
+        mGunArm.update();
         mEnemy.mBody.setTransform(210 / 16, 520 / 16, 0);
         mEnemy.setSplashScreen();
         mPlayer.setSplashScreen();
+        mGunArm.setSplashScreen();
         mIsOnFloor = true;
         mPlayer.update();
         mEnemy.update();
         mBatch.begin();
         mSplashScreenSprite.draw(mBatch);
+        mGunArm.draw(mBatch);
         mEnemy.draw(mBatch);
         mPlayer.draw(mBatch);
         mBatch.end();
@@ -541,6 +544,7 @@ public class GameWrapper implements ApplicationListener {
             mSplashScreen = false;
             mWorld.destroyBody(mPlayer.mBody);
             mWorld.destroyBody(mEnemy.mBody);
+            
             mEntities.remove(mPlayer);
             mEntities.remove(mEnemy);
             mEntities.remove(mGunArm);

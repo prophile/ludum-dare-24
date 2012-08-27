@@ -75,4 +75,8 @@ public class GunArmEntity extends Entity {
         return 99;
     }
 
+    public void setSplashScreen() {
+        mSprite.setScale(1.3f);
+    }
+
 }
