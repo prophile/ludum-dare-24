@@ -53,7 +53,7 @@ spawnRock,100
 spawnGap,100
 scoreMultiplier,10
 spawnHorse,100
-darwinDebug,1
+darwinDebug,0
 horseGallopAnimationTime,6
 horsePoofTime,12
 horseRecoil,60

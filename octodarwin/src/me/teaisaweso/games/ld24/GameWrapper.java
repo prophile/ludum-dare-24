@@ -483,12 +483,21 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void renderSplashScreen() {
+        mPlayer.mBody.setTransform(80/16, 400/16, 0);
+        mEnemy.mBody.setTransform(700/16, 400/16, 0);
+        mIsOnFloor = true;
+        mPlayer.update();
+        mEnemy.update();
         mBatch.begin();
         mSplashScreenSprite.draw(mBatch);
+        mEnemy.draw(mBatch);
+        mPlayer.draw(mBatch);
         mBatch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             mSplashScreen = false;
+            mPlayer.mBody.setTransform(0, 3, 0);
+            mEnemy.mBody.setTransform(-13, 3, 0);
         }
     }
 
