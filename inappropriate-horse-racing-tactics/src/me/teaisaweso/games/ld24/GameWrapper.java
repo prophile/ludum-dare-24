@@ -87,6 +87,8 @@ public class GameWrapper implements ApplicationListener {
     private Sprite mSplashScreenSprite;
     private ExplosionManager mExplosionManager;
 
+    private float mNextSpawnPosition = 0.0f;
+
     public ExplosionManager getExplosionManager() {
         return mExplosionManager;
     }
@@ -182,10 +184,12 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createInitialObstacles(int n) {
+        float spacing = Constants.getFloat("obstacleSpacing");
         for (int i = 1; i <= n; ++i) {
-            float position = i * Constants.getFloat("obstacleSpacing");
+            float position = i * spacing;
             createObstacle(position);
         }
+        mNextSpawnPosition = (n + 1) * spacing;
     }
 
     private void createObstacle(float x) {
@@ -531,6 +535,14 @@ public class GameWrapper implements ApplicationListener {
 
         mExplosionManager.update();
 
+        handleRespawn();
+    }
+
+    private void handleRespawn() {
+        while (getCameraOrigin().x > mNextSpawnPosition - 400) {
+            createObstacle(mNextSpawnPosition);
+            mNextSpawnPosition += Constants.getFloat("obstacleSpacing");
+        }
     }
 
     private void updateEntities() {
