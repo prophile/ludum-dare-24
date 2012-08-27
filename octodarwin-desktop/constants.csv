@@ -1,7 +1,7 @@
 playerMaxSpeed,33
 playerAccel,200
 darwinMaxSpeed,37
-darwinAccel,180
+darwinAccel,190
 darwinBoostAmount,1500
 darwinBoostFalloff,0.95
 darwinPlayerCushionSize,320,this one strictly needs to be greater than 200
@@ -47,9 +47,9 @@ obstacleMinSpacing,300
 obstacleMaxSpacing,700
 spawnSoup,100
 spawnBanana,100
-spawnStump,400
-spawnDoubleStump,500
-spawnRock,200
+spawnStump,300
+spawnDoubleStump,300
+spawnRock,400
 spawnGap,100
 scoreMultiplier,10
 spawnHorse,10
@@ -62,7 +62,7 @@ horseAccelerationWaitTime,30
 playerAnimationFlapTime,6
 playerAnimationJumpTime,12
 horseHeight,150
-evolveForce,1
+evolveForce,2
 enemySize,1.0
 playerSize,0.6
 rockSize,120
