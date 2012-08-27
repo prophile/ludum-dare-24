@@ -1,15 +1,15 @@
 playerMaxSpeed,33
 playerAccel,200
-darwinMaxSpeed,30
-darwinAccel,190
-darwinBoostAmount,5000
+darwinMaxSpeed,37
+darwinAccel,180
+darwinBoostAmount,4000
 darwinBoostFalloff,0.95
-darwinPlayerCushionSize,240,this one strictly needs to be greater than 200
-darwinPlayerCushionSlowDown,0.95
-gravity,-400
-jumpVelocity,160
+darwinPlayerCushionSize,1000,this one strictly needs to be greater than 200
+darwinPlayerCushionSlowDown,0.98
+gravity,-250
+jumpVelocity,80
 slowdownDuration,120,keep this one an int
-slowdownAmount,0.4
+slowdownAmount,1
 doubleTreeProbability,0.5
 frontBGLayerScrollSpeed,0.0
 middleBGLayerScrollSpeed,0.8
@@ -75,7 +75,7 @@ bananaTentaclesFlailTime,6
 bananaTentaclesRestitution,0.8
 treeStumpMinSpacing,700
 treeStumpMaxSpacing,1200
-treeStumpSecondarySpacing,210
+treeStumpSecondarySpacing,190
 showHitboxes,1
 bananaMinSpacing,400
 bananaMaxSpacing,1800
@@ -91,3 +91,4 @@ spawnDoubleStump,100
 spawnRock,100
 spawnGap,100
 scoreMultiplier,10
+spawnHorse,100

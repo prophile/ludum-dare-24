@@ -209,6 +209,7 @@ public class GameWrapper implements ApplicationListener {
                 Constants.getFloat("spawnDoubleStump"));
         types.addEntry(ObstacleType.ROCK, Constants.getFloat("spawnRock"));
         types.addEntry(ObstacleType.GAP, Constants.getFloat("spawnGap"));
+        types.addEntry(ObstacleType.HORSE, Constants.getFloat("spawnHorse"));
         return types.pick();
     }
 
@@ -237,6 +238,9 @@ public class GameWrapper implements ApplicationListener {
             obstacle = ((TreeStumpObstacle) obstacle).createNearbyStump(mWorld);
             mEntities.add(obstacle);
             break;
+        case HORSE:
+            obstacle = new HorseObstacle(x, mWorld);
+            mEntities.add(obstacle);
         default:
             break;
         }

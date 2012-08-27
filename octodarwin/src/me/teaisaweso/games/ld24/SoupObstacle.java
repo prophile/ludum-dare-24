@@ -48,7 +48,7 @@ public class SoupObstacle extends PhysicalObstacle {
     public SoupObstacle(float x, World w) {
         loadTexturesOnDemand();
         mWidth = 180;
-        mHeight = 115;
+        mHeight = 194;
         mSprite = new Sprite(sSoup1, (int) mWidth, (int) mHeight);
         mEvolutionSound = Gdx.audio.newSound(Gdx.files
                 .internal("assets/Evolve.wav"));
@@ -58,13 +58,13 @@ public class SoupObstacle extends PhysicalObstacle {
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(70 / GameWrapper.PHYSICS_RATIO,
-                50 / GameWrapper.PHYSICS_RATIO);
+                90 / GameWrapper.PHYSICS_RATIO);
         fd.shape = ps;
         fd.density = 1;
         fd.isSensor = true;
         bd.fixedRotation = true;
         bd.position.set(new Vector2(x / GameWrapper.PHYSICS_RATIO,
-                50 / GameWrapper.PHYSICS_RATIO));
+                90 / GameWrapper.PHYSICS_RATIO));
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
         mBody.setUserData(this);
