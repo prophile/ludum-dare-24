@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 public class Main {
     public static void main(String[] args) {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-        cfg.title = "Octodarwin vs. The Monkey";
+        cfg.title = "Octo-Darwin vs. Bat-Monkey";
         cfg.useGL20 = true;
         configureWindowDimensions(cfg);
 
