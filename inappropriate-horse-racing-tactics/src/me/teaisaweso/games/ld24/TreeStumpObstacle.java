@@ -20,11 +20,12 @@ public class TreeStumpObstacle extends PhysicalObstacle {
         float minSpacing = Constants.getFloat("treeStumpMinSpacing");
         float maxSpacing = Constants.getFloat("treeStumpMaxSpacing");
         float spacingRange = maxSpacing - minSpacing;
-        Vector2 position = new Vector2(GameWrapper.instance.getCameraOrigin().x + minSpacing
-                + GameWrapper.instance.mRng.nextFloat() * spacingRange, 50);
+        Vector2 position = new Vector2(GameWrapper.instance.getCameraOrigin().x
+                + minSpacing + GameWrapper.instance.mRng.nextFloat()
+                * spacingRange, 50);
         return new TreeStumpObstacle(position, w, scale);
     }
- 
+
     public TreeStumpObstacle(Vector2 worldPosition, World w, float scale) {
         Texture t = new Texture(Gdx.files.internal("assets/Stump.png"));
         mSprite = new Sprite(t, 161, 122);
@@ -50,17 +51,16 @@ public class TreeStumpObstacle extends PhysicalObstacle {
     }
 
     public TreeStumpObstacle createNearbyStump(World w) {
-        return new TreeStumpObstacle(
-                new Vector2(getPosition()
-                        .add(Constants
-                                .getFloat("treeStumpSecondarySpacing"), 30)), w, 1.5f);
+        return new TreeStumpObstacle(new Vector2(getPosition().add(
+                Constants.getFloat("treeStumpSecondarySpacing"), 30)), w, 1.5f);
     }
 
     @Override
     public void collide(Entity e, Contact c) {
         // Re-enabled collision for players
-        if (e instanceof Player)
+        if (e instanceof Player) {
             c.setEnabled(true);
+        }
 
     }
 
@@ -83,6 +83,11 @@ public class TreeStumpObstacle extends PhysicalObstacle {
     @Override
     public Sprite getCurrentSprite() {
         return mSprite;
+    }
+
+    @Override
+    public boolean update() {
+        return shouldCull();
     }
 
 }

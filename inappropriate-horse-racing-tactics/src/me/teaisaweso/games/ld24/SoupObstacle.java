@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class SoupObstacle extends PhysicalObstacle {
 
@@ -23,8 +23,8 @@ public class SoupObstacle extends PhysicalObstacle {
             sSoupTentacle2;
 
     private EvolutionStage mStage;
-    private Sprite mSprite;
-    private Sound mEvolutionSound;
+    private final Sprite mSprite;
+    private final Sound mEvolutionSound;
     private int mTicks;
     public boolean mDead;
 
@@ -39,10 +39,10 @@ public class SoupObstacle extends PhysicalObstacle {
         sSoup1 = new Texture(Gdx.files.internal("assets/Asset_Soup_1.png"));
         sSoup2 = new Texture(Gdx.files.internal("assets/Asset_Soup_2.png"));
         sSoup3 = new Texture(Gdx.files.internal("assets/Asset_Soup_3.png"));
-        sSoupTentacle1 = new Texture(Gdx.files
-                .internal("assets/Asset_Soup_tentacle1.png"));
-        sSoupTentacle2 = new Texture(Gdx.files
-                .internal("assets/Asset_Soup_tentacle2.png"));
+        sSoupTentacle1 = new Texture(
+                Gdx.files.internal("assets/Asset_Soup_tentacle1.png"));
+        sSoupTentacle2 = new Texture(
+                Gdx.files.internal("assets/Asset_Soup_tentacle2.png"));
     }
 
     public SoupObstacle(float x, World w) {
@@ -57,12 +57,14 @@ public class SoupObstacle extends PhysicalObstacle {
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(70 / GameWrapper.PHYSICS_RATIO, 50 / GameWrapper.PHYSICS_RATIO);
+        ps.setAsBox(70 / GameWrapper.PHYSICS_RATIO,
+                50 / GameWrapper.PHYSICS_RATIO);
         fd.shape = ps;
         fd.density = 1;
         fd.isSensor = true;
         bd.fixedRotation = true;
-        bd.position.set(new Vector2(x / GameWrapper.PHYSICS_RATIO, 0/GameWrapper.PHYSICS_RATIO));
+        bd.position.set(new Vector2(x / GameWrapper.PHYSICS_RATIO,
+                0 / GameWrapper.PHYSICS_RATIO));
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
         mBody.setUserData(this);
@@ -100,7 +102,7 @@ public class SoupObstacle extends PhysicalObstacle {
         }
         mTicks++;
 
-        return false;
+        return shouldCull();
     }
 
     @Override

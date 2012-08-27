@@ -188,7 +188,7 @@ public class BananaObstacle extends PhysicalObstacle {
             System.out.println(mHitTicks);
         }
 
-        return false;
+        return shouldCull();
     }
 
     @Override
