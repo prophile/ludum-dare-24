@@ -482,7 +482,7 @@ public class GameWrapper implements ApplicationListener {
 
     private void loadGameOverAssets() {
         Texture t;
-        t = new Texture(Gdx.files.internal("assets/Screen_Game_Over.png"));
+        t = new Texture(Gdx.files.internal("assets/gameoverbackground.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mGameOverSprite = new Sprite(t, 800, 600);
         mGameOverBatch = new SpriteBatch();
@@ -562,7 +562,7 @@ public class GameWrapper implements ApplicationListener {
         Color oldColor = mTextFont.getColor();
         mTextFont.setScale(1.0f);
         mTextFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        mTextFont.drawMultiLine(mGameOverBatch, text, 40.0f, 290.0f);
+        mTextFont.drawMultiLine(mGameOverBatch, text, 40.0f, 400.0f);
         mTextFont.setColor(oldColor);
         i += 1;
         mGameOverBatch.end();
