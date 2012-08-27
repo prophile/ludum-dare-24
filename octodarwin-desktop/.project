@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>inappropriate-horse-racing-tactics-desktop</name>
+	<name>octodarwin-desktop</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,6 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-	</linkedResources>
 </projectDescription>
