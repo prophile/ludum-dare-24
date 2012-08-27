@@ -161,4 +161,9 @@ public class Player extends Entity {
         return super.getPosition().add(32, 0);
     }
 
+    @Override
+    public int drawOrder() {
+        return 100;
+    }
+
 }

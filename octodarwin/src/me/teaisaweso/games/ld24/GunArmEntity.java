@@ -64,4 +64,9 @@ public class GunArmEntity extends Entity {
         return mPlayer.getPosition().add(80, 0);
     }
 
+    @Override
+    public int drawOrder() {
+        return 99;
+    }
+
 }

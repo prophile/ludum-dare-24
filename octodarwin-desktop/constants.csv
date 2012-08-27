@@ -46,8 +46,8 @@ darwinMaxSpeed,38
 darwinAccel,190
 darwinBoostAmount,4000
 darwinBoostFalloff,0.95
-darwinPlayerCushionSize,240,this one strictly needs to be greater than 200
-darwinPlayerCushionSlowDown,0.98
+darwinPlayerCushionSize,100000,this one strictly needs to be greater than 200
+darwinPlayerCushionSlowDown,0.1
 gravity,-250
 jumpVelocity,80
 slowdownDuration,120,keep this one an int
@@ -92,3 +92,4 @@ spawnRock,100
 spawnGap,100
 scoreMultiplier,10
 spawnHorse,100
+darwinDebug,1

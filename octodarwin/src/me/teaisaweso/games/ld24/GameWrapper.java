@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -76,7 +78,7 @@ public class GameWrapper implements ApplicationListener {
     private Player mPlayer;
 
     final Set<Body> mRemoveBodies = new HashSet<Body>();
-    final Set<Entity> mEntities = new HashSet<Entity>();
+    final SortedSet<Entity> mEntities = new TreeSet<Entity>();
 
     public final Random mRng = new Random();
 
@@ -441,8 +443,9 @@ public class GameWrapper implements ApplicationListener {
 
     private void removeCondemnedBodies() {
         for (Body b : mRemoveBodies) {
-            b.setTransform(new Vector2(-9000, -9000), 0);
+            b.setTransform(-9000, -9000, 0);
         }
+        mRemoveBodies.clear();
     }
 
     @Override
@@ -522,7 +525,6 @@ public class GameWrapper implements ApplicationListener {
 
         mBatch.begin();
         mBackgroundManager.draw(mBatch);
-
         for (Entity e : mEntities) {
             e.draw(mBatch);
         }
@@ -618,8 +620,11 @@ public class GameWrapper implements ApplicationListener {
             if (c.mBody != null) {
                 mRemoveBodies.add(c.mBody);
             }
+            
             mEntities.remove(c);
         }
+        System.out.println(mEntities.size());
+        System.out.println(mWorld.getBodyCount());
     }
 
     private void updatePlayerForAirControl() {
