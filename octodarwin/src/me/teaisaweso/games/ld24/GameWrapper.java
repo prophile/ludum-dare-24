@@ -201,7 +201,10 @@ public class GameWrapper implements ApplicationListener {
         return minSpacing + spacingRange * sRng.nextFloat();
     }
 
+    private ObstacleType mPreviousChoice;
+    
     private ObstacleType getRandomObstacleType() {
+        
         LotteryChooser<ObstacleType> types = new LotteryChooser<ObstacleType>(
                 sRng);
         types.addEntry(ObstacleType.SOUP, Constants.getFloat("spawnSoup"));
@@ -210,9 +213,12 @@ public class GameWrapper implements ApplicationListener {
         types.addEntry(ObstacleType.DOUBLE_STUMP,
                 Constants.getFloat("spawnDoubleStump"));
         types.addEntry(ObstacleType.ROCK, Constants.getFloat("spawnRock"));
-        types.addEntry(ObstacleType.GAP, Constants.getFloat("spawnGap"));
+        if (mPreviousChoice != ObstacleType.GAP) {
+            types.addEntry(ObstacleType.GAP, Constants.getFloat("spawnGap"));
+        }
         types.addEntry(ObstacleType.HORSE, Constants.getFloat("spawnHorse"));
-        return types.pick();
+        mPreviousChoice = types.pick();
+        return mPreviousChoice;
     }
 
     private void createObstacleObjectOfType(ObstacleType type, float x) {
@@ -445,7 +451,6 @@ public class GameWrapper implements ApplicationListener {
         for (Body b : mRemoveBodies) {
             b.setTransform(-9000, -9000, 0);
         }
-        mRemoveBodies.clear();
     }
 
     @Override

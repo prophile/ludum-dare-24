@@ -44,7 +44,7 @@ public class Enemy extends Entity {
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO), mHeight
-                / (2 * GameWrapper.PHYSICS_RATIO));
+                / (2 * GameWrapper.PHYSICS_RATIO)-2);
         fd.density = 1;
         fd.shape = ps;
         bd.fixedRotation = true;
@@ -142,6 +142,12 @@ public class Enemy extends Entity {
     @Override
     public int drawOrder() {
         return 98;
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        // TODO Auto-generated method stub
+        return super.getPosition().add(0, 30);
     }
 
 }
