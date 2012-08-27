@@ -202,9 +202,9 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private ObstacleType mPreviousChoice;
-    
+
     private ObstacleType getRandomObstacleType() {
-        
+
         LotteryChooser<ObstacleType> types = new LotteryChooser<ObstacleType>(
                 sRng);
         types.addEntry(ObstacleType.SOUP, Constants.getFloat("spawnSoup"));
@@ -376,6 +376,13 @@ public class GameWrapper implements ApplicationListener {
         Entity collider_a = (Entity) a.getBody().getUserData();
         Entity collider_b = (Entity) b.getBody().getUserData();
 
+        // TODO: make this less of a hack
+        if (collider_a instanceof HorseObstacle
+                && ((HorseObstacle) collider_a).mStage == HorseObstacle.EvolutionStage.TENTACLES) {
+            c.setEnabled(false);
+            return;
+        }
+
         if (collider_a instanceof BulletEntity
                 && !(collider_b instanceof Player)) {
             boolean suppressBulletRemoval = false;
@@ -544,7 +551,8 @@ public class GameWrapper implements ApplicationListener {
                 .getFloat("scoreMultiplier")));
         String dist = "Score: " + Integer.toString(mScore) + "m";
         if (Constants.getBoolean("darwinDebug")) {
-            dist += "player speed: " + mPlayer.mBody.getLinearVelocity().x + " ";
+            dist += "player speed: " + mPlayer.mBody.getLinearVelocity().x
+                    + " ";
             dist += "darwin speed: " + mEnemy.mBody.getLinearVelocity().x + " ";
         }
         mTextFont.setScale(2);
@@ -629,7 +637,7 @@ public class GameWrapper implements ApplicationListener {
             if (c.mBody != null) {
                 mRemoveBodies.add(c.mBody);
             }
-            
+
             mEntities.remove(c);
         }
         System.out.println(mEntities.size());
