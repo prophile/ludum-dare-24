@@ -73,4 +73,9 @@ public class RockObstacle extends PhysicalObstacle {
         return mSprite;
     }
 
+    @Override
+    public boolean update() {
+        return shouldCull();
+    }
+
 }

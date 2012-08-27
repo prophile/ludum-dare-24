@@ -82,3 +82,11 @@ bananaMaxSpacing,1800
 bananaHeight,420
 rockFirstPosition,2000
 rockSpacing,1500
+obstacleMinSpacing,300
+obstacleMaxSpacing,1000
+spawnSoup,100
+spawnBanana,100
+spawnStump,100
+spawnDoubleStump,100
+spawnRock,100
+spawnGap,100

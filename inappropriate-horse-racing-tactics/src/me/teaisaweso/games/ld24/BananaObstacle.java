@@ -67,17 +67,11 @@ public class BananaObstacle extends PhysicalObstacle {
         setupFiltering(sTentacleTextureLow);
     }
 
-    public BananaObstacle(World world) {
+    public BananaObstacle(float x, World world) {
         loadTexturesOnDemand();
 
-        float minSpacing = Constants.getFloat("bananaMinSpacing");
-        float maxSpacing = Constants.getFloat("bananaMaxSpacing");
-        float spacingRange = maxSpacing - minSpacing;
         BodyDef bd = new BodyDef();
-        bd.position
-                .set((GameWrapper.instance.getCameraOrigin().x + minSpacing + GameWrapper.instance.mRng
-                        .nextFloat() * spacingRange) / 16,
-                        Constants.getFloat("bananaHeight") / 16);
+        bd.position.set(x / 16, Constants.getFloat("bananaHeight") / 16);
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
@@ -188,7 +182,7 @@ public class BananaObstacle extends PhysicalObstacle {
             System.out.println(mHitTicks);
         }
 
-        return false;
+        return shouldCull();
     }
 
     @Override

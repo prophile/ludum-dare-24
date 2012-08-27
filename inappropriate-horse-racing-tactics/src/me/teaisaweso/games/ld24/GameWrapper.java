@@ -80,18 +80,14 @@ public class GameWrapper implements ApplicationListener {
 
     public final Random mRng = new Random();
 
-    private RockObstacle mSingleRockObstacle;
-    private BananaObstacle mSingleSlowDownObstacle;
-    private TreeStumpObstacle mTreeStumpObstacle1;
-    private TreeStumpObstacle mTreeStumpObstacle2;
-    private SoupObstacle mSingleSoupObstacle;
-
     private World mWorld;
 
     private boolean mSplashScreen = true;
 
     private Sprite mSplashScreenSprite;
     private ExplosionManager mExplosionManager;
+
+    private float mNextSpawnPosition = 0.0f;
 
     public ExplosionManager getExplosionManager() {
         return mExplosionManager;
@@ -172,8 +168,9 @@ public class GameWrapper implements ApplicationListener {
         createPlayer();
         createDarwin();
 
+        createInitialObstacles(5);
+
         addFloor();
-        createObstacles();
         mGunArm = new GunArmEntity(mPlayer);
         mEntities.add(mGunArm);
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
@@ -184,6 +181,69 @@ public class GameWrapper implements ApplicationListener {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         mCamera = new OrthographicCamera(w, h);
+    }
+
+    private void createInitialObstacles(int n) {
+        float position = getRandomObstacleSpacing();
+        for (int i = 1; i <= n; ++i) {
+            createObstacle(position);
+            position += getRandomObstacleSpacing();
+        }
+        mNextSpawnPosition = position;
+    }
+
+    private float getRandomObstacleSpacing() {
+        float minSpacing = Constants.getFloat("obstacleMinSpacing");
+        float maxSpacing = Constants.getFloat("obstacleMaxSpacing");
+        float spacingRange = maxSpacing - minSpacing;
+        return minSpacing + spacingRange * sRng.nextFloat();
+    }
+
+    private ObstacleType getRandomObstacleType() {
+        LotteryChooser<ObstacleType> types = new LotteryChooser<ObstacleType>(
+                sRng);
+        types.addEntry(ObstacleType.SOUP, Constants.getFloat("spawnSoup"));
+        types.addEntry(ObstacleType.BANANA, Constants.getFloat("spawnBanana"));
+        types.addEntry(ObstacleType.STUMP, Constants.getFloat("spawnStump"));
+        types.addEntry(ObstacleType.DOUBLE_STUMP,
+                Constants.getFloat("spawnDoubleStump"));
+        types.addEntry(ObstacleType.ROCK, Constants.getFloat("spawnRock"));
+        types.addEntry(ObstacleType.GAP, Constants.getFloat("spawnGap"));
+        return types.pick();
+    }
+
+    private void createObstacleObjectOfType(ObstacleType type, float x) {
+        PhysicalObstacle obstacle;
+        switch (type) {
+        case ROCK:
+            obstacle = new RockObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            break;
+        case BANANA:
+            obstacle = new BananaObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            break;
+        case SOUP:
+            obstacle = new SoupObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            break;
+        case STUMP:
+            obstacle = new TreeStumpObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            break;
+        case DOUBLE_STUMP:
+            obstacle = new TreeStumpObstacle(x, mWorld);
+            mEntities.add(obstacle);
+            obstacle = ((TreeStumpObstacle) obstacle).createNearbyStump(mWorld);
+            mEntities.add(obstacle);
+            break;
+        default:
+            break;
+        }
+    }
+
+    private void createObstacle(float x) {
+        createObstacleObjectOfType(getRandomObstacleType(), x);
     }
 
     private void createCrosshair() {
@@ -198,15 +258,6 @@ public class GameWrapper implements ApplicationListener {
         mEntities.add(mEnemy);
     }
 
-    private void createObstacles() {
-        createSlowDownObstacle();
-        createTreeStumpObstacle();
-        mSingleRockObstacle = new RockObstacle(
-                Constants.getFloat("rockFirstPosition"), mWorld);
-        mEntities.add(mSingleRockObstacle);
-        createSoupObstacle();
-    }
-
     private void createPhysicsSimulation() {
         mWorld = new World(new Vector2(0, 0), true);
         mWorld.setContactListener(new WorldContactListener(this));
@@ -218,27 +269,14 @@ public class GameWrapper implements ApplicationListener {
         mEntities.add(mPlayer);
     }
 
-    private void createSlowDownObstacle() {
-        mSingleSlowDownObstacle = new BananaObstacle(mWorld);
-        mEntities.add(mSingleSlowDownObstacle);
-    }
-
-    private void createTreeStumpObstacle() {
-
-        mTreeStumpObstacle1 = TreeStumpObstacle.createStumpObstacle(mWorld, 1);
-        mEntities.add(mTreeStumpObstacle1);
-
-        if (sRng.nextFloat() < Constants.getFloat("doubleTreeProbability")) {
-            mTreeStumpObstacle2 = mTreeStumpObstacle1.createNearbyStump(mWorld);
-            mEntities.add(mTreeStumpObstacle2);
-        }
-    }
-
-    private void createSoupObstacle() {
-        mSingleSoupObstacle = new SoupObstacle(getCameraOrigin().x + 1200
-                + mRng.nextFloat() * 1200, mWorld);
-        mEntities.add(mSingleSoupObstacle);
-    }
+    /*
+     * private void createTreeStumpObstacle() { mTreeStumpObstacle1 =
+     * TreeStumpObstacle.createStumpObstacle(mWorld, 1);
+     * mEntities.add(mTreeStumpObstacle1); if (sRng.nextFloat() <
+     * Constants.getFloat("doubleTreeProbability")) { mTreeStumpObstacle2 =
+     * mTreeStumpObstacle1.createNearbyStump(mWorld);
+     * mEntities.add(mTreeStumpObstacle2); } }
+     */
 
     @Override
     public void dispose() {
@@ -404,22 +442,6 @@ public class GameWrapper implements ApplicationListener {
         }
     }
 
-    private void removeTreeStumpObstacle() {
-        mTreeStumpObstacle1.mBody.setActive(false);
-        mWorld.destroyBody(mTreeStumpObstacle1.mBody);
-        mEntities.remove(mTreeStumpObstacle1);
-        mTreeStumpObstacle1 = null;
-
-        if (mTreeStumpObstacle2 != null) {
-            mTreeStumpObstacle2.mBody.setActive(false);
-            mTreeStumpObstacle2.mBody.setTransform(-9000, -9000, 0);
-            //mWorld.destroyBody(mTreeStumpObstacle2.mBody);
-            mTreeStumpObstacle2.mBody = null;
-            mEntities.remove(mTreeStumpObstacle2);
-            mTreeStumpObstacle2 = null;
-        }
-    }
-
     @Override
     public void render() {
         if (mSplashScreen) {
@@ -520,11 +542,6 @@ public class GameWrapper implements ApplicationListener {
     public void resize(int width, int height) {
     }
 
-    private void respawnTreeStumpObstacle() {
-        removeTreeStumpObstacle();
-        createTreeStumpObstacle();
-    }
-
     @Override
     public void resume() {
     }
@@ -548,10 +565,6 @@ public class GameWrapper implements ApplicationListener {
         mWorld.step((float) (1.0 / 60.0), 3, 3);
     }
 
-    private boolean treeStumpObstacleHasLeftScreen() {
-        return mTreeStumpObstacle1.getPosition().x - getCameraOrigin().x < -600;
-    }
-
     private void update() {
         mIsOnFloor = false;
         simulatePhysicsStep();
@@ -571,6 +584,14 @@ public class GameWrapper implements ApplicationListener {
 
         mExplosionManager.update();
 
+        handleRespawn();
+    }
+
+    private void handleRespawn() {
+        while (getCameraOrigin().x > mNextSpawnPosition - 900) {
+            createObstacle(mNextSpawnPosition);
+            mNextSpawnPosition += getRandomObstacleSpacing();
+        }
     }
 
     private void updateEntities() {
@@ -588,51 +609,6 @@ public class GameWrapper implements ApplicationListener {
                 mRemoveBodies.add(c.mBody);
             }
             mEntities.remove(c);
-        }
-
-        respawnObstacles();
-    }
-
-    private void respawnObstacles() {
-        if (mTreeStumpObstacle1 != null) {
-            if (treeStumpObstacleHasLeftScreen()) {
-                respawnTreeStumpObstacle();
-            }
-        }
-        if (mSingleRockObstacle != null) {
-            if (mSingleRockObstacle.mDead
-                    || mSingleRockObstacle.getPosition().x
-                            - getCameraOrigin().x < -600) {
-                mSingleRockObstacle.mBody.setActive(false);
-                mWorld.destroyBody(mSingleRockObstacle.mBody);
-                mEntities.remove(mSingleRockObstacle);
-                mSingleRockObstacle = new RockObstacle(getCameraOrigin().x
-                        + Constants.getFloat("rockSpacing"), mWorld);
-                mEntities.add(mSingleRockObstacle);
-            }
-        }
-        if (mSingleSlowDownObstacle != null) {
-            if (mSingleSlowDownObstacle.mDead
-                    || mSingleSlowDownObstacle.getPosition().x
-                            - getCameraOrigin().x < -600) {
-                mSingleSlowDownObstacle.mBody.setActive(false);
-                mWorld.destroyBody(mSingleSlowDownObstacle.mBody);
-                mEntities.remove(mSingleSlowDownObstacle);
-                createSlowDownObstacle();
-                mEntities.add(mSingleSlowDownObstacle);
-            }
-        }
-
-        if (mSingleSoupObstacle != null) {
-            if (mSingleSoupObstacle.mDead
-                    || mSingleSoupObstacle.getPosition().x
-                            - getCameraOrigin().x < -600) {
-                mSingleSoupObstacle.mBody.setActive(false);
-                mWorld.destroyBody(mSingleSoupObstacle.mBody);
-                mEntities.remove(mSingleSoupObstacle);
-                createSoupObstacle();
-                mEntities.add(mSingleSoupObstacle);
-            }
         }
     }
 

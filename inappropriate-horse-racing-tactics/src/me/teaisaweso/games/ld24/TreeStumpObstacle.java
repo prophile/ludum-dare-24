@@ -6,25 +6,19 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class TreeStumpObstacle extends PhysicalObstacle {
 
     private final Sprite mSprite;
-    private float mScale;
+    private final float mScale;
 
-    public static TreeStumpObstacle createStumpObstacle(World w, float scale) {
-        float minSpacing = Constants.getFloat("treeStumpMinSpacing");
-        float maxSpacing = Constants.getFloat("treeStumpMaxSpacing");
-        float spacingRange = maxSpacing - minSpacing;
-        Vector2 position = new Vector2(GameWrapper.instance.getCameraOrigin().x
-                + minSpacing + GameWrapper.instance.mRng.nextFloat()
-                * spacingRange, 50);
-        return new TreeStumpObstacle(position, w, scale);
+    public TreeStumpObstacle(float x, World w) {
+        this(new Vector2(x, 50), w, 1.0f);
     }
 
     public TreeStumpObstacle(Vector2 worldPosition, World w, float scale) {
@@ -37,8 +31,8 @@ public class TreeStumpObstacle extends PhysicalObstacle {
         bd.type = BodyType.StaticBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(161 * scale / (2 * GameWrapper.PHYSICS_RATIO)-2*scale, 122
-                * scale / (2 * GameWrapper.PHYSICS_RATIO));
+        ps.setAsBox(161 * scale / (2 * GameWrapper.PHYSICS_RATIO) - 2 * scale,
+                122 * scale / (2 * GameWrapper.PHYSICS_RATIO));
         fd.shape = ps;
         fd.friction = Constants.getFloat("treeStumpFriction");
         bd.position.set(new Vector2(
@@ -60,7 +54,9 @@ public class TreeStumpObstacle extends PhysicalObstacle {
     @Override
     public void collide(Entity e, Contact c) {
         // Re-enabled collision for players
-        if (e instanceof Player) c.setEnabled(true);
+        if (e instanceof Player) {
+            c.setEnabled(true);
+        }
 
     }
 
@@ -92,6 +88,11 @@ public class TreeStumpObstacle extends PhysicalObstacle {
     @Override
     public Sprite getCurrentSprite() {
         return mSprite;
+    }
+
+    @Override
+    public boolean update() {
+        return shouldCull();
     }
 
 }
