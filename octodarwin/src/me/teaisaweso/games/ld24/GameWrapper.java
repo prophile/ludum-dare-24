@@ -89,8 +89,13 @@ public class GameWrapper implements ApplicationListener {
     private Sprite mSplashScreenSprite;
     private ExplosionManager mBananaExplosionManager;
     private ExplosionManager mDustExplosionManager;
+    private ExplosionManager mRainbowExplosionManager;
 
     private float mNextSpawnPosition = 0.0f;
+
+    public ExplosionManager getRainbowExplosionManager() {
+        return mRainbowExplosionManager;
+    }
 
     public ExplosionManager getBananaExplosionManager() {
         return mBananaExplosionManager;
@@ -168,6 +173,7 @@ public class GameWrapper implements ApplicationListener {
         // Blank list of top scores, in case intertubes fail.
         mPublicTopScores = new ScoreDownloader();
 
+        mRainbowExplosionManager = new ExplosionManager("rainbow_burst");
         mBananaExplosionManager = new ExplosionManager("bananarama");
         mDustExplosionManager = new ExplosionManager("dust");
 
@@ -545,6 +551,7 @@ public class GameWrapper implements ApplicationListener {
 
         drawCrosshair(mBatch);
 
+        mRainbowExplosionManager.draw(mBatch);
         mBananaExplosionManager.draw(mBatch);
         mDustExplosionManager.draw(mBatch);
 
@@ -614,6 +621,7 @@ public class GameWrapper implements ApplicationListener {
             updatePlayerForAirControl();
         }
 
+        mRainbowExplosionManager.update();
         mBananaExplosionManager.update();
         mDustExplosionManager.update();
 

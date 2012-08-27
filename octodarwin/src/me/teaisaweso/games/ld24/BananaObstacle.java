@@ -84,7 +84,7 @@ public class BananaObstacle extends PhysicalObstacle {
         fd.shape = cs;
         fd.isSensor = false;
         fd.restitution = Constants.getFloat("bananaTentaclesRestitution");
-        fd.density = 1;
+        fd.density = 0.2f;
         mBody = world.createBody(bd);
         mBody.createFixture(fd);
         mBody.setUserData(this);
