@@ -95,6 +95,8 @@ public class GameWrapper implements ApplicationListener {
 
     private float mNextSpawnPosition = 0.0f;
 
+    Music mDeathMusic;
+
     public ExplosionManager getRainbowExplosionManager() {
         return mRainbowExplosionManager;
     }
@@ -151,9 +153,13 @@ public class GameWrapper implements ApplicationListener {
     public void create() {
         assert instance == null || instance == this;
         if (instance == null) {
-            Music m = Gdx.audio.newMusic(Gdx.files.internal("assets/Mix.ogg"));
-            m.setLooping(true);
-            m.play();
+            mMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/Mix.ogg"));
+            mMusic.setLooping(true);
+            mMusic.play();
+
+            mDeathMusic = Gdx.audio.newMusic(Gdx.files
+                    .internal("assets/Death.ogg"));
+            mDeathMusic.setLooping(false);
         }
 
         instance = this;
@@ -163,7 +169,8 @@ public class GameWrapper implements ApplicationListener {
 
         loadGameOverAssets();
 
-        Texture t = new Texture(Gdx.files.internal("assets/Screen_splashfinal1.png"));
+        Texture t = new Texture(
+                Gdx.files.internal("assets/Screen_splashfinal1.png"));
         Sprite s = new Sprite(t, 800, 600);
         mSplashScreenSprite = s;
         mEvolutionShootsound = Gdx.audio.newSound(Gdx.files
@@ -223,6 +230,8 @@ public class GameWrapper implements ApplicationListener {
     private ObstacleType mPreviousChoice;
     private int mObstaclesWithoutEvolution = 0;
 
+    Music mMusic;
+
     private ObstacleType getRandomObstacleType() {
 
         LotteryChooser<ObstacleType> types = new LotteryChooser<ObstacleType>(
@@ -249,7 +258,7 @@ public class GameWrapper implements ApplicationListener {
         } else {
             mObstaclesWithoutEvolution = 0;
         }
- 
+
         mPreviousChoice = choice;
         return mPreviousChoice;
     }
@@ -586,6 +595,12 @@ public class GameWrapper implements ApplicationListener {
                 e.printStackTrace();
             }
             create();
+            if (GameWrapper.instance.mDeathMusic.isPlaying()) {
+                GameWrapper.instance.mDeathMusic.stop();
+            }
+            if (!GameWrapper.instance.mMusic.isPlaying()) {
+                GameWrapper.instance.mMusic.play();
+            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             System.exit(0);
         }
@@ -712,7 +727,6 @@ public class GameWrapper implements ApplicationListener {
             mEntities.remove(c);
         }
 
-        
     }
 
     private void updatePlayerForAirControl() {
