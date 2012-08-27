@@ -12,10 +12,10 @@ public class BackgroundManager {
     private static final TextureFilter BACKGROUND_TEXTURE_FILTER = TextureFilter.Linear;
     private final Sprite[] mBackgroundSprites = new Sprite[8];
     private final static float[] sShifts = {
-            0.25f,
-            0.25f,
-            Constants.getFloat("backBGLayerScrollSpeed"),
-            Constants.getFloat("backBGLayerScrollSpeed"),
+        Constants.getFloat("backBGLayerScrollSpeed"),
+        Constants.getFloat("backBGLayerScrollSpeed"),
+        Constants.getFloat("backBGLayerScrollSpeed"),
+        Constants.getFloat("backBGLayerScrollSpeed"),
             Constants.getFloat("middleBGLayerScrollSpeed"),
             Constants.getFloat("middleBGLayerScrollSpeed"),
             Constants.getFloat("frontBGLayerScrollSpeed"),
@@ -62,9 +62,9 @@ public class BackgroundManager {
         mBackgroundSprites[1] = new Sprite(sBackLayer, 800, 600);
         mBackgroundSprites[1].setPosition(400, 0);
         mBackgroundSprites[2] = new Sprite(sHedgeLayer, 800, 600);
-        mBackgroundSprites[2].setPosition(-400, 0);
+        mBackgroundSprites[2].setPosition(-400, -10);
         mBackgroundSprites[3] = new Sprite(sHedgeLayer, 800, 600);
-        mBackgroundSprites[3].setPosition(400, 0);
+        mBackgroundSprites[3].setPosition(400, -10);
         mBackgroundSprites[4] = new Sprite(sMidLayer, 800, 600);
         mBackgroundSprites[4].setPosition(-400, 0);
         mBackgroundSprites[5] = new Sprite(sMidLayer, 800, 600);
