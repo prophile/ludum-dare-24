@@ -80,12 +80,6 @@ public class GameWrapper implements ApplicationListener {
 
     public final Random mRng = new Random();
 
-    private RockObstacle mSingleRockObstacle;
-    private BananaObstacle mSingleSlowDownObstacle;
-    private TreeStumpObstacle mTreeStumpObstacle1;
-    private TreeStumpObstacle mTreeStumpObstacle2;
-    private SoupObstacle mSingleSoupObstacle;
-
     private World mWorld;
 
     private boolean mSplashScreen = true;
@@ -173,7 +167,6 @@ public class GameWrapper implements ApplicationListener {
         createDarwin();
 
         addFloor();
-        createObstacles();
         mGunArm = new GunArmEntity(mPlayer);
         mEntities.add(mGunArm);
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
@@ -198,15 +191,6 @@ public class GameWrapper implements ApplicationListener {
         mEntities.add(mEnemy);
     }
 
-    private void createObstacles() {
-        createSlowDownObstacle();
-        createTreeStumpObstacle();
-        mSingleRockObstacle = new RockObstacle(
-                Constants.getFloat("rockFirstPosition"), mWorld);
-        mEntities.add(mSingleRockObstacle);
-        createSoupObstacle();
-    }
-
     private void createPhysicsSimulation() {
         mWorld = new World(new Vector2(0, 0), true);
         mWorld.setContactListener(new WorldContactListener(this));
@@ -218,27 +202,14 @@ public class GameWrapper implements ApplicationListener {
         mEntities.add(mPlayer);
     }
 
-    private void createSlowDownObstacle() {
-        mSingleSlowDownObstacle = new BananaObstacle(mWorld);
-        mEntities.add(mSingleSlowDownObstacle);
-    }
-
-    private void createTreeStumpObstacle() {
-
-        mTreeStumpObstacle1 = TreeStumpObstacle.createStumpObstacle(mWorld, 1);
-        mEntities.add(mTreeStumpObstacle1);
-
-        if (sRng.nextFloat() < Constants.getFloat("doubleTreeProbability")) {
-            mTreeStumpObstacle2 = mTreeStumpObstacle1.createNearbyStump(mWorld);
-            mEntities.add(mTreeStumpObstacle2);
-        }
-    }
-
-    private void createSoupObstacle() {
-        mSingleSoupObstacle = new SoupObstacle(getCameraOrigin().x + 1200
-                + mRng.nextFloat() * 1200, mWorld);
-        mEntities.add(mSingleSoupObstacle);
-    }
+    /*
+     * private void createTreeStumpObstacle() { mTreeStumpObstacle1 =
+     * TreeStumpObstacle.createStumpObstacle(mWorld, 1);
+     * mEntities.add(mTreeStumpObstacle1); if (sRng.nextFloat() <
+     * Constants.getFloat("doubleTreeProbability")) { mTreeStumpObstacle2 =
+     * mTreeStumpObstacle1.createNearbyStump(mWorld);
+     * mEntities.add(mTreeStumpObstacle2); } }
+     */
 
     @Override
     public void dispose() {
@@ -404,20 +375,6 @@ public class GameWrapper implements ApplicationListener {
         }
     }
 
-    private void removeTreeStumpObstacle() {
-        mTreeStumpObstacle1.mBody.setActive(false);
-        mWorld.destroyBody(mTreeStumpObstacle1.mBody);
-        mEntities.remove(mTreeStumpObstacle1);
-        mTreeStumpObstacle1 = null;
-
-        if (mTreeStumpObstacle2 != null) {
-            mTreeStumpObstacle2.mBody.setActive(false);
-            mWorld.destroyBody(mTreeStumpObstacle2.mBody);
-            mEntities.remove(mTreeStumpObstacle2);
-            mTreeStumpObstacle2 = null;
-        }
-    }
-
     @Override
     public void render() {
         if (mSplashScreen) {
@@ -518,11 +475,6 @@ public class GameWrapper implements ApplicationListener {
     public void resize(int width, int height) {
     }
 
-    private void respawnTreeStumpObstacle() {
-        removeTreeStumpObstacle();
-        createTreeStumpObstacle();
-    }
-
     @Override
     public void resume() {
     }
@@ -544,10 +496,6 @@ public class GameWrapper implements ApplicationListener {
 
     private void simulatePhysicsStep() {
         mWorld.step((float) (1.0 / 60.0), 3, 3);
-    }
-
-    private boolean treeStumpObstacleHasLeftScreen() {
-        return mTreeStumpObstacle1.getPosition().x - getCameraOrigin().x < -600;
     }
 
     private void update() {
@@ -586,51 +534,6 @@ public class GameWrapper implements ApplicationListener {
                 mRemoveBodies.add(c.mBody);
             }
             mEntities.remove(c);
-        }
-
-        respawnObstacles();
-    }
-
-    private void respawnObstacles() {
-        if (mTreeStumpObstacle1 != null) {
-            if (treeStumpObstacleHasLeftScreen()) {
-                respawnTreeStumpObstacle();
-            }
-        }
-        if (mSingleRockObstacle != null) {
-            if (mSingleRockObstacle.mDead
-                    || mSingleRockObstacle.getPosition().x
-                            - getCameraOrigin().x < -600) {
-                mSingleRockObstacle.mBody.setActive(false);
-                mWorld.destroyBody(mSingleRockObstacle.mBody);
-                mEntities.remove(mSingleRockObstacle);
-                mSingleRockObstacle = new RockObstacle(getCameraOrigin().x
-                        + Constants.getFloat("rockSpacing"), mWorld);
-                mEntities.add(mSingleRockObstacle);
-            }
-        }
-        if (mSingleSlowDownObstacle != null) {
-            if (mSingleSlowDownObstacle.mDead
-                    || mSingleSlowDownObstacle.getPosition().x
-                            - getCameraOrigin().x < -600) {
-                mSingleSlowDownObstacle.mBody.setActive(false);
-                mWorld.destroyBody(mSingleSlowDownObstacle.mBody);
-                mEntities.remove(mSingleSlowDownObstacle);
-                createSlowDownObstacle();
-                mEntities.add(mSingleSlowDownObstacle);
-            }
-        }
-
-        if (mSingleSoupObstacle != null) {
-            if (mSingleSoupObstacle.mDead
-                    || mSingleSoupObstacle.getPosition().x
-                            - getCameraOrigin().x < -600) {
-                mSingleSoupObstacle.mBody.setActive(false);
-                mWorld.destroyBody(mSingleSoupObstacle.mBody);
-                mEntities.remove(mSingleSoupObstacle);
-                createSoupObstacle();
-                mEntities.add(mSingleSoupObstacle);
-            }
         }
     }
 
