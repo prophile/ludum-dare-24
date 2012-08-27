@@ -100,3 +100,4 @@ horseAcceleration,-500
 horseAccelerationWaitTime,30
 playerAnimationFlapTime,6
 playerAnimationJumpTime,12
+horseHeight,150

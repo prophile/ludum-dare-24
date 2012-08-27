@@ -66,7 +66,7 @@ public class HorseObstacle extends PhysicalObstacle {
         loadTexturesOnDemand();
 
         BodyDef bd = new BodyDef();
-        bd.position.set(x / 16, 60 / 16);
+        bd.position.set(x / 16, Constants.getInt("horseHeight") / 16);
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
