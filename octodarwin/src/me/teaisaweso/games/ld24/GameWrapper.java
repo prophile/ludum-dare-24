@@ -525,7 +525,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void renderSplashScreen() {
-        mPlayer.mBody.setTransform(600 / 16, 325 / 16, 0);
+        mPlayer.mBody.setTransform(575 / 16, 325 / 16, 0);
         mGunArm.update();
         mEnemy.mBody.setTransform(210 / 16, 520 / 16, 0);
         mEnemy.setSplashScreen();
