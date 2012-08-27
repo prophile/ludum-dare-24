@@ -456,8 +456,10 @@ public class GameWrapper implements ApplicationListener {
 
     private void removeCondemnedBodies() {
         for (Body b : mRemoveBodies) {
-            b.setTransform(-9000, -9000, 0);
+            mWorld.destroyBody(b);
         }
+
+        mRemoveBodies.clear();
     }
 
     @Override
@@ -537,6 +539,7 @@ public class GameWrapper implements ApplicationListener {
 
         mBatch.begin();
         mBackgroundManager.draw(mBatch);
+
         for (Entity e : mEntities) {
             e.draw(mBatch);
         }
@@ -636,10 +639,12 @@ public class GameWrapper implements ApplicationListener {
         for (Entity c : condemned) {
             if (c.mBody != null) {
                 mRemoveBodies.add(c.mBody);
+                c.mBody = null;
             }
 
             mEntities.remove(c);
         }
+
         System.out.println(mEntities.size());
         System.out.println(mWorld.getBodyCount());
     }
