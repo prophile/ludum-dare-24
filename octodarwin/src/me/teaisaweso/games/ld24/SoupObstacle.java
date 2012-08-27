@@ -30,7 +30,7 @@ public class SoupObstacle extends PhysicalObstacle {
     public boolean mDead;
 
     private final EvolutionGlow mGlow = new EvolutionGlow(this, new Vector2(0,
-            -70), 70);
+            -70), 220);
 
     private static void loadTexturesOnDemand() {
         if (!sTexturesLoaded) {
