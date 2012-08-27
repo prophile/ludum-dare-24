@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
-public class Entity {
+public class Entity implements Comparable<Entity> {
     protected Body mBody;
     protected float mWidth = 0, mHeight = 0;
     protected final EntityAttributes mAttributes = new EntityAttributes();
@@ -30,5 +30,14 @@ public class Entity {
                 - mHeight / 2);
 
         image.draw(sb);
+    }
+    
+    public int drawOrder() {
+        return 0;
+    }
+
+    @Override
+    public int compareTo(Entity arg0) {
+        return this.drawOrder() - arg0.drawOrder();
     }
 }
