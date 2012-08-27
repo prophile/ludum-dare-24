@@ -15,10 +15,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Player extends Entity {
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
@@ -27,7 +27,8 @@ public class Player extends Entity {
     private final Sound mJumpSound, mHurtSound;
 
     public Player(World world) {
-        Texture mTexture = new Texture(Gdx.files.internal("assets/AssetMonkey.png"));
+        Texture mTexture = new Texture(
+                Gdx.files.internal("assets/AssetMonkey.png"));
         mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mSprite = new Sprite(mTexture, 200, 200);
         configureAttributes();
@@ -121,7 +122,6 @@ public class Player extends Entity {
             modifier.update();
             if (modifier.hasEnded()) {
                 endedModifiers.add(modifier);
-                System.out.println("removing");
             }
         }
 

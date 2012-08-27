@@ -108,7 +108,6 @@ public class SoupObstacle extends PhysicalObstacle {
     @Override
     public void hit() {
         if (mStage == EvolutionStage.NORMAL) {
-            System.out.println("evolving");
             mStage = EvolutionStage.TENTACLES;
             mEvolutionSound.play();
         }
