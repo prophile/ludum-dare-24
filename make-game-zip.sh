@@ -1,5 +1,5 @@
 #!/bin/bash
-dir=`mktemp -d lolwat`
+dir=`mktemp -d lolwatXXXXXX`
 curdir=`pwd`
 echo $dir
 mkdir $dir/octodarwin
