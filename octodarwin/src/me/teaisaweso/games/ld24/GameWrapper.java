@@ -57,7 +57,6 @@ public class GameWrapper implements ApplicationListener {
 
     private BitmapFont mTextFont;
     private int mScore;
-    private int mRank;
     private ScoreDownloader mPublicTopScores;
 
     private Sprite mCrosshair;
@@ -166,7 +165,6 @@ public class GameWrapper implements ApplicationListener {
         mTextFont.getRegion().getTexture()
                 .setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mScore = 0;
-        mRank = 0;
         // Blank list of top scores, in case intertubes fail.
         mPublicTopScores = new ScoreDownloader();
 
@@ -523,7 +521,6 @@ public class GameWrapper implements ApplicationListener {
                         "http://immense-savannah-9950.herokuapp.com/score/"
                                 + username + "/" + (mScore ^ 0x5f3759df));
                 u.getContent();
-                mRank = 0; // Actually get this content in the future.
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -594,7 +591,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void setGameOver() {
-        mPublicTopScores.downloadScoresAgain(mScore, mRank);
+        mPublicTopScores.downloadScoresAgain(mScore);
         mIsGameOver = true;
     }
 
@@ -669,14 +666,12 @@ public class GameWrapper implements ApplicationListener {
 
     protected class ScoreDownloader implements Runnable {
         public ConcurrentSkipListSet<ScoreEntry> mScoreList;
-        public int mRank;
 
         public ScoreDownloader() {
             mScoreList = new ConcurrentSkipListSet<ScoreEntry>();
         }
 
-        public void downloadScoresAgain(int myScore, int myRank) {
-            mRank = myRank;
+        public void downloadScoresAgain(int myScore) {
             mScoreList.clear();
             String username = System.getProperty("user.name");
             mScoreList.add(new ScoreEntry(username, myScore, true));
