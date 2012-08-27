@@ -41,7 +41,7 @@ public class BulletEntity extends Entity {
 
         mBody = b;
         mBody.setUserData(this);
-        mHashCode = GameWrapper.instance.mRng.nextInt()*30+1;
+        mHashCode = GameWrapper.instance.mRng.nextInt(30000)+3000;
         mParticleEffect = getEffectPool().obtain();
     }
 
