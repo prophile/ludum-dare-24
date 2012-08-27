@@ -29,7 +29,7 @@ public class RockObstacle extends PhysicalObstacle {
     }
 
     private Texture loadRockTexture() {
-        Texture t = new Texture(Gdx.files.internal("assets/AssetRockDraft.png"));
+        Texture t = new Texture(Gdx.files.internal("assets/Asset_rock_draft.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         return t;
     }
