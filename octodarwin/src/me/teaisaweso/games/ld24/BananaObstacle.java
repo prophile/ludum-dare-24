@@ -77,7 +77,7 @@ public class BananaObstacle extends PhysicalObstacle {
         bd.type = BodyType.DynamicBody;
         FixtureDef fd = new FixtureDef();
         CircleShape cs = new CircleShape();
-        cs.setRadius(1);
+        cs.setRadius(2);
         fd.shape = cs;
         fd.isSensor = false;
         fd.restitution = Constants.getFloat("bananaTentaclesRestitution");

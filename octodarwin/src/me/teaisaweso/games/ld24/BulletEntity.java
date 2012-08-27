@@ -16,6 +16,7 @@ public class BulletEntity extends Entity {
     private final ParticleEffectPool.PooledEffect mParticleEffect;
     private static ParticleEffectPool sEffectPool = null;
     private final int mRotateSpeed;
+    private int mHashCode;
 
     private static ParticleEffectPool getEffectPool() {
         if (sEffectPool == null) {
@@ -40,7 +41,7 @@ public class BulletEntity extends Entity {
 
         mBody = b;
         mBody.setUserData(this);
-
+        mHashCode = GameWrapper.instance.mRng.nextInt()*30+1;
         mParticleEffect = getEffectPool().obtain();
     }
 
@@ -73,4 +74,11 @@ public class BulletEntity extends Entity {
         Vector2 velocity = mBody.getLinearVelocity();
         mBody.setLinearVelocity(-velocity.x, velocity.y);
     }
+
+    @Override
+    public int drawOrder() {
+        return mHashCode;
+    }
+    
+    
 }
