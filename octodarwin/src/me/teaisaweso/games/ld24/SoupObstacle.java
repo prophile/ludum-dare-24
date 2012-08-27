@@ -21,7 +21,7 @@ public class SoupObstacle extends PhysicalObstacle {
 
     private static boolean sTexturesLoaded = false;
     private static Texture sSoup1, sSoup2, sSoup3, sSoupTentacle1,
-            sSoupTentacle2;
+            sSoupTentacle2, sSoupPoof;
 
     private EvolutionStage mStage;
     private final Sprite mSprite;
@@ -47,6 +47,8 @@ public class SoupObstacle extends PhysicalObstacle {
                 Gdx.files.internal("assets/Asset_Soup_tentacle1.png"));
         sSoupTentacle2 = new Texture(
                 Gdx.files.internal("assets/Asset_Soup_tentacle2.png"));
+        sSoupPoof = new Texture(
+                Gdx.files.internal("assets/Asset_Soup_tentacle0.png"));
     }
 
     public SoupObstacle(float x, World w) {
@@ -62,7 +64,7 @@ public class SoupObstacle extends PhysicalObstacle {
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(70 / GameWrapper.PHYSICS_RATIO,
-                20/ GameWrapper.PHYSICS_RATIO);
+                20 / GameWrapper.PHYSICS_RATIO);
         fd.shape = ps;
         fd.density = 1;
         fd.isSensor = true;
@@ -99,7 +101,9 @@ public class SoupObstacle extends PhysicalObstacle {
                 mSprite.setTexture(sSoup3);
             }
         } else {
-            if (mTicks % 20 < 10) {
+            if (mTicks < 12) {
+                mSprite.setTexture(sSoupPoof);
+            } else if (mTicks % 20 < 10) {
                 mSprite.setTexture(sSoupTentacle1);
             } else {
                 mSprite.setTexture(sSoupTentacle2);
@@ -115,6 +119,7 @@ public class SoupObstacle extends PhysicalObstacle {
         if (mStage == EvolutionStage.NORMAL) {
             mStage = EvolutionStage.TENTACLES;
             mEvolutionSound.play();
+            mTicks = 0;
         }
     }
 
