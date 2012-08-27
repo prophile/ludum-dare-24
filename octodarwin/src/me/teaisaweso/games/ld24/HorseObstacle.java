@@ -74,8 +74,8 @@ public class HorseObstacle extends PhysicalObstacle {
         PolygonShape ps = new PolygonShape();
         mWidth = 333;
         mHeight = 199;
-        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO), mHeight
-                / (2 * GameWrapper.PHYSICS_RATIO));
+        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO)-2, mHeight
+                / (2 * GameWrapper.PHYSICS_RATIO)-2);
 
         fd.shape = ps;
         fd.isSensor = false;
@@ -106,6 +106,12 @@ public class HorseObstacle extends PhysicalObstacle {
             
             mDead = true;
         }
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        // TODO Auto-generated method stub
+        return super.getPosition().add(32,32);
     }
 
     @Override
