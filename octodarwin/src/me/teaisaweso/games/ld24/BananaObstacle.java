@@ -107,7 +107,6 @@ public class BananaObstacle extends PhysicalObstacle {
             GameWrapper.instance.getBananaExplosionManager().pew(getPosition());
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
-            enemy.mBody.setLinearVelocity(0.0f, 0.0f);
             if (mTicks-mLastPlayedSoundTicks > 60) {
                 System.out.println("darwin bananas");
                 mDarwinHurtSound.play();
