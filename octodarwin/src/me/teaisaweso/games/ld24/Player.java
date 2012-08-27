@@ -26,9 +26,10 @@ public class Player extends Entity {
     private int mLastJumpTicks;
     private final Sound mJumpSound, mHurtSound;
     private int mTicks = 0;
+    private boolean mGotHurt = false;
 
     private static Texture sFlapTexture1, sFlapTexture2, sJumpTexture,
-            sAirTexture;
+            sAirTexture, sHurtTexture;
     private static boolean sTexturesLoaded = false;
 
     private static void loadTextures() {
@@ -40,10 +41,13 @@ public class Player extends Entity {
                 Gdx.files.internal("assets/Asset_Monkey_jump.png"));
         sAirTexture = new Texture(
                 Gdx.files.internal("assets/Asset_Monkey_midair.png"));
+        sHurtTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_Hurt.png"));
         sFlapTexture1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         sFlapTexture2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         sJumpTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         sAirTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        sHurtTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
     }
 
     private static void loadTexturesOnDemand() {
@@ -140,7 +144,9 @@ public class Player extends Entity {
                     mBody.getLinearVelocity().y);
         }
         int flapTime = Constants.getInt("playerAnimationFlapTime");
-        if (mLastJumpTicks < Constants.getInt("playerAnimationJumpTime")) {
+        if (mGotHurt) {
+            mSprite.setTexture(sHurtTexture);
+        } else if (mLastJumpTicks < Constants.getInt("playerAnimationJumpTime")) {
             mSprite.setTexture(sJumpTexture);
         } else if (!GameWrapper.instance.isOnFloor()) {
             mSprite.setTexture(sAirTexture);
@@ -181,6 +187,7 @@ public class Player extends Entity {
         mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.0000f));
         mAttributes.mAccel *= 0.5;
         mHurtSound.play();
+        mGotHurt = true;
         Timer t = new Timer();
         t.schedule(new TimerTask() {
 
@@ -189,6 +196,7 @@ public class Player extends Entity {
                 mSprite.setColor(1.0f, 1.0f, 1.0f, 1.0f);
                 mAttributes.mAccel *= 2;
                 mBody.setLinearVelocity(mBody.getLinearVelocity().mul(1f));
+                mGotHurt = false;
             }
         }, 1000);
     }
