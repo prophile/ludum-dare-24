@@ -452,7 +452,7 @@ public class GameWrapper implements ApplicationListener {
 
     private void loadGameOverAssets() {
         Texture t;
-        t = new Texture(Gdx.files.internal("assets/gameoverscreen.png"));
+        t = new Texture(Gdx.files.internal("assets/Screen_Game_Over.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mGameOverSprite = new Sprite(t, 800, 600);
         mGameOverBatch = new SpriteBatch();
@@ -506,12 +506,19 @@ public class GameWrapper implements ApplicationListener {
         mGameOverSprite.draw(mGameOverBatch);
 
         String text = new String();
+        int i = 0;
         for (ScoreEntry e : mPublicTopScores.mScoreList) {
-
-            text += e.mName + ": " + e.mScore + "m";
+            text += "    ";
             if (e.mIsPlayer) {
-                text += "                <---- your score";
+                text += "yours   ";
+            } else {
+                text += "    " + i + "     ";
             }
+            
+            text += "          ";
+            
+            text += e.mName + "                            " + e.mScore + "m";
+            
 
             text += "\n";
         }
@@ -519,9 +526,9 @@ public class GameWrapper implements ApplicationListener {
         Color oldColor = mTextFont.getColor();
         mTextFont.setScale(1.0f);
         mTextFont.setColor(1.0f, 1.0f, 0.0f, 0.5f);
-        mTextFont.drawMultiLine(mGameOverBatch, text, 390.0f, 290.0f);
+        mTextFont.drawMultiLine(mGameOverBatch, text, 40.0f, 290.0f);
         mTextFont.setColor(oldColor);
-
+        i += 1;
         mGameOverBatch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
