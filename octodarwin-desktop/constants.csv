@@ -32,7 +32,7 @@ bananaTentaclesFlailTime,6
 bananaTentaclesRestitution,0.4
 treeStumpMinSpacing,800
 treeStumpMaxSpacing,900
-showHitboxes,0
+showHitboxes,1
 bananaMinSpacing,600
 bananaMaxSpacing,1800
 bananaHeight,400
@@ -65,3 +65,4 @@ horseHeight,150
 evolveForce,1
 enemySize,1.0
 playerSize,0.6
+rockSize,120
