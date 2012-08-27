@@ -520,7 +520,7 @@ public class GameWrapper implements ApplicationListener {
         mGameOverSprite.draw(mGameOverBatch);
 
         String text = new String();
-        int i = 0;
+        int i = 1;
         for (ScoreEntry e : mPublicTopScores.mScoreList) {
             text += "    ";
             if (e.mIsPlayer) {
@@ -535,6 +535,7 @@ public class GameWrapper implements ApplicationListener {
             
 
             text += "\n";
+            i += 1;
         }
 
         Color oldColor = mTextFont.getColor();
