@@ -155,7 +155,7 @@ public class GameWrapper implements ApplicationListener {
             m.setLooping(true);
             m.play();
         }
-        
+
         instance = this;
         mEntities.clear();
 
@@ -223,6 +223,7 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private ObstacleType mPreviousChoice;
+    private int mObstaclesWithoutEvolution = 0;
 
     private ObstacleType getRandomObstacleType() {
 
@@ -230,15 +231,28 @@ public class GameWrapper implements ApplicationListener {
                 sRng);
         types.addEntry(ObstacleType.SOUP, Constants.getFloat("spawnSoup"));
         types.addEntry(ObstacleType.BANANA, Constants.getFloat("spawnBanana"));
-        types.addEntry(ObstacleType.STUMP, Constants.getFloat("spawnStump"));
-        types.addEntry(ObstacleType.DOUBLE_STUMP,
-                Constants.getFloat("spawnDoubleStump"));
-        types.addEntry(ObstacleType.ROCK, Constants.getFloat("spawnRock"));
+        types.addEntry(ObstacleType.HORSE, Constants.getFloat("spawnHorse"));
+        if (mObstaclesWithoutEvolution < Constants.getInt("evolveForce")) {
+            types.addEntry(ObstacleType.STUMP, Constants.getFloat("spawnStump"));
+            types.addEntry(ObstacleType.DOUBLE_STUMP,
+                    Constants.getFloat("spawnDoubleStump"));
+            types.addEntry(ObstacleType.ROCK, Constants.getFloat("spawnRock"));
+        } else {
+            System.out.println("forcing an evolution");
+        }
         if (mPreviousChoice != ObstacleType.GAP) {
             types.addEntry(ObstacleType.GAP, Constants.getFloat("spawnGap"));
         }
-        types.addEntry(ObstacleType.HORSE, Constants.getFloat("spawnHorse"));
-        mPreviousChoice = types.pick();
+
+        ObstacleType choice = types.pick();
+        if (choice != ObstacleType.SOUP && choice != ObstacleType.BANANA
+                && choice != ObstacleType.HORSE) {
+            mObstaclesWithoutEvolution++;
+        } else {
+            mObstaclesWithoutEvolution = 0;
+        }
+ 
+        mPreviousChoice = choice;
         return mPreviousChoice;
     }
 
@@ -398,10 +412,11 @@ public class GameWrapper implements ApplicationListener {
             c.setEnabled(false);
             return;
         }
-        
+
         Entity collider_a = (Entity) a.getBody().getUserData();
         Entity collider_b = (Entity) b.getBody().getUserData();
-        if (collider_a instanceof BananaObstacle && collider_b instanceof BananaObstacle) {
+        if (collider_a instanceof BananaObstacle
+                && collider_b instanceof BananaObstacle) {
             c.setEnabled(false);
             return;
         }
@@ -439,7 +454,7 @@ public class GameWrapper implements ApplicationListener {
             }
 
             if (collider_b instanceof Enemy) {
-                ((Enemy) collider_b).catchPlayer((Player)collider_a);
+                ((Enemy) collider_b).catchPlayer((Player) collider_a);
             }
 
             if (collider_b instanceof PhysicalObstacle) {
@@ -497,8 +512,8 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void renderSplashScreen() {
-        mPlayer.mBody.setTransform(80/16, 400/16, 0);
-        mEnemy.mBody.setTransform(700/16, 400/16, 0);
+        mPlayer.mBody.setTransform(80 / 16, 400 / 16, 0);
+        mEnemy.mBody.setTransform(700 / 16, 400 / 16, 0);
         mIsOnFloor = true;
         mPlayer.update();
         mEnemy.update();
@@ -528,11 +543,10 @@ public class GameWrapper implements ApplicationListener {
             } else {
                 text += "    " + i + "     ";
             }
-            
+
             text += "          ";
-            
+
             text += e.mName + "                            " + e.mScore + "m";
-            
 
             text += "\n";
             i += 1;
@@ -688,8 +702,7 @@ public class GameWrapper implements ApplicationListener {
             mEntities.remove(c);
         }
 
-        System.out.println(mEntities.size());
-        System.out.println(mWorld.getBodyCount());
+        
     }
 
     private void updatePlayerForAirControl() {
