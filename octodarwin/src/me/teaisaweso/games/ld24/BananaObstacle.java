@@ -100,7 +100,7 @@ public class BananaObstacle extends PhysicalObstacle {
     @Override
     public void collide(Entity e, Contact c) {
         if (e instanceof Enemy && mStage != EvolutionStage.NORMAL) {
-            GameWrapper.instance.getExplosionManager().pew(getPosition());
+            GameWrapper.instance.getBananaExplosionManager().pew(getPosition());
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);

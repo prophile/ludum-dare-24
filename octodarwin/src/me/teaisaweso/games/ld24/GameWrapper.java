@@ -87,12 +87,17 @@ public class GameWrapper implements ApplicationListener {
     private boolean mSplashScreen = true;
 
     private Sprite mSplashScreenSprite;
-    private ExplosionManager mExplosionManager;
+    private ExplosionManager mBananaExplosionManager;
+    private ExplosionManager mDustExplosionManager;
 
     private float mNextSpawnPosition = 0.0f;
 
-    public ExplosionManager getExplosionManager() {
-        return mExplosionManager;
+    public ExplosionManager getBananaExplosionManager() {
+        return mBananaExplosionManager;
+    }
+
+    public ExplosionManager getDustExplosionManager() {
+        return mDustExplosionManager;
     }
 
     public void addFloor() {
@@ -163,7 +168,8 @@ public class GameWrapper implements ApplicationListener {
         // Blank list of top scores, in case intertubes fail.
         mPublicTopScores = new ScoreDownloader();
 
-        mExplosionManager = new ExplosionManager();
+        mBananaExplosionManager = new ExplosionManager("bananarama");
+        mDustExplosionManager = new ExplosionManager("dust");
 
         createCrosshair();
 
@@ -546,7 +552,8 @@ public class GameWrapper implements ApplicationListener {
 
         drawCrosshair(mBatch);
 
-        mExplosionManager.draw(mBatch);
+        mBananaExplosionManager.draw(mBatch);
+        mDustExplosionManager.draw(mBatch);
 
         // Reset transform to untransformed, draw distance/score text
         mBatch.setTransformMatrix(new Matrix4().translate(0, 0, 0));
@@ -614,7 +621,8 @@ public class GameWrapper implements ApplicationListener {
             updatePlayerForAirControl();
         }
 
-        mExplosionManager.update();
+        mBananaExplosionManager.update();
+        mDustExplosionManager.update();
 
         handleRespawn();
     }

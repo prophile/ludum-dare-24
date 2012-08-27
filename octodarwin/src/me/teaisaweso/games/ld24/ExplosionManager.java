@@ -15,9 +15,9 @@ public class ExplosionManager {
     private final ParticleEffectPool mEffectPool;
     private final Set<ParticleEffectPool.PooledEffect> mActiveEffects = new HashSet<ParticleEffectPool.PooledEffect>();
 
-    public ExplosionManager() {
+    public ExplosionManager(String name) {
         ParticleEffect effect = new ParticleEffect();
-        effect.load(Gdx.files.internal("assets/bananarama"),
+        effect.load(Gdx.files.internal("assets/" + name),
                 Gdx.files.internal("assets"));
         mEffectPool = new ParticleEffectPool(effect, 4, 4);
     }

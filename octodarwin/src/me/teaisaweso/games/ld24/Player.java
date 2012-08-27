@@ -134,8 +134,8 @@ public class Player extends Entity {
                     Constants.getFloat("jumpVelocity")));
             mLastJumpTicks = 0;
             mJumpSound.play();
+            GameWrapper.instance.getDustExplosionManager().pew(getPosition());
         }
-
     }
 
     public void doHurt() {
