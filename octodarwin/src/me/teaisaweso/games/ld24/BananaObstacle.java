@@ -30,6 +30,8 @@ public class BananaObstacle extends PhysicalObstacle {
     public int mHitTicks = 0;
     private int mLifeTicks = 0;
     public boolean mDead = false;
+    private int mTicks = 0;
+    private int mLastPlayedSoundTicks = 0;
 
     private static void loadTexturesOnDemand() {
         if (!texturesLoaded) {
@@ -102,15 +104,20 @@ public class BananaObstacle extends PhysicalObstacle {
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
-            mDarwinHurtSound.play();
+            if (mTicks-mLastPlayedSoundTicks > 60) {
+                mDarwinHurtSound.play();
+                mLastPlayedSoundTicks = mTicks;
+            }
             mDead = true;
         }
     }
 
     @Override
     public void hit() {
+        mTicks ++;
         if (mStage == EvolutionStage.NORMAL) {
             Vector2 position = getPosition();
+            mEvolutionSound.play();
             if (GameWrapper.instance.getRNG().nextFloat() < Constants
                     .getFloat("bananaFlyingChance")) {
                 mStage = EvolutionStage.FLYING;
@@ -133,7 +140,7 @@ public class BananaObstacle extends PhysicalObstacle {
                 mSprite.setScale(1.8f);
                 mSprite.setOrigin(0.0f, 90.0f);
             }
-            mEvolutionSound.play();
+            
         }
     }
 

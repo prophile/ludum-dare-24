@@ -33,6 +33,8 @@ public class HorseObstacle extends PhysicalObstacle {
     public int mHitTicks = 0;
     private int mLifeTicks = 0;
     public boolean mDead = false;
+    private int mLastPlayedSoundTicks;
+    private int mTicks;
 
     private static void loadTexturesOnDemand() {
         if (!texturesLoaded) {
@@ -97,7 +99,11 @@ public class HorseObstacle extends PhysicalObstacle {
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
-            mDarwinHurtSound.play();
+            if (mTicks-mLastPlayedSoundTicks > 60) {
+                mDarwinHurtSound.play();
+                mLastPlayedSoundTicks = mTicks;
+            }
+            
             mDead = true;
         }
     }
@@ -110,13 +116,15 @@ public class HorseObstacle extends PhysicalObstacle {
             mStage = EvolutionStage.TENTACLES;
             //mSprite.setScale(1.8f);
             //mSprite.setOrigin(0.0f, 90.0f);
+            mEvolutionSound.play();
         }
-        mEvolutionSound.play();
+        
         
     }
 
     @Override
     public boolean update() {
+        mTicks++;
         if (mStage == EvolutionStage.NORMAL) {
             ++mLifeTicks;
             mSprite.setTexture(sUnevolvedTextures[0]);

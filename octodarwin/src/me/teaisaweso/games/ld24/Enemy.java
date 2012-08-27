@@ -113,11 +113,15 @@ public class Enemy extends Entity {
 
         if (playerX - getPosition().x < Constants
                 .getFloat("darwinPlayerCushionSize")) {
-            if (Constants.getBoolean("darwinDebug")) mSprite.setColor(0.5f, 0.0f, 0.0f, 1f);
+            if (Constants.getBoolean("darwinDebug")) {
+                mSprite.setColor(0.5f, 0.0f, 0.0f, 1f);
+                mSprite.setColor(0.5f, 0.0f, 0.0f, 1);
+            }
             mBody.setLinearVelocity(mBody.getLinearVelocity().mul(
                     Constants.getFloat("darwinPlayerCushionSlowDown")));
         } else {
             mSprite.setColor(1f, 1f, 1f, 1f);
+            mSprite.setColor(1, 1, 1, 1);
         }
 
         return false;
