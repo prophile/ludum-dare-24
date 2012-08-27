@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -30,8 +31,10 @@ public class BananaObstacle extends PhysicalObstacle {
     public int mHitTicks = 0;
     private int mLifeTicks = 0;
     public boolean mDead = false;
+
     private int mTicks = 0;
     private int mLastPlayedSoundTicks = 0;
+    private final EvolutionGlow mGlow = new EvolutionGlow(this, 0.2f);
 
     private static void loadTexturesOnDemand() {
         if (!texturesLoaded) {
@@ -146,6 +149,7 @@ public class BananaObstacle extends PhysicalObstacle {
 
     @Override
     public boolean update() {
+        mGlow.update();
         if (mStage == EvolutionStage.NORMAL) {
             ++mLifeTicks;
             int rotateSpeed = Constants.getInt("bananaSwingTime");
@@ -198,5 +202,13 @@ public class BananaObstacle extends PhysicalObstacle {
     @Override
     public StatusModifier freshStatusModifier() {
         return new SlowDownModifier();
+    }
+
+    @Override
+    public void draw(SpriteBatch sb) {
+        if (mStage == EvolutionStage.NORMAL) {
+            mGlow.draw(sb);
+        }
+        super.draw(sb);
     }
 }

@@ -1,25 +1,23 @@
 package me.teaisaweso.games.ld24;
 
-import me.teaisaweso.games.ld24.BananaObstacle.EvolutionStage;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class HorseObstacle extends PhysicalObstacle {
 
     enum EvolutionStage {
-        NORMAL, FLYING, TENTACLES;
+        NORMAL, TENTACLES;
     }
 
     EvolutionStage mStage = EvolutionStage.NORMAL;
@@ -31,10 +29,12 @@ public class HorseObstacle extends PhysicalObstacle {
     private final static Texture[] sUnevolvedTextures = new Texture[6];
     private static boolean texturesLoaded = false;
     public int mHitTicks = 0;
-    private int mLifeTicks = 0;
     public boolean mDead = false;
     private int mLastPlayedSoundTicks;
     private int mTicks;
+
+    private final EvolutionGlow mGlow = new EvolutionGlow(this, new Vector2(0,
+            -30), 700);
 
     private static void loadTexturesOnDemand() {
         if (!texturesLoaded) {
@@ -74,17 +74,17 @@ public class HorseObstacle extends PhysicalObstacle {
         PolygonShape ps = new PolygonShape();
         mWidth = 333;
         mHeight = 199;
-        ps.setAsBox(mWidth/(2*GameWrapper.PHYSICS_RATIO), mHeight/(2*GameWrapper.PHYSICS_RATIO));
-        
+        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO), mHeight
+                / (2 * GameWrapper.PHYSICS_RATIO));
+
         fd.shape = ps;
         fd.isSensor = false;
-        fd.restitution = Constants.getFloat("bananaTentaclesRestitution");
         fd.density = 1;
         mBody = world.createBody(bd);
+        mBody.setFixedRotation(true);
         mBody.createFixture(fd);
         mBody.setUserData(this);
 
-        
         mSprite = new Sprite(sUnevolvedTextures[0], (int) mWidth, (int) mHeight);
         mDarwinHurtSound = Gdx.audio.newSound(Gdx.files
                 .internal("assets/DarwinHurt.wav"));
@@ -95,7 +95,7 @@ public class HorseObstacle extends PhysicalObstacle {
     @Override
     public void collide(Entity e, Contact c) {
         if (e instanceof Enemy && mStage != EvolutionStage.NORMAL) {
-            //GameWrapper.instance.getExplosionManager().pew(getPosition());
+            // GameWrapper.instance.getExplosionManager().pew(getPosition());
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
@@ -111,39 +111,38 @@ public class HorseObstacle extends PhysicalObstacle {
     @Override
     public void hit() {
         if (mStage == EvolutionStage.NORMAL) {
-            Vector2 position = getPosition();
-
             mStage = EvolutionStage.TENTACLES;
             //mSprite.setScale(1.8f);
             //mSprite.setOrigin(0.0f, 90.0f);
             mEvolutionSound.play();
         }
         
+        mBody.setLinearVelocity(Constants.getFloat("horseRecoil"), 0.0f);
         
     }
 
     @Override
     public boolean update() {
         mTicks++;
+        mGlow.update();
         if (mStage == EvolutionStage.NORMAL) {
-            ++mLifeTicks;
             mSprite.setTexture(sUnevolvedTextures[0]);
         } else {
             ++mHitTicks;
-            if (mHitTicks < Constants.getInt("bananaPoofTime")) {
+            if (mHitTicks < Constants.getInt("horsePoofTime")) {
                 mSprite.setTexture(sPoofTexture);
             } else {
-                if (mStage == EvolutionStage.FLYING) {
-
+                int flapTime = Constants.getInt("horseGallopAnimationTime");
+                if (mHitTicks % (2 * flapTime) < flapTime) {
+                    mSprite.setTexture(sTentacleTextureHigh);
                 } else {
-                    mBody.setLinearVelocity(-100, 0);
-                    int flapTime = Constants.getInt("bananaTentaclesFlailTime");
-                    if (mHitTicks % (2 * flapTime) < flapTime) {
-                        mSprite.setTexture(sTentacleTextureHigh);
-                    } else {
-                        mSprite.setTexture(sTentacleTextureLow);
-                    }
+                    mSprite.setTexture(sTentacleTextureLow);
                 }
+            }
+            if (mHitTicks >= Constants.getInt("horseAccelerationWaitTime")) {
+                mBody.applyLinearImpulse(
+                        new Vector2(Constants.getFloat("horseAcceleration"),
+                                0.0f), mBody.getPosition());
             }
         }
 
@@ -158,6 +157,14 @@ public class HorseObstacle extends PhysicalObstacle {
     @Override
     public StatusModifier freshStatusModifier() {
         return new SlowDownModifier();
+    }
+
+    @Override
+    public void draw(SpriteBatch sb) {
+        if (mStage == EvolutionStage.NORMAL) {
+            mGlow.draw(sb);
+        }
+        super.draw(sb);
     }
 
 }
