@@ -1,2 +1,2 @@
-cd inappropriate-horse-racing-tactics-desktop
+cd octodarwin-desktop 
 launch.bat
