@@ -194,8 +194,6 @@ public class GameWrapper implements ApplicationListener {
         createInitialObstacles(5);
 
         addFloor();
-        mGunArm = new GunArmEntity(mPlayer);
-        mEntities.add(mGunArm);
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
     }
 
@@ -300,6 +298,9 @@ public class GameWrapper implements ApplicationListener {
         mPlayer = new Player(mWorld);
         mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
         mEntities.add(mPlayer);
+
+        mGunArm = new GunArmEntity(mPlayer);
+        mEntities.add(mGunArm);
     }
 
     /*
@@ -398,10 +399,11 @@ public class GameWrapper implements ApplicationListener {
             c.setEnabled(false);
             return;
         }
-        
+
         Entity collider_a = (Entity) a.getBody().getUserData();
         Entity collider_b = (Entity) b.getBody().getUserData();
-        if (collider_a instanceof BananaObstacle && collider_b instanceof BananaObstacle) {
+        if (collider_a instanceof BananaObstacle
+                && collider_b instanceof BananaObstacle) {
             c.setEnabled(false);
             return;
         }
@@ -439,7 +441,7 @@ public class GameWrapper implements ApplicationListener {
             }
 
             if (collider_b instanceof Enemy) {
-                ((Enemy) collider_b).catchPlayer((Player)collider_a);
+                ((Enemy) collider_b).catchPlayer((Player) collider_a);
             }
 
             if (collider_b instanceof PhysicalObstacle) {
@@ -497,8 +499,8 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void renderSplashScreen() {
-        mPlayer.mBody.setTransform(80/16, 400/16, 0);
-        mEnemy.mBody.setTransform(700/16, 400/16, 0);
+        mPlayer.mBody.setTransform(80 / 16, 400 / 16, 0);
+        mEnemy.mBody.setTransform(700 / 16, 400 / 16, 0);
         mIsOnFloor = true;
         mPlayer.update();
         mEnemy.update();
@@ -510,8 +512,13 @@ public class GameWrapper implements ApplicationListener {
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             mSplashScreen = false;
-            mPlayer.mBody.setTransform(0, 3, 0);
-            mEnemy.mBody.setTransform(-13, 3, 0);
+            mWorld.destroyBody(mPlayer.mBody);
+            mWorld.destroyBody(mEnemy.mBody);
+            mEntities.remove(mPlayer);
+            mEntities.remove(mEnemy);
+            mEntities.remove(mGunArm);
+            createPlayer();
+            createDarwin();
         }
     }
 
@@ -528,11 +535,10 @@ public class GameWrapper implements ApplicationListener {
             } else {
                 text += "    " + i + "     ";
             }
-            
+
             text += "          ";
-            
+
             text += e.mName + "                            " + e.mScore + "m";
-            
 
             text += "\n";
             i += 1;

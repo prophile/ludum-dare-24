@@ -26,6 +26,7 @@ public class Enemy extends Entity {
     private int mTicks;
 
     public Enemy(World world) {
+        float sizeFactor = Constants.getFloat("enemySize");
         Texture t;
         t = new Texture(Gdx.files.internal("assets/Asset_Darwin1.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -36,8 +37,15 @@ public class Enemy extends Entity {
         t = new Texture(Gdx.files.internal("assets/Asset_Darwinangry.png"));
         mAngrySprite = new Sprite(t, 200, 400);
 
-        mWidth = 200;
-        mHeight = 400;
+        mSprite.setOrigin(-50 * (1 - sizeFactor), -100 * (1 - sizeFactor));
+        mSprite.setScale(sizeFactor);
+        mSprite2.setOrigin(-50 * (1 - sizeFactor), -100 * (1 - sizeFactor));
+        mSprite2.setScale(sizeFactor);
+        mAngrySprite.setOrigin(-50 * (1 - sizeFactor), -100 * (1 - sizeFactor));
+        mAngrySprite.setScale(sizeFactor);
+
+        mWidth = (int) (sizeFactor * 200);
+        mHeight = (int) (sizeFactor * 400);
         mAttributes.mMaxSpeed = Constants.getFloat("darwinMaxSpeed");
         mAttributes.mAccel = Constants.getFloat("darwinAccel");
         BodyDef bd = new BodyDef();
@@ -50,7 +58,7 @@ public class Enemy extends Entity {
         bd.fixedRotation = true;
         bd.type = BodyType.DynamicBody;
         bd.fixedRotation = true;
-        bd.position.set(-13, 3);
+        bd.position.set(-13, 3 - 400 * (1 - sizeFactor));
         Body b = world.createBody(bd);
         b.createFixture(fd);
         mBody = b;
