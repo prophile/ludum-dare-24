@@ -382,13 +382,6 @@ public class GameWrapper implements ApplicationListener {
         Entity collider_a = (Entity) a.getBody().getUserData();
         Entity collider_b = (Entity) b.getBody().getUserData();
 
-        // TODO: make this less of a hack
-        if (collider_a instanceof HorseObstacle
-                && ((HorseObstacle) collider_a).mStage == HorseObstacle.EvolutionStage.TENTACLES) {
-            c.setEnabled(false);
-            return;
-        }
-
         if (collider_a instanceof BulletEntity
                 && !(collider_b instanceof Player)) {
             boolean suppressBulletRemoval = false;
