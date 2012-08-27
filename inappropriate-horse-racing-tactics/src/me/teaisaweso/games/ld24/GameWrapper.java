@@ -184,12 +184,19 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createInitialObstacles(int n) {
-        float spacing = Constants.getFloat("obstacleSpacing");
+        float spacing = getRandomObstacleSpacing();
         for (int i = 1; i <= n; ++i) {
             float position = i * spacing;
             createObstacle(position);
         }
         mNextSpawnPosition = (n + 1) * spacing;
+    }
+
+    private float getRandomObstacleSpacing() {
+        float minSpacing = Constants.getFloat("obstacleMinSpacing");
+        float maxSpacing = Constants.getFloat("obstacleMaxSpacing");
+        float spacingRange = maxSpacing - minSpacing;
+        return minSpacing + spacingRange * sRng.nextFloat();
     }
 
     private void createObstacle(float x) {
@@ -541,7 +548,7 @@ public class GameWrapper implements ApplicationListener {
     private void handleRespawn() {
         while (getCameraOrigin().x > mNextSpawnPosition - 400) {
             createObstacle(mNextSpawnPosition);
-            mNextSpawnPosition += Constants.getFloat("obstacleSpacing");
+            mNextSpawnPosition += getRandomObstacleSpacing();
         }
     }
 

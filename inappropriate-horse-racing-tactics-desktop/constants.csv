@@ -41,4 +41,5 @@ rockFirstPosition,2000
 rockSpacing,1800
 bulletFireOffset,150
 reloadTime,30
-obstacleSpacing,300
+obstacleMinSpacing,300
+obstacleMaxSpacing,1000
