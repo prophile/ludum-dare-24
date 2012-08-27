@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -27,6 +28,9 @@ public class SoupObstacle extends PhysicalObstacle {
     private final Sound mEvolutionSound;
     private int mTicks;
     public boolean mDead;
+
+    private final EvolutionGlow mGlow = new EvolutionGlow(this, new Vector2(0,
+            -70), 70);
 
     private static void loadTexturesOnDemand() {
         if (!sTexturesLoaded) {
@@ -85,6 +89,7 @@ public class SoupObstacle extends PhysicalObstacle {
 
     @Override
     public boolean update() {
+        mGlow.update();
         if (mStage == EvolutionStage.NORMAL) {
             if (mTicks % 21 < 7) {
                 mSprite.setTexture(sSoup1);
@@ -121,5 +126,13 @@ public class SoupObstacle extends PhysicalObstacle {
     @Override
     public StatusModifier freshStatusModifier() {
         return new SlowDownModifier();
+    }
+
+    @Override
+    public void draw(SpriteBatch sb) {
+        if (mStage == EvolutionStage.NORMAL) {
+            mGlow.draw(sb);
+        }
+        super.draw(sb);
     }
 }
