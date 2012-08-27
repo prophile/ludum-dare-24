@@ -543,6 +543,10 @@ public class GameWrapper implements ApplicationListener {
         mScore = (int) (getCameraOrigin().x / (PHYSICS_RATIO * Constants
                 .getFloat("scoreMultiplier")));
         String dist = "Score: " + Integer.toString(mScore) + "m";
+        if (Constants.getBoolean("darwinDebug")) {
+            dist += "player speed: " + mPlayer.mBody.getLinearVelocity().x + " ";
+            dist += "darwin speed: " + mEnemy.mBody.getLinearVelocity().x + " ";
+        }
         mTextFont.setScale(2);
         mTextFont.draw(mBatch, dist, -390.0f, +290.0f);
 
