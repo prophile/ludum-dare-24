@@ -65,4 +65,5 @@ horseHeight,150
 evolveForce,2
 enemySize,1.0
 playerSize,0.6
-rockSize,120
+rockWidth,120
+rockHeight,90

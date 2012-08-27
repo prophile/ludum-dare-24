@@ -19,10 +19,11 @@ public class RockObstacle extends PhysicalObstacle {
 
     public RockObstacle(float x, World w) {
         Vector2 worldPos = new Vector2(x,
-                50.0f + (Constants.getFloat("rockSize") - 90.0f));
+                50.0f + (Constants.getFloat("rockHeight") - 90.0f));
         configureAttributes();
         mSprite = new Sprite(loadRockTexture(), 90, 90);
-        mSprite.setScale(Constants.getFloat("rockSize") / 90.0f);
+        mSprite.setScale(Constants.getFloat("rockWidth") / 90.0f,
+                Constants.getFloat("rockHeight") / 90.0f);
         mSprite.setOrigin(0, 0);
         createPhysicsBody(worldPos, w);
     }
@@ -47,8 +48,8 @@ public class RockObstacle extends PhysicalObstacle {
     }
 
     private void configureAttributes() {
-        mWidth = Constants.getInt("rockSize");
-        mHeight = Constants.getInt("rockSize");
+        mWidth = Constants.getInt("rockWidth");
+        mHeight = Constants.getInt("rockHeight");
         mDead = false;
     }
 
