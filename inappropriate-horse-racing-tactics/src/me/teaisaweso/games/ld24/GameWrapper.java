@@ -298,7 +298,6 @@ public class GameWrapper implements ApplicationListener {
             --mLastFireCountdown;
         }
         if (Gdx.input.isButtonPressed(Buttons.LEFT) && mLastFireCountdown == 0) {
-            System.out.println("touch");
             BodyDef bd = new BodyDef();
             bd.type = BodyType.KinematicBody;
             float px = playerSprite.getX() + playerSprite.getWidth() / 2;
@@ -470,12 +469,12 @@ public class GameWrapper implements ApplicationListener {
 
         String text = new String();
         for (ScoreEntry e : mPublicTopScores.mScoreList) {
-            
+
             text += e.mName + ": " + e.mScore + "m";
             if (e.mIsPlayer) {
                 text += "                <---- your score";
             }
-            
+
             text += "\n";
         }
 
@@ -530,7 +529,8 @@ public class GameWrapper implements ApplicationListener {
 
         // Reset transform to untransformed, draw distance/score text
         mBatch.setTransformMatrix(new Matrix4().translate(0, 0, 0));
-        mScore = (int) (getCameraOrigin().x / (PHYSICS_RATIO*Constants.getFloat("scoreMultiplier")));
+        mScore = (int) (getCameraOrigin().x / (PHYSICS_RATIO * Constants
+                .getFloat("scoreMultiplier")));
         String dist = "Score: " + Integer.toString(mScore) + "m";
         mTextFont.setScale(2);
         mTextFont.draw(mBatch, dist, -390.0f, +290.0f);
@@ -581,7 +581,6 @@ public class GameWrapper implements ApplicationListener {
         removeCondemnedBodies();
 
         if (shouldJump()) {
-            System.out.println("jumping");
             mPlayer.jump();
         }
 

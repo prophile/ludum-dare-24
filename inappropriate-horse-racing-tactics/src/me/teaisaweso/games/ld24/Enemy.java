@@ -12,10 +12,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Enemy extends Entity {
 
@@ -32,10 +32,10 @@ public class Enemy extends Entity {
         mSprite = new Sprite(t, 200, 400);
         t = new Texture(Gdx.files.internal("assets/Asset_Darwin2.png"));
         mSprite2 = new Sprite(t, 200, 400);
-        
+
         t = new Texture(Gdx.files.internal("assets/Asset_Darwinangry.png"));
         mAngrySprite = new Sprite(t, 200, 400);
-        
+
         mWidth = 200;
         mHeight = 400;
         mAttributes.mMaxSpeed = Constants.getFloat("darwinMaxSpeed");
@@ -59,7 +59,7 @@ public class Enemy extends Entity {
 
     @Override
     public Sprite getCurrentSprite() {
-        Sprite currentSprite = (mTicks % 20 < 10) ? mSprite : mSprite2;
+        Sprite currentSprite = mTicks % 20 < 10 ? mSprite : mSprite2;
         if (mStatusModifiers.size() >= 1) {
             return mAngrySprite;
         }
@@ -91,6 +91,7 @@ public class Enemy extends Entity {
         return currentSpeed;
     }
 
+    @Override
     public boolean update() {
         float cameraX = GameWrapper.instance.getCameraOrigin().x;
         float playerX = GameWrapper.instance.getPlayer().getPosition().x;
@@ -112,7 +113,6 @@ public class Enemy extends Entity {
 
         if (playerX - getPosition().x < Constants
                 .getFloat("darwinPlayerCushionSize")) {
-            System.out.println("slowing");
             mBody.setLinearVelocity(mBody.getLinearVelocity().mul(
                     Constants.getFloat("darwinPlayerCushionSlowDown")));
         }
@@ -126,7 +126,6 @@ public class Enemy extends Entity {
             modifier.update();
             if (modifier.hasEnded()) {
                 endedModifiers.add(modifier);
-                System.out.println("removing");
             }
         }
 

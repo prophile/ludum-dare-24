@@ -3,6 +3,7 @@ package me.teaisaweso.games.ld24;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -34,6 +35,7 @@ public class BackgroundManager {
                 BACKGROUND_TEXTURE_FILTER);
         sFrontLayer.setFilter(BACKGROUND_TEXTURE_FILTER,
                 BACKGROUND_TEXTURE_FILTER);
+        sBackLayer.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
     }
 
     private static void loadTexturesOnDemand() {

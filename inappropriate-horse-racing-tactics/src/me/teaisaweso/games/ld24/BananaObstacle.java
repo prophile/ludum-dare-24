@@ -110,7 +110,6 @@ public class BananaObstacle extends PhysicalObstacle {
     @Override
     public void hit() {
         if (mStage == EvolutionStage.NORMAL) {
-            System.out.println("evolving");
             Vector2 position = getPosition();
             if (GameWrapper.instance.getRNG().nextFloat() < Constants
                     .getFloat("bananaFlyingChance")) {
@@ -179,7 +178,6 @@ public class BananaObstacle extends PhysicalObstacle {
                     }
                 }
             }
-            System.out.println(mHitTicks);
         }
 
         return shouldCull();
