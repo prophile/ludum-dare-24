@@ -596,19 +596,6 @@ public class GameWrapper implements ApplicationListener {
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             clearGameOver();
-            String username = System.getProperty("user.name");
-            try {
-                URL u = new URL(
-                        "http://immense-savannah-9950.herokuapp.com/score/"
-                                + username + "/" + (mScore ^ 0x5f3759df));
-                u.getContent();
-            } catch (MalformedURLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
             create();
             if (GameWrapper.instance.mDeathMusic.isPlaying()) {
                 GameWrapper.instance.mDeathMusic.stop();
@@ -679,6 +666,20 @@ public class GameWrapper implements ApplicationListener {
     }
 
     public void setGameOver() {
+        String username = System.getProperty("user.name");
+        try {
+            System.out.println("sending scores");
+            URL u = new URL(
+                    "http://immense-savannah-9950.herokuapp.com/score/"
+                            + username + "/" + (mScore ^ 0x5f3759df));
+            u.getContent();
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         mPublicTopScores.downloadScoresAgain(mScore);
         mIsGameOver = true;
     }
