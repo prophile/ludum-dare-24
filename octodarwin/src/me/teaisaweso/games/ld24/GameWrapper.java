@@ -387,7 +387,10 @@ public class GameWrapper implements ApplicationListener {
     void handleCollision(Fixture a, Fixture b, Contact c) {
         Entity collider_a = (Entity) a.getBody().getUserData();
         Entity collider_b = (Entity) b.getBody().getUserData();
-
+        if (collider_a instanceof BananaObstacle && collider_b instanceof BananaObstacle) {
+            c.setEnabled(false);
+            return;
+        }
         if (collider_a instanceof BulletEntity
                 && !(collider_b instanceof Player)) {
             boolean suppressBulletRemoval = false;
