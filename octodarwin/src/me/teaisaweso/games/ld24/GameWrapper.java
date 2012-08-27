@@ -194,8 +194,6 @@ public class GameWrapper implements ApplicationListener {
         createInitialObstacles(5);
 
         addFloor();
-        mGunArm = new GunArmEntity(mPlayer);
-        mEntities.add(mGunArm);
         mDebugger = new Box2DDebugRenderer(true, true, true, true);
     }
 
@@ -314,6 +312,9 @@ public class GameWrapper implements ApplicationListener {
         mPlayer = new Player(mWorld);
         mPlayer.addStatusModifier(new CameraAttachedModifier(mPlayer));
         mEntities.add(mPlayer);
+
+        mGunArm = new GunArmEntity(mPlayer);
+        mEntities.add(mGunArm);
     }
 
     /*
@@ -525,8 +526,13 @@ public class GameWrapper implements ApplicationListener {
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             mSplashScreen = false;
-            mPlayer.mBody.setTransform(0, 3, 0);
-            mEnemy.mBody.setTransform(-13, 3, 0);
+            mWorld.destroyBody(mPlayer.mBody);
+            mWorld.destroyBody(mEnemy.mBody);
+            mEntities.remove(mPlayer);
+            mEntities.remove(mEnemy);
+            mEntities.remove(mGunArm);
+            createPlayer();
+            createDarwin();
         }
     }
 

@@ -71,12 +71,15 @@ public class Player extends Entity {
     }
 
     private void createPhysicsBody(World world) {
+        float scale = Constants.getFloat("playerSize");
         BodyDef bd = new BodyDef();
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
 
-        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO) - 4, mHeight
-                / (2 * GameWrapper.PHYSICS_RATIO), new Vector2(-1, 0), 0);
+        mSprite.setScale(scale);
+        ps.setAsBox(scale * (mWidth / (2 * GameWrapper.PHYSICS_RATIO) - 4),
+                scale * (mHeight / (2 * GameWrapper.PHYSICS_RATIO)),
+                new Vector2(-1, 0), 0);
         fd.density = 1;
         fd.shape = ps;
 
@@ -137,7 +140,7 @@ public class Player extends Entity {
             GameWrapper.instance.setGameOver();
             return false;
         }
-        
+
         if (!GameWrapper.instance.isOnFloor()) {
             mBody.applyForceToCenter(0.0f, Constants.getFloat("gravity")
                     * mBody.getMass());
@@ -147,7 +150,8 @@ public class Player extends Entity {
         mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
                 mBody.getPosition());
         if (mDying) {
-            mBody.setLinearVelocity(getEffectiveMaxSpeed(), mBody.getLinearVelocity().y);
+            mBody.setLinearVelocity(getEffectiveMaxSpeed(),
+                    mBody.getLinearVelocity().y);
         } else if (mBody.getLinearVelocity().x > getEffectiveMaxSpeed()) {
             mBody.setLinearVelocity(getEffectiveMaxSpeed(),
                     mBody.getLinearVelocity().y);
@@ -220,16 +224,16 @@ public class Player extends Entity {
     public int drawOrder() {
         return 100;
     }
-    
+
     public void caught() {
         mAttributes.mAccel = 0.0f;
         mAttributes.mMaxSpeed = 0.0f;
         mDying = true;
         GameWrapper.instance.mDying = true;
-        
+
         mBody.applyLinearImpulse(new Vector2(0.0f, 5000.0f),
                 mBody.getPosition());
-        
+
         mDeathTick = mTicks;
         mSprite.setColor(0.7f, 0.3f, 0.3f, 1.0f);
         mSprite.setTexture(sHurtTexture);
