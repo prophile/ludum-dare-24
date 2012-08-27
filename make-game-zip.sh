@@ -5,7 +5,7 @@ echo $dir
 mkdir $dir/octodarwin
 find octodarwin* *.bat *.command | xargs -L 1 -I@ cp -r @ $dir/octodarwin/
 cd $dir
-zip octodarwin.zip octodarwin
+zip -r octodarwin.zip octodarwin
 mv octodarwin.zip $curdir
 cd $curdir
 rm -rf $dir
