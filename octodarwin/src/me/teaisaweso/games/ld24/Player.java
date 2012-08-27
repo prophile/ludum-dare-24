@@ -153,7 +153,7 @@ public class Player extends Entity {
                     mBody.getLinearVelocity().y);
         }
         int flapTime = Constants.getInt("playerAnimationFlapTime");
-        if (mGotHurt) {
+        if (mGotHurt || mDying) {
             mSprite.setTexture(sHurtTexture);
         } else if (mLastJumpTicks < Constants.getInt("playerAnimationJumpTime")) {
             mSprite.setTexture(sJumpTexture);
@@ -231,6 +231,7 @@ public class Player extends Entity {
                 mBody.getPosition());
         
         mDeathTick = mTicks;
+        mSprite.setColor(0.7f, 0.3f, 0.3f, 1.0f);
+        mSprite.setTexture(sHurtTexture);
     }
-
 }
