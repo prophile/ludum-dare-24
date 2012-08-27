@@ -372,10 +372,10 @@ public class GameWrapper implements ApplicationListener {
             bd.position
                     .set((playerSprite.getX() + playerSprite.getWidth() / 2 + targetVector.x
                             * Constants.getFloat("bulletFireOffset"))
-                            / PHYSICS_RATIO, (playerSprite.getY()
+                            / PHYSICS_RATIO, Math.max((playerSprite.getY()
                             + playerSprite.getHeight() / 2 + targetVector.y
                             * Constants.getFloat("bulletFireOffset"))
-                            / PHYSICS_RATIO);
+                            / PHYSICS_RATIO, 30 / PHYSICS_RATIO));
             FixtureDef fd = new FixtureDef();
             CircleShape cs = new CircleShape();
             cs.setRadius(2);
