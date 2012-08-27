@@ -3,7 +3,9 @@ dir=`mktemp -d lolwatXXXXXX`
 curdir=`pwd`
 echo $dir
 mkdir $dir/octodarwin
-find octodarwin* *.bat *.command | xargs -L 1 -I@ cp -r @ $dir/octodarwin/
+cp -r octodarwin* $dir/octodarwin/
+cp -r *.bat $dir/octodarwin/
+cp -r *.command $dir/octodarwin/
 cd $dir
 zip -r octodarwin.zip octodarwin
 mv octodarwin.zip $curdir
