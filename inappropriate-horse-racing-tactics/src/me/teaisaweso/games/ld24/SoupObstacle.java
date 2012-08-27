@@ -62,7 +62,7 @@ public class SoupObstacle extends PhysicalObstacle {
         fd.density = 1;
         fd.isSensor = true;
         bd.fixedRotation = true;
-        bd.position.set(new Vector2(x / GameWrapper.PHYSICS_RATIO, 0/GameWrapper.PHYSICS_RATIO));
+        bd.position.set(new Vector2(x / GameWrapper.PHYSICS_RATIO, 50/GameWrapper.PHYSICS_RATIO));
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
         mBody.setUserData(this);
