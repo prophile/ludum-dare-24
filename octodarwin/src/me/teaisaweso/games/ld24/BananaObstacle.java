@@ -102,12 +102,14 @@ public class BananaObstacle extends PhysicalObstacle {
 
     @Override
     public void collide(Entity e, Contact c) {
+        System.out.println("enemy collide");
         if (e instanceof Enemy && mStage != EvolutionStage.NORMAL) {
             GameWrapper.instance.getBananaExplosionManager().pew(getPosition());
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
             if (mTicks-mLastPlayedSoundTicks > 60) {
+                System.out.println("darwin bananas");
                 mDarwinHurtSound.play();
                 mLastPlayedSoundTicks = mTicks;
             }
@@ -117,7 +119,7 @@ public class BananaObstacle extends PhysicalObstacle {
 
     @Override
     public void hit() {
-        mTicks ++;
+        
         if (mStage == EvolutionStage.NORMAL) {
             Vector2 position = getPosition();
             mEvolutionSound.play();
@@ -150,6 +152,7 @@ public class BananaObstacle extends PhysicalObstacle {
     @Override
     public boolean update() {
         mGlow.update();
+        mTicks++;
         if (mStage == EvolutionStage.NORMAL) {
             ++mLifeTicks;
             int rotateSpeed = Constants.getInt("bananaSwingTime");
