@@ -2,14 +2,14 @@ playerMaxSpeed,33
 playerAccel,200
 darwinMaxSpeed,37
 darwinAccel,180
-darwinBoostAmount,4000
+darwinBoostAmount,1500
 darwinBoostFalloff,0.95
-darwinPlayerCushionSize,1000,this one strictly needs to be greater than 200
+darwinPlayerCushionSize,320,this one strictly needs to be greater than 200
 darwinPlayerCushionSlowDown,0.98
 gravity,-250
 jumpVelocity,80
-slowdownDuration,120,keep this one an int
-slowdownAmount,1
+slowdownDuration,20,keep this one an int
+slowdownAmount,0.9
 doubleTreeProbability,0.5
 frontBGLayerScrollSpeed,0.0
 middleBGLayerScrollSpeed,0.8
@@ -37,22 +37,22 @@ bananaMinSpacing,600
 bananaMaxSpacing,1800
 bananaHeight,400
 rockFirstPosition,2000
-bulletFireOffset,50
+bulletFireOffset,150
 reloadTime,30
 spikeSlowdownAmount,2
 psikeSlowdownDuration,120
 treeStumpSecondarySpacing,190
 rockSpacing,1500
 obstacleMinSpacing,300
-obstacleMaxSpacing,1000
+obstacleMaxSpacing,700
 spawnSoup,100
 spawnBanana,100
-spawnStump,100
-spawnDoubleStump,100
-spawnRock,100
+spawnStump,200
+spawnDoubleStump,200
+spawnRock,200
 spawnGap,100
 scoreMultiplier,10
-spawnHorse,100
+spawnHorse,50
 darwinDebug,0
 horseGallopAnimationTime,6
 horsePoofTime,12
@@ -65,4 +65,3 @@ horseHeight,150
 evolveForce,1
 enemySize,1.0
 playerSize,0.6
-
