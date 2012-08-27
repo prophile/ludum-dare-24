@@ -540,7 +540,7 @@ public class GameWrapper implements ApplicationListener {
 
         Color oldColor = mTextFont.getColor();
         mTextFont.setScale(1.0f);
-        mTextFont.setColor(1.0f, 1.0f, 0.0f, 0.5f);
+        mTextFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         mTextFont.drawMultiLine(mGameOverBatch, text, 40.0f, 290.0f);
         mTextFont.setColor(oldColor);
         i += 1;
