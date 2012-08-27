@@ -555,30 +555,39 @@ public class GameWrapper implements ApplicationListener {
         mGameOverBatch.begin();
         mGameOverSprite.draw(mGameOverBatch);
 
-        String text = new String();
-        int i = 1;
-        for (ScoreEntry e : mPublicTopScores.mScoreList) {
-            text += "    ";
-            if (e.mIsPlayer) {
-                text += "yours   ";
-            } else {
-                text += "    " + i + "     ";
-            }
-
-            text += "          ";
-
-            text += e.mName + "                            " + e.mScore + "m";
-
-            text += "\n";
-            i += 1;
-        }
-
         Color oldColor = mTextFont.getColor();
         mTextFont.setScale(1.0f);
         mTextFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        
+        String text = new String();
+        int i = 1;
+        for (ScoreEntry e : mPublicTopScores.mScoreList) {
+            if (e.mIsPlayer) {
+                text += "yours";
+            } else {
+                text += i;
+            }
+            i += 1;
+            text += "\n";
+        }
+        
         mTextFont.drawMultiLine(mGameOverBatch, text, 40.0f, 400.0f);
+
+        text = "";
+        for (ScoreEntry e : mPublicTopScores.mScoreList) {
+            text += e.mName + "\n";
+        }
+
+        mTextFont.drawMultiLine(mGameOverBatch, text, 130.0f, 400.0f);
+
+        text = "";
+        for (ScoreEntry e : mPublicTopScores.mScoreList) {
+            text += e.mScore + "m\n";
+        }
+
+        mTextFont.drawMultiLine(mGameOverBatch, text, 270.0f, 400.0f);
+
         mTextFont.setColor(oldColor);
-        i += 1;
         mGameOverBatch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
