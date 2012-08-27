@@ -20,13 +20,22 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 public class Enemy extends Entity {
 
     private final Sprite mSprite;
+    private final Sprite mSprite2;
+    private final Sprite mAngrySprite;
     private final List<StatusModifier> mStatusModifiers = new ArrayList<StatusModifier>();
+    private int mTicks;
 
     public Enemy(World world) {
         Texture t;
         t = new Texture(Gdx.files.internal("assets/Asset_Darwin1.png"));
         t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         mSprite = new Sprite(t, 200, 400);
+        t = new Texture(Gdx.files.internal("assets/Asset_Darwin2.png"));
+        mSprite2 = new Sprite(t, 200, 400);
+        
+        t = new Texture(Gdx.files.internal("assets/Asset_Darwinangry.png"));
+        mAngrySprite = new Sprite(t, 200, 400);
+        
         mWidth = 200;
         mHeight = 400;
         mAttributes.mMaxSpeed = Constants.getFloat("darwinMaxSpeed");
@@ -50,10 +59,9 @@ public class Enemy extends Entity {
 
     @Override
     public Sprite getCurrentSprite() {
-        Sprite currentSprite = mSprite;
-
-        for (StatusModifier modifier : mStatusModifiers) {
-            currentSprite = modifier.getCurrentSprite(currentSprite);
+        Sprite currentSprite = (mTicks % 20 < 10) ? mSprite : mSprite2;
+        if (mStatusModifiers.size() >= 1) {
+            return mAngrySprite;
         }
 
         return currentSprite;
@@ -86,7 +94,7 @@ public class Enemy extends Entity {
     public boolean update() {
         float cameraX = GameWrapper.instance.getCameraOrigin().x;
         float playerX = GameWrapper.instance.getPlayer().getPosition().x;
-
+        mTicks += 1;
         updateAndRemoveModifiers();
         mBody.applyLinearImpulse(new Vector2(getEffectiveAccel(), 0),
                 mBody.getPosition());

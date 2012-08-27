@@ -15,26 +15,29 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 public class TreeStumpObstacle extends PhysicalObstacle {
 
     private final Sprite mSprite;
+    private float mScale;
 
     public static TreeStumpObstacle createStumpObstacle(World w, float scale) {
         float minSpacing = Constants.getFloat("treeStumpMinSpacing");
         float maxSpacing = Constants.getFloat("treeStumpMaxSpacing");
         float spacingRange = maxSpacing - minSpacing;
-        Vector2 position = new Vector2(GameWrapper.instance.getCameraOrigin().x + minSpacing
-                + GameWrapper.instance.mRng.nextFloat() * spacingRange, 50);
+        Vector2 position = new Vector2(GameWrapper.instance.getCameraOrigin().x
+                + minSpacing + GameWrapper.instance.mRng.nextFloat()
+                * spacingRange, 50);
         return new TreeStumpObstacle(position, w, scale);
     }
- 
+
     public TreeStumpObstacle(Vector2 worldPosition, World w, float scale) {
         Texture t = new Texture(Gdx.files.internal("assets/Stump.png"));
         mSprite = new Sprite(t, 161, 122);
+        mScale = scale;
         mSprite.setScale(scale);
 
         BodyDef bd = new BodyDef();
         bd.type = BodyType.StaticBody;
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(161 * scale / (2 * GameWrapper.PHYSICS_RATIO) - 2, 122
+        ps.setAsBox(161 * scale / (2 * GameWrapper.PHYSICS_RATIO)-2*scale, 122
                 * scale / (2 * GameWrapper.PHYSICS_RATIO));
         fd.shape = ps;
         fd.friction = Constants.getFloat("treeStumpFriction");
@@ -50,17 +53,14 @@ public class TreeStumpObstacle extends PhysicalObstacle {
     }
 
     public TreeStumpObstacle createNearbyStump(World w) {
-        return new TreeStumpObstacle(
-                new Vector2(getPosition()
-                        .add(Constants
-                                .getFloat("treeStumpSecondarySpacing"), 30)), w, 1.5f);
+        return new TreeStumpObstacle(new Vector2(getPosition().add(
+                Constants.getFloat("treeStumpSecondarySpacing"), 30)), w, 1.5f);
     }
 
     @Override
     public void collide(Entity e, Contact c) {
         // Re-enabled collision for players
-        if (e instanceof Player)
-            c.setEnabled(true);
+        if (e instanceof Player) c.setEnabled(true);
 
     }
 
@@ -72,6 +72,15 @@ public class TreeStumpObstacle extends PhysicalObstacle {
     public void hit() {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        if (mScale == 1.0) {
+            return super.getPosition();
+        } else {
+            return super.getPosition().add(32, 0);
+        }
     }
 
     @Override

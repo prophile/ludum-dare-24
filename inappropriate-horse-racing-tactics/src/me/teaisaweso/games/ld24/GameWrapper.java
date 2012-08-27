@@ -412,7 +412,9 @@ public class GameWrapper implements ApplicationListener {
 
         if (mTreeStumpObstacle2 != null) {
             mTreeStumpObstacle2.mBody.setActive(false);
-            mWorld.destroyBody(mTreeStumpObstacle2.mBody);
+            mTreeStumpObstacle2.mBody.setTransform(-9000, -9000, 0);
+            //mWorld.destroyBody(mTreeStumpObstacle2.mBody);
+            mTreeStumpObstacle2.mBody = null;
             mEntities.remove(mTreeStumpObstacle2);
             mTreeStumpObstacle2 = null;
         }

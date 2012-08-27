@@ -140,7 +140,8 @@ public class Player extends Entity {
 
     public void doHurt() {
         mSprite.setColor(0.7f, 0.3f, 0.3f, 1.0f);
-        mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.1f));
+        mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.0000f));
+        mAttributes.mAccel *= 0.5;
         mHurtSound.play();
         Timer t = new Timer();
         t.schedule(new TimerTask() {
@@ -148,7 +149,8 @@ public class Player extends Entity {
             @Override
             public void run() {
                 mSprite.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-                mBody.setLinearVelocity(mBody.getLinearVelocity().mul(3f));
+                mAttributes.mAccel *= 2;
+                mBody.setLinearVelocity(mBody.getLinearVelocity().mul(1f));
             }
         }, 1000);
     }
