@@ -19,6 +19,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -149,6 +150,12 @@ public class GameWrapper implements ApplicationListener {
     @Override
     public void create() {
         assert instance == null || instance == this;
+        if (instance == null) {
+            Music m = Gdx.audio.newMusic(Gdx.files.internal("assets/Mix.ogg"));
+            m.setLooping(true);
+            m.play();
+        }
+        
         instance = this;
         mEntities.clear();
 
