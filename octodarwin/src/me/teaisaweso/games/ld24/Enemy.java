@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -88,6 +90,14 @@ public class Enemy extends Entity {
     public void catchPlayer(Player p) {
         mAttributes.mAccel = 0.0f;
         mAttributes.mMaxSpeed = 0.0f;
+        GameWrapper.instance.mCanShoot = false;
+        new Timer().schedule(new TimerTask() {
+            
+            @Override
+            public void run() {
+                GameWrapper.instance.mCanShoot = true;
+            }
+        }, 1200);
         p.caught();
     }
 

@@ -232,6 +232,8 @@ public class GameWrapper implements ApplicationListener {
 
     Music mMusic;
 
+    public boolean mCanShoot = true;
+
     private ObstacleType getRandomObstacleType() {
 
         LotteryChooser<ObstacleType> types = new LotteryChooser<ObstacleType>(
@@ -354,7 +356,7 @@ public class GameWrapper implements ApplicationListener {
         if (mLastFireCountdown > 0) {
             --mLastFireCountdown;
         }
-        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mLastFireCountdown == 0) {
+        if (Gdx.input.isButtonPressed(Buttons.LEFT) && mLastFireCountdown == 0 && mCanShoot) {
             BodyDef bd = new BodyDef();
             bd.type = BodyType.KinematicBody;
             float px = playerSprite.getX() + playerSprite.getWidth() / 2;
