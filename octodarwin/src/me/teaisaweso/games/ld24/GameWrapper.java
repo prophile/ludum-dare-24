@@ -688,7 +688,7 @@ public class GameWrapper implements ApplicationListener {
             try {
                 // Open scores url,
                 URL u = new URL(
-                        "http://immense-savannah-9950.herokuapp.com/csv_scores");
+                        "http://immense-savannah-9950.herokuapp.com/csv_scores/" + mRank);
                 u.getContent();
 
                 // Setup read from it
