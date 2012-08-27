@@ -237,5 +237,8 @@ public class Player extends Entity {
         mDeathTick = mTicks;
         mSprite.setColor(0.7f, 0.3f, 0.3f, 1.0f);
         mSprite.setTexture(sHurtTexture);
+
+        // GameWrapper.instance.mMusic.stop();
+        GameWrapper.instance.mDeathMusic.play();
     }
 }
