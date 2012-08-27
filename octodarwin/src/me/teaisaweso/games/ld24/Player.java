@@ -25,12 +25,42 @@ public class Player extends Entity {
     private final Sprite mSprite;
     private int mLastJumpTicks;
     private final Sound mJumpSound, mHurtSound;
+    private int mTicks = 0;
+    private boolean mGotHurt = false;
+
+    private static Texture sFlapTexture1, sFlapTexture2, sJumpTexture,
+            sAirTexture, sHurtTexture;
+    private static boolean sTexturesLoaded = false;
+
+    private static void loadTextures() {
+        sFlapTexture1 = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_Flapping1.png"));
+        sFlapTexture2 = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_Flapping2.png"));
+        sJumpTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_jump.png"));
+        sAirTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_midair.png"));
+        sHurtTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_Hurt.png"));
+        sFlapTexture1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        sFlapTexture2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        sJumpTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        sAirTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        sHurtTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+    }
+
+    private static void loadTexturesOnDemand() {
+        if (!sTexturesLoaded) {
+            loadTextures();
+            sTexturesLoaded = true;
+        }
+    }
 
     public Player(World world) {
-        Texture mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkey.png"));
-        mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        mSprite = new Sprite(mTexture, 200, 200);
+        loadTexturesOnDemand();
+
+        mSprite = new Sprite(sFlapTexture1, 200, 200);
         configureAttributes();
         createPhysicsBody(world);
         mJumpSound = Gdx.audio.newSound(Gdx.files.internal("assets/Jump.wav"));
@@ -100,6 +130,7 @@ public class Player extends Entity {
 
     @Override
     public boolean update() {
+        ++mTicks;
         if (!GameWrapper.instance.isOnFloor()) {
             mBody.applyForceToCenter(0.0f, Constants.getFloat("gravity")
                     * mBody.getMass());
@@ -112,7 +143,20 @@ public class Player extends Entity {
             mBody.setLinearVelocity(getEffectiveMaxSpeed(),
                     mBody.getLinearVelocity().y);
         }
-
+        int flapTime = Constants.getInt("playerAnimationFlapTime");
+        if (mGotHurt) {
+            mSprite.setTexture(sHurtTexture);
+        } else if (mLastJumpTicks < Constants.getInt("playerAnimationJumpTime")) {
+            mSprite.setTexture(sJumpTexture);
+        } else if (!GameWrapper.instance.isOnFloor()) {
+            mSprite.setTexture(sAirTexture);
+        } else {
+            if (mTicks % (flapTime * 2) < flapTime) {
+                mSprite.setTexture(sFlapTexture1);
+            } else {
+                mSprite.setTexture(sFlapTexture2);
+            }
+        }
         return false;
     }
 
@@ -134,8 +178,8 @@ public class Player extends Entity {
                     Constants.getFloat("jumpVelocity")));
             mLastJumpTicks = 0;
             mJumpSound.play();
+            GameWrapper.instance.getDustExplosionManager().pew(getPosition());
         }
-
     }
 
     public void doHurt() {
@@ -143,6 +187,7 @@ public class Player extends Entity {
         mBody.setLinearVelocity(mBody.getLinearVelocity().mul(0.0000f));
         mAttributes.mAccel *= 0.5;
         mHurtSound.play();
+        mGotHurt = true;
         Timer t = new Timer();
         t.schedule(new TimerTask() {
 
@@ -151,6 +196,7 @@ public class Player extends Entity {
                 mSprite.setColor(1.0f, 1.0f, 1.0f, 1.0f);
                 mAttributes.mAccel *= 2;
                 mBody.setLinearVelocity(mBody.getLinearVelocity().mul(1f));
+                mGotHurt = false;
             }
         }, 1000);
     }
