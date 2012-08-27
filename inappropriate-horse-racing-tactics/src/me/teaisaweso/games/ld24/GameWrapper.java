@@ -470,11 +470,17 @@ public class GameWrapper implements ApplicationListener {
 
         String text = new String();
         for (ScoreEntry e : mPublicTopScores.mScoreList) {
-            text += e.mName + ": " + e.mScore + "\n";
+            
+            text += e.mName + ": " + e.mScore + "m";
+            if (e.mIsPlayer) {
+                text += "                <---- your score";
+            }
+            
+            text += "\n";
         }
 
         Color oldColor = mTextFont.getColor();
-
+        mTextFont.setScale(1.0f);
         mTextFont.setColor(1.0f, 1.0f, 0.0f, 0.5f);
         mTextFont.drawMultiLine(mGameOverBatch, text, 390.0f, 290.0f);
         mTextFont.setColor(oldColor);
@@ -524,8 +530,9 @@ public class GameWrapper implements ApplicationListener {
 
         // Reset transform to untransformed, draw distance/score text
         mBatch.setTransformMatrix(new Matrix4().translate(0, 0, 0));
-        mScore = (int) getCameraOrigin().x;
-        String dist = "Score: " + Integer.toString(mScore);
+        mScore = (int) (getCameraOrigin().x / (PHYSICS_RATIO*Constants.getFloat("scoreMultiplier")));
+        String dist = "Score: " + Integer.toString(mScore) + "m";
+        mTextFont.setScale(2);
         mTextFont.draw(mBatch, dist, -390.0f, +290.0f);
 
         mBatch.end();
@@ -629,7 +636,7 @@ public class GameWrapper implements ApplicationListener {
         public void downloadScoresAgain(int myScore) {
             mScoreList.clear();
             String username = System.getProperty("user.name");
-            mScoreList.add(new ScoreEntry(username, myScore));
+            mScoreList.add(new ScoreEntry(username, myScore, true));
             new Thread(mPublicTopScores).start();
         }
 
@@ -665,7 +672,7 @@ public class GameWrapper implements ApplicationListener {
                     String[] pair = line.split(",");
                     assert pair.length == 2;
                     mScoreList.add(new ScoreEntry(pair[0], new Integer(pair[1])
-                            .intValue()));
+                            .intValue(), false));
                 }
 
             } catch (MalformedURLException e) {
@@ -679,9 +686,10 @@ public class GameWrapper implements ApplicationListener {
     }
 
     protected class ScoreEntry implements Comparable<ScoreEntry> {
-        public ScoreEntry(String n, int s) {
+        public ScoreEntry(String n, int s, boolean isPlayer) {
             mName = n;
             mScore = s;
+            mIsPlayer = isPlayer;
         }
 
         @Override
@@ -697,5 +705,6 @@ public class GameWrapper implements ApplicationListener {
 
         String mName;
         int mScore;
+        boolean mIsPlayer;
     }
 }

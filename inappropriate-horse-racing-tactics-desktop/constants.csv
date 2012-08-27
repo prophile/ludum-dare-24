@@ -90,3 +90,4 @@ spawnStump,100
 spawnDoubleStump,100
 spawnRock,100
 spawnGap,100
+scoreMultiplier,10
