@@ -32,7 +32,7 @@ public class TreeStumpObstacle extends PhysicalObstacle {
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(161 * scale / (2 * GameWrapper.PHYSICS_RATIO) - 2 * scale,
-                122 * scale / (2 * GameWrapper.PHYSICS_RATIO));
+                122 * scale / (2 * GameWrapper.PHYSICS_RATIO) - 2*(scale-1.0f));
         fd.shape = ps;
         fd.friction = Constants.getFloat("treeStumpFriction");
         bd.position.set(new Vector2(
@@ -75,7 +75,7 @@ public class TreeStumpObstacle extends PhysicalObstacle {
         if (mScale == 1.0) {
             return super.getPosition();
         } else {
-            return super.getPosition().add(32, 0);
+            return super.getPosition().add(32, 32);
         }
     }
 

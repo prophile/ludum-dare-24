@@ -62,13 +62,13 @@ public class SoupObstacle extends PhysicalObstacle {
         FixtureDef fd = new FixtureDef();
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(70 / GameWrapper.PHYSICS_RATIO,
-                90 / GameWrapper.PHYSICS_RATIO);
+                20/ GameWrapper.PHYSICS_RATIO);
         fd.shape = ps;
         fd.density = 1;
         fd.isSensor = true;
         bd.fixedRotation = true;
         bd.position.set(new Vector2(x / GameWrapper.PHYSICS_RATIO,
-                90 / GameWrapper.PHYSICS_RATIO));
+                40 / GameWrapper.PHYSICS_RATIO));
         mBody = w.createBody(bd);
         mBody.createFixture(fd);
         mBody.setUserData(this);
@@ -121,6 +121,12 @@ public class SoupObstacle extends PhysicalObstacle {
     @Override
     public Sprite getCurrentSprite() {
         return mSprite;
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        // TODO Auto-generated method stub
+        return super.getPosition().add(0, 50);
     }
 
     @Override
