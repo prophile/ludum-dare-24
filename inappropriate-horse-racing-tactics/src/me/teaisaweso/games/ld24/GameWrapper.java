@@ -184,12 +184,12 @@ public class GameWrapper implements ApplicationListener {
     }
 
     private void createInitialObstacles(int n) {
-        float spacing = getRandomObstacleSpacing();
+        float position = getRandomObstacleSpacing();
         for (int i = 1; i <= n; ++i) {
-            float position = i * spacing;
             createObstacle(position);
+            position += getRandomObstacleSpacing();
         }
-        mNextSpawnPosition = (n + 1) * spacing;
+        mNextSpawnPosition = position;
     }
 
     private float getRandomObstacleSpacing() {
