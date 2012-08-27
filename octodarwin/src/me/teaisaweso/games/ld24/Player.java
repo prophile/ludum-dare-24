@@ -27,7 +27,8 @@ public class Player extends Entity {
     private final Sound mJumpSound, mHurtSound;
     private int mTicks = 0;
 
-    private static Texture sFlapTexture1, sFlapTexture2, sJumpTexture;
+    private static Texture sFlapTexture1, sFlapTexture2, sJumpTexture,
+            sAirTexture;
     private static boolean sTexturesLoaded = false;
 
     private static void loadTextures() {
@@ -37,9 +38,12 @@ public class Player extends Entity {
                 Gdx.files.internal("assets/Asset_Monkey_Flapping2.png"));
         sJumpTexture = new Texture(
                 Gdx.files.internal("assets/Asset_Monkey_jump.png"));
+        sAirTexture = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_midair.png"));
         sFlapTexture1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         sFlapTexture2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         sJumpTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        sAirTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
     }
 
     private static void loadTexturesOnDemand() {
@@ -138,6 +142,8 @@ public class Player extends Entity {
         int flapTime = Constants.getInt("playerAnimationFlapTime");
         if (mLastJumpTicks < Constants.getInt("playerAnimationJumpTime")) {
             mSprite.setTexture(sJumpTexture);
+        } else if (!GameWrapper.instance.isOnFloor()) {
+            mSprite.setTexture(sAirTexture);
         } else {
             if (mTicks % (flapTime * 2) < flapTime) {
                 mSprite.setTexture(sFlapTexture1);
