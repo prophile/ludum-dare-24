@@ -166,6 +166,8 @@ public class GameWrapper implements ApplicationListener {
         createPlayer();
         createDarwin();
 
+        createInitialObstacles(5);
+
         addFloor();
         mGunArm = new GunArmEntity(mPlayer);
         mEntities.add(mGunArm);
@@ -177,6 +179,18 @@ public class GameWrapper implements ApplicationListener {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         mCamera = new OrthographicCamera(w, h);
+    }
+
+    private void createInitialObstacles(int n) {
+        for (int i = 1; i <= n; ++i) {
+            float position = i * Constants.getFloat("obstacleSpacing");
+            createObstacle(position);
+        }
+    }
+
+    private void createObstacle(float x) {
+        RockObstacle obstacle = new RockObstacle(x, mWorld);
+        mEntities.add(obstacle);
     }
 
     private void createCrosshair() {
