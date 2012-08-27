@@ -25,12 +25,31 @@ public class Player extends Entity {
     private final Sprite mSprite;
     private int mLastJumpTicks;
     private final Sound mJumpSound, mHurtSound;
+    private int mTicks = 0;
+
+    private static Texture sFlapTexture1, sFlapTexture2;
+    private static boolean sTexturesLoaded = false;
+
+    private static void loadTextures() {
+        sFlapTexture1 = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_Flapping1.png"));
+        sFlapTexture2 = new Texture(
+                Gdx.files.internal("assets/Asset_Monkey_Flapping2.png"));
+        sFlapTexture1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        sFlapTexture2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+    }
+
+    private static void loadTexturesOnDemand() {
+        if (!sTexturesLoaded) {
+            loadTextures();
+            sTexturesLoaded = true;
+        }
+    }
 
     public Player(World world) {
-        Texture mTexture = new Texture(
-                Gdx.files.internal("assets/AssetMonkey.png"));
-        mTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        mSprite = new Sprite(mTexture, 200, 200);
+        loadTexturesOnDemand();
+
+        mSprite = new Sprite(sFlapTexture1, 200, 200);
         configureAttributes();
         createPhysicsBody(world);
         mJumpSound = Gdx.audio.newSound(Gdx.files.internal("assets/Jump.wav"));
@@ -100,6 +119,7 @@ public class Player extends Entity {
 
     @Override
     public boolean update() {
+        ++mTicks;
         if (!GameWrapper.instance.isOnFloor()) {
             mBody.applyForceToCenter(0.0f, Constants.getFloat("gravity")
                     * mBody.getMass());
@@ -112,7 +132,12 @@ public class Player extends Entity {
             mBody.setLinearVelocity(getEffectiveMaxSpeed(),
                     mBody.getLinearVelocity().y);
         }
-
+        int flapTime = Constants.getInt("playerAnimationFlapTime");
+        if (mTicks % (flapTime * 2) < flapTime) {
+            mSprite.setTexture(sFlapTexture1);
+        } else {
+            mSprite.setTexture(sFlapTexture2);
+        }
         return false;
     }
 

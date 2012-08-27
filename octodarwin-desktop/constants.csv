@@ -98,3 +98,4 @@ horsePoofTime,12
 horseRecoil,60
 horseAcceleration,-500
 horseAccelerationWaitTime,30
+playerAnimationFlapTime,6
