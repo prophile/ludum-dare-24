@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -30,6 +31,9 @@ public class HorseObstacle extends PhysicalObstacle {
     private static boolean texturesLoaded = false;
     public int mHitTicks = 0;
     public boolean mDead = false;
+
+    private ParticleEffect mTrail = null;
+
     private int mLastPlayedSoundTicks;
     private int mTicks;
 
@@ -74,8 +78,8 @@ public class HorseObstacle extends PhysicalObstacle {
         PolygonShape ps = new PolygonShape();
         mWidth = 333;
         mHeight = 199;
-        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO)-2, mHeight
-                / (2 * GameWrapper.PHYSICS_RATIO)-2);
+        ps.setAsBox(mWidth / (2 * GameWrapper.PHYSICS_RATIO) - 2, mHeight
+                / (2 * GameWrapper.PHYSICS_RATIO) - 2);
 
         fd.shape = ps;
         fd.isSensor = false;
@@ -94,41 +98,53 @@ public class HorseObstacle extends PhysicalObstacle {
 
     @Override
     public void collide(Entity e, Contact c) {
+        if (mDead) {
+            return;
+        }
         if (e instanceof Enemy && mStage != EvolutionStage.NORMAL) {
             // GameWrapper.instance.getExplosionManager().pew(getPosition());
             Enemy enemy = (Enemy) e;
             enemy.addStatusModifier(freshStatusModifier());
             enemy.mBody.setLinearVelocity(0.0f, 0.0f);
-            if (mTicks-mLastPlayedSoundTicks > 60) {
+            if (mTicks - mLastPlayedSoundTicks > 60) {
                 mDarwinHurtSound.play();
                 mLastPlayedSoundTicks = mTicks;
             }
-            
+
             mDead = true;
+            GameWrapper.instance.getRainbowExplosionManager()
+                    .pew(getPosition());
         }
     }
 
     @Override
     public Vector2 getPosition() {
         // TODO Auto-generated method stub
-        return super.getPosition().add(32,32);
+        return super.getPosition().add(32, 32);
     }
 
     @Override
     public void hit() {
         if (mStage == EvolutionStage.NORMAL) {
             mStage = EvolutionStage.TENTACLES;
+            mBody.setLinearVelocity(Constants.getFloat("horseRecoil"), 0.0f);
             //mSprite.setScale(1.8f);
             //mSprite.setOrigin(0.0f, 90.0f);
             mEvolutionSound.play();
+            mTrail = new ParticleEffect();
+            mTrail.load(Gdx.files.internal("assets/rainbow"),
+                    Gdx.files.internal("assets"));
         }
-        
-        mBody.setLinearVelocity(Constants.getFloat("horseRecoil"), 0.0f);
-        
     }
 
     @Override
     public boolean update() {
+        if (mTrail != null) {
+            Vector2 trailPosition = new Vector2(getPosition());
+            trailPosition.add(new Vector2(100.0f, 0.0f));
+            mTrail.setPosition(trailPosition.x, trailPosition.y);
+            mTrail.update(1.0f / 60.0f);
+        }
         mTicks++;
         mGlow.update();
         if (mStage == EvolutionStage.NORMAL) {
@@ -169,6 +185,9 @@ public class HorseObstacle extends PhysicalObstacle {
     public void draw(SpriteBatch sb) {
         if (mStage == EvolutionStage.NORMAL) {
             mGlow.draw(sb);
+        }
+        if (mTrail != null) {
+            mTrail.draw(sb);
         }
         super.draw(sb);
     }
