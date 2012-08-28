@@ -2,7 +2,7 @@ playerMaxSpeed,33
 playerAccel,200
 darwinMaxSpeed,37
 darwinAccel,190
-darwinBoostAmount,300
+darwinBoostAmount,75
 darwinBoostFalloff,0.95
 darwinPlayerCushionSize,320,this one strictly needs to be greater than 200
 darwinPlayerCushionSlowDown,0.98
